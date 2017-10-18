@@ -1,0 +1,47 @@
+<XFileATG Version="1.7">
+    <!-- Time: Tue May 24 18:24:02 2011 -->
+    <!-- Exporter: Samples Content Exporter for FBX version 2.5.9 -->
+    <!-- DCC: FBX SDK 7.1.0 -->
+    <!-- Stats: 1573 vertices, 2880 triangles, 1 materials, 0.062 seconds to parse scene. -->
+    <LoadHint MeshCount="1" MaterialCount="1" AnimationCount="0" FrameCount="3" />
+    <PhysicalMemoryFile BigEndian="1">scenes\tk.pmem</PhysicalMemoryFile>
+    <BundledResources>textures\tk.xpr</BundledResources>
+    <Mesh Name="Mesh_Torus Knot01">
+        <MeshTopology VertexBufferCount="1">
+            <VertexBuffer Name="Default" Stream="0" Stride="32">
+                <VertexDecls Count="6">
+                    <VertexDecl Offset="0" Type="FLOAT3" Usage="POSITION" />
+                    <VertexDecl Offset="12" Type="DEC3N" Usage="NORMAL" />
+                    <VertexDecl Offset="16" Type="FLOAT16_2" Usage="TEXCOORD" />
+                    <VertexDecl Offset="20" Type="FLOAT16_2" Usage="TEXCOORD" UsageIndex="1" />
+                    <VertexDecl Offset="24" Type="DEC3N" Usage="TANGENT" />
+                    <VertexDecl Offset="28" Type="DEC3N" Usage="BINORMAL" />
+                </VertexDecls>
+                <PhysicalBinaryData Offset="0" Size="50336" Count="1573" />
+            </VertexBuffer>
+            <IndexBuffer IndexSize="16">
+                <PhysicalBinaryData Offset="50336" Size="17280" Count="8640" />
+            </IndexBuffer>
+            <IBSubset Name="subset0_01 - Default" PrimitiveType="TriangleList" StartIndex="0" IndexCount="8640" />
+        </MeshTopology>
+    </Mesh>
+    <MaterialInstance Name="01 - Default" MaterialName="Default">
+        <ParamString Name="DiffuseTexture" Type="Texture2D" InstanceParam="TRUE">
+            <Value>GroundTrack.tga</Value>
+        </ParamString>
+        <ParamString Name="NormalMapTexture" Type="Texture2D" InstanceParam="TRUE">
+            <Value>default-normalmap.dds</Value>
+        </ParamString>
+    </MaterialInstance>
+    <Frame Name="RootNode" Matrix="1.000000, 0.000000, 0.000000, 0.000000, 0.000000, 1.000000, -0.000000, 0.000000, -0.000000, -0.000000, 1.000000, -0.000000, 0.000000, 0.000000, -0.000000, 1.000000">
+        <Frame Name="Torus Knot01" Matrix="0.010000, 0.000000, 0.000000, 0.000000, 0.000000, 0.010000, -0.000000, 0.000000, -0.000000, -0.000000, 0.010000, -0.000000, 0.000000, 0.000000, -0.000000, 1.000000">
+            <Model Mesh="Mesh_Torus Knot01">
+                <AxisAlignedBoxBound Center="-1.953436, -0.000055, -0.000095" Extents="13.109936, 13.960340, 10.106443" />
+                <SubsetMaterialMapping SubsetName="subset0_01 - Default" MaterialName="01 - Default" />
+            </Model>
+        </Frame>
+        <Frame Name="Producer Perspective" Matrix="1.000000, 0.000000, 0.000000, 0.000000, 0.000000, 1.000000, -0.000000, 0.000000, -0.000000, -0.000000, 1.000000, -0.000000, 0.000000, 0.000000, -0.000000, 1.000000">
+            <PerspectiveCamera Name="" EyePoint="0.000000, 0.000000, 0.000000" LookDirection="0.000000, 1.000000, 0.000000" UpDirection="0.000000, 0.000000, 1.000000" FieldOfView="40.000000" Aspect="1.333333" ZNear="10.000000" ZFar="4000.000000" FocalLength="21.354494" />
+        </Frame>
+    </Frame>
+</XFileATG>
