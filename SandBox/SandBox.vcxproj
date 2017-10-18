@@ -1,0 +1,475 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug DX11|ARM">
+      <Configuration>Debug DX11</Configuration>
+      <Platform>ARM</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Debug DX11|Win32">
+      <Configuration>Debug DX11</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Debug Windows Store|ARM">
+      <Configuration>Debug Windows Store</Configuration>
+      <Platform>ARM</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Debug Windows Store|Win32">
+      <Configuration>Debug Windows Store</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release DX11|ARM">
+      <Configuration>Release DX11</Configuration>
+      <Platform>ARM</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release DX11|Win32">
+      <Configuration>Release DX11</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{32BBB653-D545-4C2A-A2C3-7BD9CE724553}</ProjectGuid>
+    <RootNamespace>SandBox</RootNamespace>
+    <Keyword>Win32Proj</Keyword>
+    <MinimumVisualStudioVersion>11.0</MinimumVisualStudioVersion>
+    <WindowsTargetPlatformVersion>10.0.10240.0</WindowsTargetPlatformVersion>
+  </PropertyGroup>
+  <PropertyGroup Label="Globals" Condition="'$(Configuration)|$(Platform)'=='Debug Windows Store|Win32'">
+    <ProjectGuid>{32BBB653-D545-4C2A-A2C3-7BD9CE724553}</ProjectGuid>
+    <RootNamespace>SandBox</RootNamespace>
+    <AppContainerApplication>true</AppContainerApplication>
+    <MinimumVisualStudioVersion>11.0</MinimumVisualStudioVersion>
+  </PropertyGroup>
+  <PropertyGroup Label="Globals" Condition="'$(Configuration)|$(Platform)'=='Debug Windows Store|ARM'">
+    <ProjectGuid>{32BBB653-D545-4C2A-A2C3-7BD9CE724553}</ProjectGuid>
+    <RootNamespace>SandBox</RootNamespace>
+    <AppContainerApplication>true</AppContainerApplication>
+    <MinimumVisualStudioVersion>11.0</MinimumVisualStudioVersion>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release DX11|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <CharacterSet>MultiByte</CharacterSet>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <PlatformToolset>v110</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release DX11|ARM'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <CharacterSet>MultiByte</CharacterSet>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <PlatformToolset>v110</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug DX11|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <CharacterSet>MultiByte</CharacterSet>
+    <PlatformToolset>v140</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug DX11|ARM'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <CharacterSet>MultiByte</CharacterSet>
+    <PlatformToolset>v110</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Label="Configuration" Condition="'$(Configuration)|$(Platform)'=='Debug Windows Store|ARM'">
+    <PlatformToolset>v110</PlatformToolset>
+    <WindowsAppContainer>true</WindowsAppContainer>
+  </PropertyGroup>
+  <PropertyGroup Label="Configuration" Condition="'$(Configuration)|$(Platform)'=='Debug Windows Store|Win32'">
+    <PlatformToolset>v110</PlatformToolset>
+    <WindowsAppContainer>true</WindowsAppContainer>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release DX11|Win32'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release DX11|ARM'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug DX11|Win32'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug DX11|ARM'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup>
+    <_ProjectFileVersion>10.0.30319.1</_ProjectFileVersion>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug DX11|Win32'">$(SolutionDir)Game\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug DX11|Win32'">$(SolutionDir)_Objs\$(ProjectName)\$(Configuration)\$(Platform)\</IntDir>
+    <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Debug DX11|Win32'">true</LinkIncremental>
+    <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Debug DX11|ARM'">true</LinkIncremental>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Release DX11|Win32'">$(SolutionDir)Game\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Release DX11|Win32'">$(SolutionDir)_Objs\$(ProjectName)\$(Configuration)\</IntDir>
+    <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Release DX11|Win32'">false</LinkIncremental>
+    <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Release DX11|ARM'">false</LinkIncremental>
+    <TargetName Condition="'$(Configuration)|$(Platform)'=='Debug DX11|Win32'">SandBox_DX11D</TargetName>
+    <TargetName Condition="'$(Configuration)|$(Platform)'=='Debug DX11|ARM'">SandBox_DX11D</TargetName>
+    <TargetName Condition="'$(Configuration)|$(Platform)'=='Release DX11|Win32'">SandBox_DX11R</TargetName>
+    <TargetName Condition="'$(Configuration)|$(Platform)'=='Release DX11|ARM'">SandBox_DX11R</TargetName>
+    <PackageCertificateThumbprint>769D10A0B77AB558A2FA929E2F6AF8AB61AB5AD9</PackageCertificateThumbprint>
+    <PackageCertificateKeyFile>SandBox_TemporaryKey.pfx</PackageCertificateKeyFile>
+    <DefaultLanguage>fr</DefaultLanguage>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug Windows Store|Win32'">
+    <ExecutablePath>$(ExecutablePath)</ExecutablePath>
+    <ReferencePath>$(ReferencePath)</ReferencePath>
+    <IncludePath>$(IncludePath)</IncludePath>
+    <LibraryPath>$(LibraryPath)</LibraryPath>
+    <SourcePath>$(SourcePath)</SourcePath>
+    <ExcludePath>$(ExcludePath)</ExcludePath>
+    <OutDir>$(SolutionDir)_Objs\WinPackage\$(Platform)\$(Configuration)\$(MSBuildProjectName)\</OutDir>
+    <IntDir>$(SolutionDir)_Objs\$(ProjectName)\$(Configuration)\$(Platform)\</IntDir>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug Windows Store|ARM'">
+    <IntDir>$(SolutionDir)_Objs\$(ProjectName)\$(Configuration)\$(Platform)\</IntDir>
+    <OutDir>$(SolutionDir)_Objs\WinPackage\$(Platform)\$(Configuration)\$(MSBuildProjectName)\</OutDir>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug DX11|Win32'">
+    <ClCompile>
+      <Optimization>Disabled</Optimization>
+      <AdditionalIncludeDirectories>Includes;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;_PCDX11;_PCDX11_1;_PC;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <MinimalRebuild>true</MinimalRebuild>
+      <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
+      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
+      <StructMemberAlignment>Default</StructMemberAlignment>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <WarningLevel>Level3</WarningLevel>
+      <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
+      <ForcedIncludeFiles>stdafx.h;%(ForcedIncludeFiles)</ForcedIncludeFiles>
+    </ClCompile>
+    <Link>
+      <AdditionalDependencies>dxgi.lib;d3d11.lib;d3dcompiler.lib;dxguid.lib;dinput8.lib;xinput.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <OutputFile>$(OutDir)$(TargetFileName)</OutputFile>
+      <Version>0.1</Version>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <SubSystem>Windows</SubSystem>
+      <TargetMachine>MachineX86</TargetMachine>
+      <AdditionalLibraryDirectories>
+      </AdditionalLibraryDirectories>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug DX11|ARM'">
+    <ClCompile>
+      <Optimization>Disabled</Optimization>
+      <AdditionalIncludeDirectories>Includes;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;_PCDX11;_PC;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <MinimalRebuild>true</MinimalRebuild>
+      <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
+      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
+      <StructMemberAlignment>Default</StructMemberAlignment>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <WarningLevel>Level3</WarningLevel>
+      <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
+      <ForcedIncludeFiles>stdafx.h;%(ForcedIncludeFiles)</ForcedIncludeFiles>
+    </ClCompile>
+    <Link>
+      <AdditionalDependencies>d3d9.lib;d3d11.lib;d3dcompiler.lib;dxguid.lib;d3dx11.lib;d3dx10.lib;dinput8.lib;xinput.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <OutputFile>$(OutDir)$(TargetFileName)</OutputFile>
+      <Version>0.1</Version>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <SubSystem>Windows</SubSystem>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release DX11|Win32'">
+    <ClCompile>
+      <Optimization>MaxSpeed</Optimization>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <AdditionalIncludeDirectories>Includes;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;_PCDX11;_PC;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <WarningLevel>Level3</WarningLevel>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <ForcedIncludeFiles>stdafx.h;%(ForcedIncludeFiles)</ForcedIncludeFiles>
+    </ClCompile>
+    <Link>
+      <AdditionalDependencies>d3d11.lib;dxguid.lib;d3dx11.lib;dinput8.lib;xinput.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <OutputFile>$(OutDir)$(TargetFileName)</OutputFile>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <SubSystem>Windows</SubSystem>
+      <OptimizeReferences>true</OptimizeReferences>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <TargetMachine>MachineX86</TargetMachine>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release DX11|ARM'">
+    <ClCompile>
+      <Optimization>MaxSpeed</Optimization>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <AdditionalIncludeDirectories>Includes;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;_PCDX11;_PC;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <WarningLevel>Level3</WarningLevel>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <ForcedIncludeFiles>stdafx.h;%(ForcedIncludeFiles)</ForcedIncludeFiles>
+    </ClCompile>
+    <Link>
+      <AdditionalDependencies>d3d11.lib;dxguid.lib;d3dx11.lib;dinput8.lib;xinput.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <OutputFile>$(OutDir)$(TargetFileName)</OutputFile>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <SubSystem>Windows</SubSystem>
+      <OptimizeReferences>true</OptimizeReferences>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug Windows Store|Win32'">
+    <ClCompile>
+      <PrecompiledHeaderFile>stdafx.h</PrecompiledHeaderFile>
+      <AdditionalIncludeDirectories>Includes;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>_DEBUG;_PCDX11;_PCDX11_1;_PC;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ForcedIncludeFiles>stdafx.h</ForcedIncludeFiles>
+      <TreatWChar_tAsBuiltInType>true</TreatWChar_tAsBuiltInType>
+      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
+    </ClCompile>
+    <Link>
+      <AdditionalDependencies>d3d11.lib;dxguid.lib;d3dcompiler.lib;xinput.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug Windows Store|ARM'">
+    <ClCompile>
+      <AdditionalIncludeDirectories>Includes;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>_DEBUG;_PCDX11;_PCDX11_1;_PC;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ForcedIncludeFiles>stdafx.h</ForcedIncludeFiles>
+      <PrecompiledHeaderFile>stdafx.h</PrecompiledHeaderFile>
+      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
+    </ClCompile>
+    <Link>
+      <AdditionalDependencies>d3d11.lib;dxguid.lib;d3dcompiler.lib;xinput.lib;kernel32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClCompile Include="AndroidFile.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug Windows Store|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug Windows Store|ARM'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="AndroidInputManager.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug Windows Store|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug Windows Store|ARM'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="AndroidMain.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug Windows Store|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug Windows Store|ARM'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="AndroidRenderer.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug Windows Store|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug Windows Store|ARM'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="AndroidRendererResource.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug Windows Store|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug Windows Store|ARM'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="AndroidTimer.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug Windows Store|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug Windows Store|ARM'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="AssetCache.cpp" />
+    <ClCompile Include="Camera.cpp" />
+    <ClCompile Include="CameraFree.cpp" />
+    <ClCompile Include="GLBuffers.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug Windows Store|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug Windows Store|ARM'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="GraphObject.cpp" />
+    <ClCompile Include="SandBox.cpp" />
+    <ClCompile Include="SandBoxFile.cpp" />
+    <ClCompile Include="ScriptObject.cpp" />
+    <ClCompile Include="Terrain.cpp" />
+    <ClCompile Include="Sky.cpp" />
+    <ClCompile Include="Proc.cpp" />
+    <ClCompile Include="Mesh.cpp" />
+    <ClCompile Include="MeshLoad.cpp" />
+    <ClCompile Include="PrimitiveBuffers.cpp" />
+    <ClCompile Include="Renderer.cpp" />
+    <ClCompile Include="RendererInit.cpp" />
+    <ClCompile Include="RendererShader.cpp" />
+    <ClCompile Include="SandBoxDebug.cpp" />
+    <ClCompile Include="SandBoxMemory.cpp" />
+    <ClCompile Include="Bitmap.cpp" />
+    <ClCompile Include="Material.cpp" />
+    <ClCompile Include="BitmapLoadDDS.cpp" />
+    <ClCompile Include="ddsloader.cpp" />
+    <ClCompile Include="InputManager.cpp" />
+    <ClCompile Include="DX11Renderer.cpp" />
+    <ClCompile Include="DX11RendererInit.cpp" />
+    <ClCompile Include="DXBuffers.cpp" />
+    <ClCompile Include="DXRendererResource.cpp" />
+    <ClCompile Include="WinFile.cpp" />
+    <ClCompile Include="WinInputManager.cpp" />
+    <ClCompile Include="WinMain.cpp" />
+    <ClCompile Include="WinTimer.cpp" />
+    <ClCompile Include="stdafx.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug DX11|Win32'">Create</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug DX11|ARM'">Create</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release DX11|Win32'">Create</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release DX11|ARM'">Create</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug Windows Store|Win32'">Create</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug Windows Store|ARM'">Create</PrecompiledHeader>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="..\Shaders\fxaa.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug Windows Store|Win32'">false</ExcludedFromBuild>
+      <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Debug Windows Store|Win32'">true</DeploymentContent>
+    </Text>
+    <Text Include="..\Shaders\fxaa2.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug Windows Store|Win32'">false</ExcludedFromBuild>
+      <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Debug Windows Store|Win32'">true</DeploymentContent>
+    </Text>
+    <Text Include="..\Shaders\sh_shadow.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug Windows Store|Win32'">false</ExcludedFromBuild>
+      <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Debug Windows Store|Win32'">true</DeploymentContent>
+    </Text>
+    <ClInclude Include="Includes\AndroidFile.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug Windows Store|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug Windows Store|ARM'">true</ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="Includes\AndroidInputManager.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug Windows Store|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug Windows Store|ARM'">true</ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="Includes\AndroidMain.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug Windows Store|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug Windows Store|ARM'">true</ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="Includes\AndroidRenderer.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug Windows Store|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug Windows Store|ARM'">true</ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="Includes\AssetCache.h" />
+    <ClInclude Include="Includes\Camera.h" />
+    <ClInclude Include="Includes\CameraFree.h" />
+    <ClInclude Include="Includes\GLBuffers.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug Windows Store|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug Windows Store|ARM'">true</ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="Includes\SandBoxFile.h" />
+    <ClInclude Include="Includes\ScriptObject.h" />
+    <ClInclude Include="Includes\WinFile.h" />
+    <ClInclude Include="Includes\WinInputManager.h" />
+    <ClInclude Include="SandBox.h" />
+    <ClInclude Include="Includes\GraphObject.h" />
+    <ClInclude Include="Includes\Terrain.h" />
+    <ClInclude Include="Includes\Sky.h" />
+    <ClInclude Include="Includes\Proc.h" />
+    <ClInclude Include="Includes\Mesh.h" />
+    <ClInclude Include="Includes\MeshSDKMesh.h" />
+    <ClInclude Include="Includes\PrimitiveBuffers.h" />
+    <ClInclude Include="Includes\Renderer.h" />
+    <ClInclude Include="Includes\RendererShader.h" />
+    <ClInclude Include="Includes\ShaderConstants.h" />
+    <ClInclude Include="Includes\SandBoxDebug.h" />
+    <ClInclude Include="Includes\SandBoxMemory.h" />
+    <ClInclude Include="Includes\SandBoxThread.h" />
+    <ClInclude Include="Includes\SandBoxTypes.h" />
+    <ClInclude Include="Includes\DynArray.h" />
+    <ClInclude Include="Includes\VectorLib.h" />
+    <ClInclude Include="Includes\VectorLib.inl.h" />
+    <ClInclude Include="Includes\Bitmap.h" />
+    <ClInclude Include="Includes\Bitmap.inl.h" />
+    <ClInclude Include="Includes\BitmapFlags.h" />
+    <ClInclude Include="Includes\Material.h" />
+    <ClInclude Include="Includes\ddsloader.h" />
+    <ClInclude Include="Includes\InputManager.h" />
+    <Text Include="..\Shaders\sh_const.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug Windows Store|Win32'">false</ExcludedFromBuild>
+      <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Debug Windows Store|Win32'">true</DeploymentContent>
+    </Text>
+    <Text Include="..\Shaders\sh_math.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug Windows Store|Win32'">false</ExcludedFromBuild>
+      <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Debug Windows Store|Win32'">true</DeploymentContent>
+    </Text>
+    <Text Include="..\Shaders\ShaderRegs.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug Windows Store|Win32'">false</ExcludedFromBuild>
+      <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Debug Windows Store|Win32'">true</DeploymentContent>
+    </Text>
+    <ClInclude Include="Includes\DX11Renderer.h" />
+    <ClInclude Include="Includes\DXBuffers.h" />
+    <ClInclude Include="Includes\DXRenderer.h" />
+    <ClInclude Include="targetver.h" />
+    <ClInclude Include="Includes\WinMain.h" />
+    <ClInclude Include="Resource.h" />
+    <ClInclude Include="stdafx.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="..\Shaders\base.vsh">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug Windows Store|Win32'">false</ExcludedFromBuild>
+      <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Debug Windows Store|Win32'">true</DeploymentContent>
+      <FileType>Document</FileType>
+    </Text>
+    <Text Include="..\Shaders\compute_test.csh">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug Windows Store|Win32'">false</ExcludedFromBuild>
+      <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Debug Windows Store|Win32'">true</DeploymentContent>
+      <FileType>Document</FileType>
+    </Text>
+    <Text Include="..\Shaders\deferred_dlight.psh">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug Windows Store|Win32'">false</ExcludedFromBuild>
+      <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Debug Windows Store|Win32'">true</DeploymentContent>
+      <FileType>Document</FileType>
+    </Text>
+    <Text Include="..\Shaders\deferred_shadows.psh">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug Windows Store|Win32'">false</ExcludedFromBuild>
+      <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Debug Windows Store|Win32'">true</DeploymentContent>
+      <FileType>Document</FileType>
+    </Text>
+    <Text Include="..\Shaders\deferred_spotlight.psh">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug Windows Store|Win32'">false</ExcludedFromBuild>
+      <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Debug Windows Store|Win32'">true</DeploymentContent>
+      <FileType>Document</FileType>
+    </Text>
+    <Text Include="..\Shaders\pixel.psh">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug Windows Store|Win32'">false</ExcludedFromBuild>
+      <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Debug Windows Store|Win32'">true</DeploymentContent>
+      <FileType>Document</FileType>
+    </Text>
+    <Text Include="..\Shaders\post_process.psh">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug Windows Store|Win32'">false</ExcludedFromBuild>
+      <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Debug Windows Store|Win32'">true</DeploymentContent>
+      <FileType>Document</FileType>
+    </Text>
+    <None Include="..\Shaders\shaders.compile.bat" />
+    <Text Include="..\Shaders\ssao.psh">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug Windows Store|Win32'">false</ExcludedFromBuild>
+      <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Debug Windows Store|Win32'">true</DeploymentContent>
+      <FileType>Document</FileType>
+    </Text>
+    <Text Include="..\Shaders\vertex_factory.vsh">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug Windows Store|Win32'">false</ExcludedFromBuild>
+      <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Debug Windows Store|Win32'">true</DeploymentContent>
+      <FileType>Document</FileType>
+    </Text>
+    <None Include="d3dcompiler_46.dll">
+      <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Debug Windows Store|ARM'">true</DeploymentContent>
+      <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Debug Windows Store|Win32'">true</DeploymentContent>
+    </None>
+    <None Include="SandBox.ico" />
+    <None Include="SandBox_TemporaryKey.pfx" />
+    <None Include="small.ico" />
+    <None Include="ReadMe.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="SandBox.rc" />
+  </ItemGroup>
+  <ItemGroup>
+    <AppxManifest Include="Package.appxmanifest">
+      <SubType>Designer</SubType>
+    </AppxManifest>
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="Assets\Logo.png" />
+    <Image Include="Assets\SmallLogo.png" />
+    <Image Include="Assets\SplashScreen.png" />
+    <Image Include="Assets\StoreLogo.png" />
+    <Image Include="Assets\WideLogo.scale-100.png">
+      <DeploymentContent>true</DeploymentContent>
+    </Image>
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

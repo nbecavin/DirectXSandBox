@@ -1,0 +1,42 @@
+
+//
+// Defines shader static allocation map (minimize constant transfer)
+//
+
+#define	BEGIN_CST			0
+
+// Transfos
+#define	PROJ_MATRIX_CST		(BEGIN_CST)
+#define PROJ_MATRIX				GetMat4x4(PROJ_MATRIX_CST)
+#define PROJ_MATRIX_SIZE	(4)
+#define PROJ_MATRIX_END		(PROJ_MATRIX_CST+PROJ_MATRIX_SIZE)
+
+#define	VIEW_MATRIX_CST		(PROJ_MATRIX_END)
+#define VIEW_MATRIX				GetMat4x4(VIEW_MATRIX_CST)
+#define VIEW_MATRIX_SIZE	(4)
+#define VIEW_MATRIX_END		(VIEW_MATRIX_CST+VIEW_MATRIX_SIZE)
+
+#define	WORLD_MATRIX_CST	(VIEW_MATRIX_END)
+#define WORLD_MATRIX			GetMat4x4(WORLD_MATRIX_CST)
+#define WORLD_MATRIX_SIZE	(4)
+#define WORLD_MATRIX_END	(WORLD_MATRIX_CST+WORLD_MATRIX_SIZE)
+
+#define DEFAULT_CST			(WORLD_MATRIX_END)
+#define ABSOLUTE_TIME			c[DEFAULT_CST+0].x
+#define DEFAULT_SIZE		(4)
+#define DEFAULT_END			(DEFAULT_CST+DEFAULT_SIZE)
+
+#define EYE_CST				(DEFAULT_END)
+#define EYE_WORLD				c[EYE_CST].xyz
+#define EYE_SIZE			(1)
+#define EYE_END				(EYE_CST+EYE_SIZE)
+
+#define VIEWPORT_CST		(EYE_END)
+//#define RDR_INVSIZE	
+#define VIEWPORT_SIZE		(1)
+#define VIEWPORT_END		(VIEWPORT_CST+VIEWPORT_SIZE)
+
+#define USER_CST			(VIEWPORT_END)
+#define USER(i)					c[USER_CST+i]
+#define USER_SIZE			(8)
+#define USER_END			(USER_CST+USER_SIZE)

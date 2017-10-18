@@ -1,0 +1,132 @@
+#ifndef __DX11RENDERER_HH__
+#define __DX11RENDERER_HH__
+
+#include <Renderer.h>
+#include <ShaderConstants.h>
+#include <DXBuffers.h>
+
+#if defined(_PCDX11)
+
+struct Vertex2D
+{
+	float		x,y,z;
+	float		u,v;
+};
+
+namespace sys {
+
+	struct TextureLink
+	{
+		union {
+			ID3D11Texture2D			* Tex2D;
+			ID3D11Resource			* Resource;
+		};
+		ID3D11ShaderResourceView	* ShaderView;
+		ID3D11RenderTargetView		* Surface;
+	};
+
+	class DXRenderer : public Renderer
+	{
+	public:
+		virtual int  Init();
+		virtual bool InitStaticDatas();
+		virtual void Shut();
+		virtual void ReleaseAllResources();
+		virtual void MainLoop();
+
+		virtual VertexBuffer *		CreateVertexBuffer(U32 _Size,U32 _Usage,void * _Datas);
+		virtual IndexBuffer *		CreateIndexBuffer(U32 _Size,U32 _Usage,U32 _Fmt,void * _Datas);
+		virtual VertexDeclaration *	CreateVertexDecl(VertexElement* Decl,U32 _ShaderUID);
+		virtual void				CreateTexture(Bitmap * _Bmap);
+
+		virtual void	PushWorldMatrix( Mat4x4* _m );
+
+		virtual void	PushShader(U32 _ShaderUID);
+		virtual void	PushVertexDeclaration(VertexDeclaration* Decl);
+		virtual void	PushStreamSource(U32 StreamNumber,VertexBuffer* Buffer,U32 Offset,U32 Stride);
+		virtual void	PushIndices(IndexBuffer* Buffer,U32 _Fmt);
+		virtual void	PushMaterial(Material* Mat);
+
+		virtual void	PushDrawIndexed(PrimitiveType Type,U32 BaseVertexIndex,U32 MinVertexIndex,U32 NumVertices,U32 StartIndex,U32 PrimCount);
+
+		virtual void	RegisterShaderFromSourceFile(U32 _SUID,const char* src,const char* epoint);
+
+		virtual void InitShaders();
+				void InitSurface();
+
+				void FullScreenQuad(Vec2f scale,Vec2f offset);
+
+				void PostProcess();
+
+		ID3D11Device *			GetDevice() const { return Device; }
+		ID3D11DeviceContext *	GetDeviceContext() const { return DeviceContext; }
+		ID3DBlob *				GetShaderBlob(U32 _ShaderUID) const;
+
+	private:
+		IDXGIFactory1 *					m_DxgiFactory;
+#if WINAPI_FAMILY==WINAPI_FAMILY_APP
+		IDXGISwapChain1 *				SwapChain;
+#else
+		IDXGISwapChain *				SwapChain;
+#endif
+		ID3D11Device *					Device;
+		ID3D11DeviceContext *			DeviceContext;
+
+		IDirect3DVertexShader *			m_VSDA[SHADER_VS_COUNT];
+		IDirect3DPixelShader *			m_PSDA[SHADER_PS_COUNT];
+		ID3D11ComputeShader *			m_CSDA[SHADER_CS_COUNT];
+		ID3DBlob *						m_VSDABlob[SHADER_VS_COUNT];
+		ID3DBlob *						m_PSDABlob[SHADER_PS_COUNT];
+		ID3DBlob *						m_CSDABlob[SHADER_CS_COUNT];
+		ID3D11ShaderReflection *		m_VSDAReflection[SHADER_VS_COUNT];
+		ID3D11ShaderReflection *		m_PSDAReflection[SHADER_PS_COUNT];
+		ID3D11ShaderReflection *		m_CSDAReflection[SHADER_CS_COUNT];
+
+		// Surfaces
+		ID3D11RenderTargetView *		m_BackBuffer;
+		ID3D11DepthStencilView *		m_DepthBuffer;
+
+		DXVertexBufferDA				m_VertexBufferDA;
+		DXIndexBufferDA					m_IndexBufferDA;
+		DXVertexDeclarationDA			m_VertexDeclarationDA;
+		DXVertexShaderDA				m_VertexShaderDA;
+		DXPixelShaderDA					m_PixelShaderDA;
+
+		ID3D11RasterizerState *			m_DefaultRS;
+		ID3D11DepthStencilState *		m_DefaultDS;
+		ID3D11DepthStencilState *		m_DSS_NoZWrite;
+		ID3D11SamplerState *			m_DefaultSS;
+		ID3D11SamplerState *			m_NoBilinearSS;
+		ID3D11ShaderResourceView *		m_ZBuffer;
+
+	#if WINAPI_FAMILY_PARTITION( WINAPI_PARTITION_DESKTOP )
+		//ID3DX10Font *					m_DebugFont;
+	#endif
+
+		struct StateCache
+		{
+			DXVertexBuffer	*	VB;
+			DXIndexBuffer	*	IB;
+		};
+		StateCache					m_StateCache;
+
+		#define VS_CONSTANT_MAX_COUNT	256
+		#define VS_CONSTANT_BUFFER_SIZE	(VS_CONSTANT_MAX_COUNT*sizeof(Vec4f))
+		ID3D11Buffer *					m_VSConstant;
+	
+		ID3D11Buffer *					m_SHHemisphere;
+
+		ID3D11Buffer *					m_CameraConstant;
+		ID3D11Buffer *					m_PostProcessConstant;
+
+		void				UpdateConstantBuffer(ID3D11Buffer * _Buffer,void* _DataPtr,U32 _DataSize);
+		void				UpdateVSConstants();
+	};
+
+	extern Vec4f				m_VSConstantCache[VS_CONSTANT_MAX_COUNT];
+
+};
+
+#endif
+
+#endif //__DX11RENDERER_HH__
