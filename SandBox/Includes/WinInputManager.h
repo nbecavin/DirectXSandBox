@@ -24,11 +24,9 @@ namespace sys
 
 	protected:
 		// DirectInput
-	#if WINAPI_FAMILY_ONE_PARTITION( WINAPI_FAMILY, WINAPI_PARTITION_DESKTOP )
 		IDirectInput8 *	m_DirectInput;
 		IDirectInputDevice8 * m_DeviceMouse;
 		IDirectInputDevice8 * m_DeviceKeyboard;
-	#endif
 
 		// Xinput
 		XINPUT_STATE	m_XInputPads[XUSER_MAX_COUNT];

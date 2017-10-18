@@ -19,21 +19,18 @@
 #	undef _PC
 #	define _PC
 #	include <math.h>
-#   ifdef _PCDX11_1
-#		include <combaseapi.h>
-#		include <wrl/client.h>
-#		include <ppl.h>
-#		include <ppltasks.h>
-#		include <dxgitype.h>
-#		include <d3d11_3.h>
-#		include <DirectXMath.h>
-#		include <d3dcompiler.h>
-		using namespace DirectX;
-#   else
-#		include <d3d11_3.h>
-#		include <DirectXMath.h>
-#		include <d3dcompiler.h>
+#	include <combaseapi.h>
+#	include <wrl/client.h>
+#	include <ppl.h>
+#	include <ppltasks.h>
+#	include <dxgitype.h>
+#	include <d3d11_3.h>
+#   if defined(_PCDX12)
+#		include <d3d12.h>
 #	endif
+#	include <DirectXMath.h>
+#	include <d3dcompiler.h>
+	using namespace DirectX;
 #	define __CDECL	__cdecl
 #elif defined(_ANDROID)
 #	include <stdlib.h>

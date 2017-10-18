@@ -84,6 +84,9 @@
     <Filter Include="Assets">
       <UniqueIdentifier>{f2e75475-53ea-4f0b-9c5f-f4bd37caeb32}</UniqueIdentifier>
     </Filter>
+    <Filter Include="PC\DX11">
+      <UniqueIdentifier>{665beda8-144c-439d-8be8-29cb2cbeaf3a}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="SandBox.cpp">
@@ -136,12 +139,6 @@
     </ClCompile>
     <ClCompile Include="InputManager.cpp">
       <Filter>Common Platform\InputManager</Filter>
-    </ClCompile>
-    <ClCompile Include="DX11Renderer.cpp">
-      <Filter>PC</Filter>
-    </ClCompile>
-    <ClCompile Include="DX11RendererInit.cpp">
-      <Filter>PC</Filter>
     </ClCompile>
     <ClCompile Include="DXBuffers.cpp">
       <Filter>PC</Filter>
@@ -202,6 +199,12 @@
     </ClCompile>
     <ClCompile Include="AndroidFile.cpp">
       <Filter>Android</Filter>
+    </ClCompile>
+    <ClCompile Include="DX11Renderer.cpp">
+      <Filter>PC</Filter>
+    </ClCompile>
+    <ClCompile Include="DX11RendererInit.cpp">
+      <Filter>PC</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -277,9 +280,6 @@
     <ClInclude Include="Includes\InputManager.h">
       <Filter>Common Platform\InputManager</Filter>
     </ClInclude>
-    <ClInclude Include="Includes\DX11Renderer.h">
-      <Filter>PC</Filter>
-    </ClInclude>
     <ClInclude Include="Includes\DXBuffers.h">
       <Filter>PC</Filter>
     </ClInclude>
@@ -331,6 +331,9 @@
     </ClInclude>
     <ClInclude Include="Includes\SandBoxFile.h">
       <Filter>Common Platform\System</Filter>
+    </ClInclude>
+    <ClInclude Include="Includes\DX11Renderer.h">
+      <Filter>PC</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

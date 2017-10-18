@@ -5,7 +5,7 @@
 #include <ShaderConstants.h>
 #include <DXBuffers.h>
 
-#if defined(_PCDX11)
+#if defined(_PCDX11) || defined(_PCDX12)
 
 struct Vertex2D
 {
@@ -58,8 +58,13 @@ namespace sys {
 
 				void PostProcess();
 
-		ID3D11Device *			GetDevice() const { return Device; }
-		ID3D11DeviceContext *	GetDeviceContext() const { return DeviceContext; }
+#ifdef _PCDX12
+		ID3D12Device *			GetDevice() const { return m_pD3D12Device; }
+		ID3D12CommandList *		GetDeviceContext() const { return m_pMainCommandList; }
+#else
+		ID3D11Device *			GetDevice() const { return m_pD3D11Device; }
+		ID3D11DeviceContext *	GetDeviceContext() const { return m_ImmediateDeviceContext; }
+#endif
 		ID3DBlob *				GetShaderBlob(U32 _ShaderUID) const;
 
 	private:
@@ -69,8 +74,15 @@ namespace sys {
 #else
 		IDXGISwapChain *				SwapChain;
 #endif
-		ID3D11Device *					Device;
-		ID3D11DeviceContext *			DeviceContext;
+
+#ifdef _PCDX12
+		ID3D12Device *					m_pD3D12Device;
+		ID3D12CommandQueue *			m_pCommandQueue;
+		ID3D12CommandList *				m_pMainCommandList;
+#else
+		ID3D11Device *					m_pD3D11Device;
+		ID3D11DeviceContext *			m_ImmediateDeviceContext;
+#endif
 
 		IDirect3DVertexShader *			m_VSDA[SHADER_VS_COUNT];
 		IDirect3DPixelShader *			m_PSDA[SHADER_PS_COUNT];

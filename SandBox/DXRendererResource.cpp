@@ -47,12 +47,8 @@ namespace sys {
 		char profile[32]="";
 		char path[1024];
 
-	#if WINAPI_FAMILY_ONE_PARTITION( WINAPI_FAMILY, WINAPI_PARTITION_APP )
-		sprintf(path,"%s",src);
-	#else
 		sprintf(path,"..\\Shaders\\%s",src);
-	#endif
-
+	
 		U32 Type = (_ShaderUID&SHADER_TYPE_MASK)>>SHADER_TYPE_BITS;
 		U32 SID = (_ShaderUID&(~SHADER_TYPE_MASK));
 
@@ -122,7 +118,7 @@ namespace sys {
 			if(Type==SHADER_TYPE_VERTEX)
 			{
 				m_VSDABlob[SID] = pCode;
-				hr = Device->CreateVertexShader(pCode->GetBufferPointer(),pCode->GetBufferSize(),NULL,&m_VSDA[SID]);
+				hr = GetDevice()->CreateVertexShader(pCode->GetBufferPointer(),pCode->GetBufferSize(),NULL,&m_VSDA[SID]);
 				if(hr!=S_OK)
 					MessageBox(NULL,"Cannot create pixel shader","Shader Error",MB_OK);
 				else
@@ -133,7 +129,7 @@ namespace sys {
 			if(Type==SHADER_TYPE_PIXEL)
 			{
 				m_PSDABlob[SID] = pCode;
-				hr = Device->CreatePixelShader(pCode->GetBufferPointer(),pCode->GetBufferSize(),NULL,&m_PSDA[SID]);
+				hr = GetDevice()->CreatePixelShader(pCode->GetBufferPointer(),pCode->GetBufferSize(),NULL,&m_PSDA[SID]);
 				if(hr!=S_OK)
 					MessageBox(NULL,"Cannot create pixel shader","Shader Error",MB_OK);
 				else
@@ -144,7 +140,7 @@ namespace sys {
 			if(Type==SHADER_TYPE_COMPUTE)
 			{
 				m_CSDABlob[SID] = pCode;
-				hr = Device->CreateComputeShader(pCode->GetBufferPointer(),pCode->GetBufferSize(),NULL,&m_CSDA[SID]);
+				hr = GetDevice()->CreateComputeShader(pCode->GetBufferPointer(),pCode->GetBufferSize(),NULL,&m_CSDA[SID]);
 				if(hr!=S_OK)
 					MessageBox(NULL,"Cannot create compute shader","Shader Error",MB_OK);
 				else
@@ -155,7 +151,7 @@ namespace sys {
 		}
 	}
 
-	#if defined(_PCDX11)
+	#if defined(_PCDX11) || defined(_PCDX12)
 	ID3DBlob * DXRenderer::GetShaderBlob(U32 _ShaderUID) const
 	{
 		U32 Type = (_ShaderUID&SHADER_TYPE_MASK)>>SHADER_TYPE_BITS;
@@ -454,7 +450,7 @@ static void GetSurfaceInfo( UINT width, UINT height, DXGI_FORMAT fmt, UINT* pNum
 
 		if(_Bm->GetType()&BM_TYPE_2D)
 		{
-			HRESULT hr = Device->CreateTexture2D(&desc,pData,&tex->Tex2D);
+			HRESULT hr = m_pD3D11Device->CreateTexture2D(&desc,pData,&tex->Tex2D);
 			if(hr!=S_OK)
 			{
 				MESSAGE("Failed create texture");
@@ -468,7 +464,7 @@ static void GetSurfaceInfo( UINT width, UINT height, DXGI_FORMAT fmt, UINT* pNum
 			SRVDesc.Format = desc.Format;
 			SRVDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
 			SRVDesc.Texture2D.MipLevels = desc.MipLevels;
-			Device->CreateShaderResourceView(tex->Resource,&SRVDesc,&tex->ShaderView);
+			m_pD3D11Device->CreateShaderResourceView(tex->Resource,&SRVDesc,&tex->ShaderView);
 		}
 
 		if(_Bm->GetType()&BM_TYPE_RT)
@@ -477,7 +473,7 @@ static void GetSurfaceInfo( UINT width, UINT height, DXGI_FORMAT fmt, UINT* pNum
 			DescRT.Format = desc.Format;
 			DescRT.ViewDimension = D3D11_RTV_DIMENSION_TEXTURE2D;
 			DescRT.Texture2D.MipSlice = 0;
-			Device->CreateRenderTargetView(tex->Resource,&DescRT,&tex->Surface);
+			m_pD3D11Device->CreateRenderTargetView(tex->Resource,&DescRT,&tex->Surface);
 		}
 
 		MESSAGE("DX resource created");

@@ -66,30 +66,12 @@ namespace sys
 		//	Flags |= D3D11_CREATE_DEVICE_DEBUG;
 		#endif
 		
-		D3D11CreateDevice(NULL,D3D_DRIVER_TYPE_HARDWARE,NULL,Flags,NULL,0,D3D11_SDK_VERSION,&Device,&returnedFeatureLevel,&DeviceContext);
+#if defined(_PCDX11)
+		D3D11CreateDevice(NULL,D3D_DRIVER_TYPE_HARDWARE,NULL,Flags,NULL,0,D3D11_SDK_VERSION,&m_pD3D11Device,&returnedFeatureLevel,&m_ImmediateDeviceContext);
+#elif defined(_PCDX12)
+		D3D12CreateDevice(NULL, D3D_FEATURE_LEVEL_12_0, __uuidof(ID3D12Device), (void**)&m_pD3D12Device);
+#endif
 
-#if WINAPI_FAMILY==WINAPI_FAMILY_APP
-		DXGI_SWAP_CHAIN_DESC1 sd;
-		ZeroMemory( &sd, sizeof( sd ) );
-		sd.Width = static_cast<UINT>(SizeX); // Match the size of the window.
-		sd.Height = static_cast<UINT>(SizeY);
-		sd.Format = DXGI_FORMAT_B8G8R8A8_UNORM; // This is the most common swap chain format.
-		sd.Stereo = false;
-		sd.SampleDesc.Count = 1; // Don't use multi-sampling.
-		sd.SampleDesc.Quality = 0;
-		sd.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;
-		sd.BufferCount = 2; // Use double-buffering to minimize latency.
-		sd.Scaling = DXGI_SCALING_NONE;
-		sd.SwapEffect = DXGI_SWAP_EFFECT_FLIP_SEQUENTIAL; // All Windows Store apps must use this SwapEffect.
-		sd.Flags = 0;
-		IDXGIDevice2 * pDXGIDevice;
-		hr = Device->QueryInterface(__uuidof(IDXGIDevice2), (void **)&pDXGIDevice);
-		IDXGIAdapter * pDXGIAdapter;
-		hr = pDXGIDevice->GetParent(__uuidof(IDXGIAdapter), (void **)&pDXGIAdapter);
-		IDXGIFactory2 * pIDXGIFactory;
-		pDXGIAdapter->GetParent(__uuidof(IDXGIFactory2), (void **)&pIDXGIFactory);
-		pIDXGIFactory->CreateSwapChainForCoreWindow(Device,reinterpret_cast<IUnknown*>(sys::pc::m_App->GetWindow()),&sd,NULL,&SwapChain);
-#else
 		DXGI_SWAP_CHAIN_DESC sd;
 		ZeroMemory( &sd, sizeof( sd ) );
 		sd.BufferCount = 1;
@@ -104,8 +86,7 @@ namespace sys
 		sd.SampleDesc.Quality = 0;
 		sd.Windowed = TRUE;
 		hr = CreateDXGIFactory1(__uuidof(IDXGIFactory1), (void**)(&m_DxgiFactory) );
-		hr = m_DxgiFactory->CreateSwapChain(Device,&sd,&SwapChain);
-#endif
+		hr = m_DxgiFactory->CreateSwapChain(GetDevice(),&sd,&SwapChain);
 
 		// Create a render target view
 		ID3D11Texture2D* pBackBuffer = NULL;
@@ -113,7 +94,7 @@ namespace sys
 		if( FAILED( hr ) )
 			return hr;
 
-		hr = Device->CreateRenderTargetView( pBackBuffer, NULL, &m_BackBuffer );
+		hr = GetDevice()->CreateRenderTargetView( pBackBuffer, NULL, &m_BackBuffer );
 		pBackBuffer->Release();
 		if( FAILED( hr ) )
 			return hr;
@@ -141,7 +122,7 @@ namespace sys
         descDepth.BindFlags = D3D11_BIND_DEPTH_STENCIL|D3D11_BIND_SHADER_RESOURCE;
         descDepth.CPUAccessFlags = 0;
         descDepth.MiscFlags = 0;
-        hr = Device->CreateTexture2D( &descDepth, NULL, &pDepthStencil );
+        hr = GetDevice()->CreateTexture2D( &descDepth, NULL, &pDepthStencil );
         if( FAILED( hr ) )
             return hr;
 
@@ -154,7 +135,7 @@ namespace sys
         else
             descDSV.ViewDimension = D3D11_DSV_DIMENSION_TEXTURE2D;
         descDSV.Texture2D.MipSlice = 0;
-        hr = Device->CreateDepthStencilView( pDepthStencil, &descDSV, &m_DepthBuffer );
+        hr = GetDevice()->CreateDepthStencilView( pDepthStencil, &descDSV, &m_DepthBuffer );
         if( FAILED( hr ) )
             return hr;
 
@@ -163,11 +144,11 @@ namespace sys
 		SRVDesc.Format = DXGI_FORMAT_R24_UNORM_X8_TYPELESS;
 		SRVDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
 		SRVDesc.Texture2D.MipLevels = 1;
-		hr = Device->CreateShaderResourceView( pDepthStencil, &SRVDesc,&m_ZBuffer);
+		hr = GetDevice()->CreateShaderResourceView( pDepthStencil, &SRVDesc,&m_ZBuffer);
         if( FAILED( hr ) )
             return hr;
 
-		DeviceContext->OMSetRenderTargets( 1, &m_BackBuffer, m_DepthBuffer );
+		m_ImmediateDeviceContext->OMSetRenderTargets( 1, &m_BackBuffer, m_DepthBuffer );
 
 		// Fill in a buffer description.
 		D3D11_BUFFER_DESC cbDesc;
@@ -177,7 +158,7 @@ namespace sys
 		cbDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
 		cbDesc.MiscFlags = 0;
 		cbDesc.StructureByteStride = 0;
-		hr = Device->CreateBuffer( &cbDesc, NULL, &m_VSConstant );
+		hr = GetDevice()->CreateBuffer( &cbDesc, NULL, &m_VSConstant );
 
 		D3D11_RASTERIZER_DESC rs;
 		rs.AntialiasedLineEnable = FALSE;
@@ -190,7 +171,7 @@ namespace sys
 		rs.MultisampleEnable = FALSE;
 		rs.ScissorEnable = FALSE;
 		rs.SlopeScaledDepthBias = 0.f;
-		Device->CreateRasterizerState(&rs,&m_DefaultRS);
+		GetDevice()->CreateRasterizerState(&rs,&m_DefaultRS);
 
 		D3D11_DEPTH_STENCIL_DESC ds;
 		ds.DepthEnable = TRUE;
@@ -207,12 +188,12 @@ namespace sys
 		ds.BackFace.StencilFailOp = D3D11_STENCIL_OP_KEEP;
 		ds.BackFace.StencilPassOp = D3D11_STENCIL_OP_KEEP;
 		ds.BackFace.StencilFunc = D3D11_COMPARISON_ALWAYS;
-		Device->CreateDepthStencilState(&ds,&m_DefaultDS);
+		GetDevice()->CreateDepthStencilState(&ds,&m_DefaultDS);
 
 		ds.DepthEnable = FALSE;
 		ds.DepthFunc = D3D11_COMPARISON_LESS_EQUAL;
 		ds.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ZERO;
-		Device->CreateDepthStencilState(&ds,&m_DSS_NoZWrite);
+		GetDevice()->CreateDepthStencilState(&ds,&m_DSS_NoZWrite);
 
 		D3D11_SAMPLER_DESC ss;
 		ZeroMemory( &ss, sizeof(ss) );
@@ -221,7 +202,7 @@ namespace sys
 		ss.MaxAnisotropy = 1;
 		ss.ComparisonFunc = D3D11_COMPARISON_ALWAYS;
 		ss.MaxLOD = D3D11_FLOAT32_MAX;
-		Device->CreateSamplerState(&ss,&m_DefaultSS);
+		GetDevice()->CreateSamplerState(&ss,&m_DefaultSS);
 
 		ZeroMemory( &ss, sizeof(ss) );
 		ss.Filter = D3D11_FILTER_MIN_MAG_MIP_POINT;
@@ -229,7 +210,7 @@ namespace sys
 		ss.MaxAnisotropy = 1;
 		ss.ComparisonFunc = D3D11_COMPARISON_ALWAYS;
 		ss.MaxLOD = D3D11_FLOAT32_MAX;
-		Device->CreateSamplerState(&ss,&m_NoBilinearSS);
+		GetDevice()->CreateSamplerState(&ss,&m_NoBilinearSS);
 
 		InitShaders();
 		InitSurface();
@@ -279,7 +260,7 @@ namespace sys
 		initialData.pSysMem = coeffs;
 		initialData.SysMemPitch = 0;
 		initialData.SysMemSlicePitch = 0;
-		Device->CreateBuffer(&desc,&initialData,&m_SHHemisphere);
+		GetDevice()->CreateBuffer(&desc,&initialData,&m_SHHemisphere);
 
 		/*
 		CameraConstant temp;

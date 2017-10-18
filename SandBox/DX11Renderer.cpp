@@ -22,8 +22,8 @@ namespace sys {
 		HRESULT hr;
 
 		float ClearColor[4] = { 0.0f, 0.125f, 0.3f, 1.0f }; // red,green,blue,alpha
-		DeviceContext->ClearRenderTargetView( m_BackBuffer, ClearColor );
-		DeviceContext->ClearDepthStencilView( m_DepthBuffer, D3D11_CLEAR_DEPTH|D3D11_CLEAR_STENCIL, 1.f, 0 );
+		m_ImmediateDeviceContext->ClearRenderTargetView( m_BackBuffer, ClearColor );
+		m_ImmediateDeviceContext->ClearDepthStencilView( m_DepthBuffer, D3D11_CLEAR_DEPTH|D3D11_CLEAR_STENCIL, 1.f, 0 );
 
 		//une view et une proj de base
 		XMMATRIX m,proj,view;
@@ -51,19 +51,19 @@ namespace sys {
 		_vec[EYE_CST] = m_Camera->GetWorldPosition();
 
 		// No geometry shader
-		DeviceContext->GSSetShader(NULL,NULL,0);
+		m_ImmediateDeviceContext->GSSetShader(NULL,NULL,0);
 
-		DeviceContext->RSSetState(m_DefaultRS);
-		DeviceContext->OMSetDepthStencilState(m_DefaultDS,0);
-		DeviceContext->PSSetSamplers(0,1,&m_DefaultSS);
-		DeviceContext->PSSetSamplers(1,1,&m_DefaultSS);
-		DeviceContext->PSSetSamplers(2,1,&m_DefaultSS);
+		m_ImmediateDeviceContext->RSSetState(m_DefaultRS);
+		m_ImmediateDeviceContext->OMSetDepthStencilState(m_DefaultDS,0);
+		m_ImmediateDeviceContext->PSSetSamplers(0,1,&m_DefaultSS);
+		m_ImmediateDeviceContext->PSSetSamplers(1,1,&m_DefaultSS);
+		m_ImmediateDeviceContext->PSSetSamplers(2,1,&m_DefaultSS);
 
-		DeviceContext->VSSetConstantBuffers(8,1,&m_SHHemisphere);
-		DeviceContext->PSSetConstantBuffers(8,1,&m_SHHemisphere);
+		m_ImmediateDeviceContext->VSSetConstantBuffers(8,1,&m_SHHemisphere);
+		m_ImmediateDeviceContext->PSSetConstantBuffers(8,1,&m_SHHemisphere);
 
-		DeviceContext->VSSetConstantBuffers(9,1,&m_CameraConstant);
-		DeviceContext->PSSetConstantBuffers(9,1,&m_CameraConstant);
+		m_ImmediateDeviceContext->VSSetConstantBuffers(9,1,&m_CameraConstant);
+		m_ImmediateDeviceContext->PSSetConstantBuffers(9,1,&m_CameraConstant);
 
 /*
 		//
@@ -170,12 +170,12 @@ namespace sys {
 			//DeviceContext->RSSetState(m_TempRS);
 
 			TextureLink * rtex = reinterpret_cast<TextureLink*>(m_HdrRenderTarget->GetBinHwResId());
-			DeviceContext->OMSetRenderTargets(1,&rtex->Surface,m_DepthBuffer);
+			m_ImmediateDeviceContext->OMSetRenderTargets(1,&rtex->Surface,m_DepthBuffer);
 			float ClearColor2[4] = { 1.0f, 1.f, 1.f, 1.0f }; // red,green,blue,alpha
-			DeviceContext->ClearRenderTargetView( rtex->Surface, ClearColor2 );
+			m_ImmediateDeviceContext->ClearRenderTargetView( rtex->Surface, ClearColor2 );
 
 			rtex = reinterpret_cast<TextureLink*>(m_ssaoBuffer->GetBinHwResId());
-			DeviceContext->PSSetShaderResources(7,1,&rtex->ShaderView);
+			m_ImmediateDeviceContext->PSSetShaderResources(7,1,&rtex->ShaderView);
 
 			// Setup the viewport
 			D3D11_VIEWPORT vp;
@@ -185,7 +185,7 @@ namespace sys {
 			vp.MaxDepth = 1.0f;
 			vp.TopLeftX = 0;
 			vp.TopLeftY = 0;
-			DeviceContext->RSSetViewports( 1, &vp );
+			m_ImmediateDeviceContext->RSSetViewports( 1, &vp );
 
 			for(int i=0;i<gData.m_GraphObjectDA.GetSize();i++)
 			{
@@ -193,7 +193,7 @@ namespace sys {
 				it->Draw();
 			}
 
-			DeviceContext->RSSetState(m_DefaultRS);
+			m_ImmediateDeviceContext->RSSetState(m_DefaultRS);
 			//m_TempRS->Release();
 		}
 //		D3DPERF_EndEvent();
@@ -204,14 +204,14 @@ namespace sys {
 		TextureLink * hdrtex = reinterpret_cast<TextureLink*>(m_HdrRenderTarget->GetBinHwResId());
 		TextureLink * rtex = reinterpret_cast<TextureLink*>(m_RenderTarget->GetBinHwResId());
 			
-		DeviceContext->OMSetRenderTargets( 1, &rtex->Surface, m_DepthBuffer );
-		DeviceContext->PSSetShaderResources(0,1,&hdrtex->ShaderView);
+		m_ImmediateDeviceContext->OMSetRenderTargets( 1, &rtex->Surface, m_DepthBuffer );
+		m_ImmediateDeviceContext->PSSetShaderResources(0,1,&hdrtex->ShaderView);
 		PushShader(SHADER_VS_BASE_SCREENVERTEX);
 		PushShader(SHADER_PS_POSTPROC_COLORGRADING);
 		FullScreenQuad(Vec2f(1.f,1.f),Vec2f(0.f,0.f));
 
-		DeviceContext->OMSetRenderTargets( 1, &m_BackBuffer, m_DepthBuffer );
-		DeviceContext->PSSetShaderResources(0,1,&rtex->ShaderView);
+		m_ImmediateDeviceContext->OMSetRenderTargets( 1, &m_BackBuffer, m_DepthBuffer );
+		m_ImmediateDeviceContext->PSSetShaderResources(0,1,&rtex->ShaderView);
 		PushShader(SHADER_VS_BASE_SCREENVERTEX);
 		PushShader(SHADER_PS_POSTPROC_FXAA);
 		FullScreenQuad(Vec2f(1.f,1.f),Vec2f(0.f,0.f));
@@ -242,7 +242,7 @@ namespace sys {
 		}
 
 		ID3D11ShaderResourceView* ppSRVNULL[1] = { NULL };
-		DeviceContext->PSSetShaderResources(0,1,ppSRVNULL);
+		m_ImmediateDeviceContext->PSSetShaderResources(0,1,ppSRVNULL);
 
 		SwapChain->Present(1,0);
 	}
@@ -267,9 +267,13 @@ namespace sys {
 	void DXRenderer::Shut()
 	{
 		ReleaseAllResources();
-		DeviceContext->ClearState();
-		DeviceContext->Release();
-		Device->Release();
+		m_ImmediateDeviceContext->ClearState();
+		m_ImmediateDeviceContext->Release();
+#if defined(_PCDX11)
+		m_pD3D11Device->Release();
+#elif defined(_PCDX12)
+		m_pD3D12Device->Release();
+#endif
 	}
 
 	void DXRenderer::ReleaseAllResources()
@@ -285,8 +289,8 @@ namespace sys {
 		_vec[USER_CST+0] = XMVectorSet(scale.x,scale.y,offset.x,offset.y);
 
 		UpdateVSConstants();
-		DeviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP);
-		DeviceContext->Draw(4,0);
+		m_ImmediateDeviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP);
+		m_ImmediateDeviceContext->Draw(4,0);
 	}
 
 	void DXRenderer::PostProcess()
@@ -302,7 +306,7 @@ namespace sys {
 	void DXRenderer::PushVertexDeclaration(VertexDeclaration* Decl)
 	{
 		DXVertexDeclaration* dxbuffer = reinterpret_cast<DXVertexDeclaration*>(Decl);
-		DeviceContext->IASetInputLayout(dxbuffer->GetRes());
+		m_ImmediateDeviceContext->IASetInputLayout(dxbuffer->GetRes());
 		//m_StateCache.VB = dxbuffer;
 	}
 
@@ -312,7 +316,7 @@ namespace sys {
 		ID3D11Buffer * pBuffer = dxbuffer->GetRes();
 		UINT _Stride = Stride;
 		UINT _Offset = Offset;
-		DeviceContext->IASetVertexBuffers(StreamNumber,1,&pBuffer,&_Stride,&_Offset);
+		m_ImmediateDeviceContext->IASetVertexBuffers(StreamNumber,1,&pBuffer,&_Stride,&_Offset);
 		m_StateCache.VB = dxbuffer;
 	}
 
@@ -321,7 +325,7 @@ namespace sys {
 		if(Buffer)
 		{
 			DXIndexBuffer* dxbuffer = reinterpret_cast<DXIndexBuffer*>(Buffer);
-			DeviceContext->IASetIndexBuffer(dxbuffer->GetRes(),(_Fmt==FMT_IDX_32)?DXGI_FORMAT_R32_UINT:DXGI_FORMAT_R16_UINT,0);
+			m_ImmediateDeviceContext->IASetIndexBuffer(dxbuffer->GetRes(),(_Fmt==FMT_IDX_32)?DXGI_FORMAT_R32_UINT:DXGI_FORMAT_R16_UINT,0);
 			m_StateCache.IB = dxbuffer;
 		}
 	}
@@ -353,8 +357,9 @@ namespace sys {
 			return;
 		}
 		UpdateVSConstants();
-		DeviceContext->IASetPrimitiveTopology( _primType );
-		DeviceContext->DrawIndexed(index_count,StartIndex,BaseVertexIndex);
+		m_ImmediateDeviceContext->IASetPrimitiveTopology( _primType );
+		m_ImmediateDeviceContext->DrawIndexed(index_count,StartIndex,BaseVertexIndex);
+	#elif defined(_PCDX12)
 	#endif
 	}
 
@@ -364,11 +369,11 @@ namespace sys {
 		U32 SID = (_ShaderUID&(~SHADER_TYPE_MASK));
 		if(Type==SHADER_TYPE_VERTEX)
 		{
-			DeviceContext->VSSetShader(m_VSDA[SID],NULL,0);
+			m_ImmediateDeviceContext->VSSetShader(m_VSDA[SID],NULL,0);
 		}
 		if(Type==SHADER_TYPE_PIXEL)
 		{
-			DeviceContext->PSSetShader(m_PSDA[SID],NULL,0);
+			m_ImmediateDeviceContext->PSSetShader(m_PSDA[SID],NULL,0);
 		}
 	}
 
@@ -379,37 +384,37 @@ namespace sys {
 		if(bm)
 		{
 			TextureLink * tex = reinterpret_cast<TextureLink*>(bm->GetBinHwResId());
-			DeviceContext->PSSetShaderResources(0,1,&tex->ShaderView);
+			m_ImmediateDeviceContext->PSSetShaderResources(0,1,&tex->ShaderView);
 		}
 		bm = Mat->GetBitmap(MTL_STAGE_NORMAL);
 		if(bm)
 		{
 			TextureLink * tex = reinterpret_cast<TextureLink*>(bm->GetBinHwResId());
-			DeviceContext->PSSetShaderResources(1,1,&tex->ShaderView);
+			m_ImmediateDeviceContext->PSSetShaderResources(1,1,&tex->ShaderView);
 		}
 		bm = Mat->GetBitmap(MTL_STAGE_SPEC);
 		if(bm)
 		{
 			TextureLink * tex = reinterpret_cast<TextureLink*>(bm->GetBinHwResId());
-			DeviceContext->PSSetShaderResources(2,1,&tex->ShaderView);
+			m_ImmediateDeviceContext->PSSetShaderResources(2,1,&tex->ShaderView);
 		}
 	}
 
 	void DXRenderer::UpdateVSConstants()
 	{
 		D3D11_MAPPED_SUBRESOURCE pMappedResource;
-		DeviceContext->Map(m_VSConstant,0,D3D11_MAP_WRITE_DISCARD,0,&pMappedResource);
+		m_ImmediateDeviceContext->Map(m_VSConstant,0,D3D11_MAP_WRITE_DISCARD,0,&pMappedResource);
 		memcpy(pMappedResource.pData,m_VSConstantCache,VS_CONSTANT_BUFFER_SIZE);
-		DeviceContext->Unmap(m_VSConstant,0);
-		DeviceContext->VSSetConstantBuffers( 0, 1, &m_VSConstant );
+		m_ImmediateDeviceContext->Unmap(m_VSConstant,0);
+		m_ImmediateDeviceContext->VSSetConstantBuffers( 0, 1, &m_VSConstant );
 	}
 
 	void DXRenderer::UpdateConstantBuffer(ID3D11Buffer * _Buffer,void* _DataPtr,U32 _DataSize)
 	{
 		D3D11_MAPPED_SUBRESOURCE pMappedResource;
-		DeviceContext->Map(_Buffer,0,D3D11_MAP_WRITE_DISCARD,0,&pMappedResource);
+		m_ImmediateDeviceContext->Map(_Buffer,0,D3D11_MAP_WRITE_DISCARD,0,&pMappedResource);
 		memcpy(pMappedResource.pData,_DataPtr,_DataSize);
-		DeviceContext->Unmap(_Buffer,0);
+		m_ImmediateDeviceContext->Unmap(_Buffer,0);
 	}
 	
 };
