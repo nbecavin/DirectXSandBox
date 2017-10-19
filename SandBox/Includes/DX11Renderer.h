@@ -5,6 +5,12 @@
 #include <ShaderConstants.h>
 #include <DXBuffers.h>
 
+#if defined(_PCDX12)
+#include <D3D12HAL.h>
+#elif defined(_PCDX11)
+#include <D3D11HAL.h>
+#endif
+
 #if defined(_PCDX11) || defined(_PCDX12)
 
 struct Vertex2D
@@ -59,29 +65,21 @@ namespace sys {
 				void PostProcess();
 
 #ifdef _PCDX12
-		ID3D12Device *			GetDevice() const { return m_pD3D12Device; }
-		ID3D12CommandList *		GetDeviceContext() const { return m_pMainCommandList; }
+		ID3D12Device *			GetDevice() { return GetHAL().GetDevice(); }
+		ID3D11DeviceContext *	GetDeviceContext() { return GetHAL().GetImmediateDeviceContext(); }
 #else
-		ID3D11Device *			GetDevice() const { return m_pD3D11Device; }
-		ID3D11DeviceContext *	GetDeviceContext() const { return m_ImmediateDeviceContext; }
+		ID3D11Device *			GetDevice() { return GetHAL().GetDevice(); }
+		ID3D11DeviceContext *	GetDeviceContext() { return GetHAL().GetImmediateDeviceContext(); }
 #endif
 		ID3DBlob *				GetShaderBlob(U32 _ShaderUID) const;
 
 	private:
-		IDXGIFactory1 *					m_DxgiFactory;
-#if WINAPI_FAMILY==WINAPI_FAMILY_APP
-		IDXGISwapChain1 *				SwapChain;
-#else
-		IDXGISwapChain *				SwapChain;
-#endif
-
 #ifdef _PCDX12
-		ID3D12Device *					m_pD3D12Device;
-		ID3D12CommandQueue *			m_pCommandQueue;
-		ID3D12CommandList *				m_pMainCommandList;
+		D3D12HAL							m_HAL;
+		D3D12HAL&						GetHAL() { return m_HAL; }
 #else
-		ID3D11Device *					m_pD3D11Device;
-		ID3D11DeviceContext *			m_ImmediateDeviceContext;
+		D3D11HAL							m_HAL;
+		D3D11HAL&						GetHAL() { return m_HAL; }
 #endif
 
 		IDirect3DVertexShader *			m_VSDA[SHADER_VS_COUNT];
@@ -110,10 +108,6 @@ namespace sys {
 		ID3D11SamplerState *			m_DefaultSS;
 		ID3D11SamplerState *			m_NoBilinearSS;
 		ID3D11ShaderResourceView *		m_ZBuffer;
-
-	#if WINAPI_FAMILY_PARTITION( WINAPI_PARTITION_DESKTOP )
-		//ID3DX10Font *					m_DebugFont;
-	#endif
 
 		struct StateCache
 		{

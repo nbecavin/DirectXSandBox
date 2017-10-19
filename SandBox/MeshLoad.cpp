@@ -36,10 +36,15 @@ void Mesh::Load(char * fname)
 {
     HRESULT hr = S_OK;
 
+	const char aliaspath[] = "..\\GameDB";
+
     // Find the path for the file
 //    V_RETURN( DXUTFindDXSDKMediaFileCch( m_strPathW, sizeof( m_strPathW ) / sizeof( WCHAR ), szFileName ) );
 	char dir[1024];
-	_splitpath(fname,NULL,dir,NULL,NULL);
+	char name[1024];
+
+	sprintf(name, "%s\\%s", aliaspath, fname);
+	_splitpath(name,NULL,dir,NULL,NULL);
 
     // Open the file
 #if WINAPI_FAMILY_ONE_PARTITION( WINAPI_FAMILY, WINAPI_PARTITION_APP )
@@ -57,15 +62,15 @@ void Mesh::Load(char * fname)
 	
 	HANDLE m_hFile = CreateFile2( wstr, FILE_READ_DATA, FILE_SHARE_READ, OPEN_EXISTING, NULL );
 #else
-	HANDLE m_hFile = CreateFileA( fname, FILE_READ_DATA, FILE_SHARE_READ, NULL, OPEN_EXISTING, FILE_FLAG_SEQUENTIAL_SCAN, NULL );
+	HANDLE m_hFile = CreateFileA( name, FILE_READ_DATA, FILE_SHARE_READ, NULL, OPEN_EXISTING, FILE_FLAG_SEQUENTIAL_SCAN, NULL );
 #endif
     if( INVALID_HANDLE_VALUE == m_hFile )
 	{
-		MESSAGE("failed to load mesh : %s", fname);
+		MESSAGE("failed to load mesh : %s", name);
         return ;
 	}
 
-	MESSAGE("Loading mesh : %s", fname);
+	MESSAGE("Loading mesh : %s", name);
 
     // Change the path to just the directory
     /*WCHAR* pLastBSlash = wcsrchr( m_strPathW, L'\\' );

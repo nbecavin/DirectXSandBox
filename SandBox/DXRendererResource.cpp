@@ -42,6 +42,7 @@ namespace sys {
 
 	void DXRenderer::RegisterShaderFromSourceFile(U32 _ShaderUID,const char* src,const char* epoint)
 	{
+#ifdef _PCDX11
 		HRESULT hr;
 
 		char profile[32]="";
@@ -149,6 +150,7 @@ namespace sys {
 				}
 			}
 		}
+#endif
 	}
 
 	#if defined(_PCDX11) || defined(_PCDX12)
@@ -380,6 +382,7 @@ static void GetSurfaceInfo( UINT width, UINT height, DXGI_FORMAT fmt, UINT* pNum
 
 	void DXRenderer::CreateTexture(Bitmap * _Bm)
 	{
+#ifdef _PCDX11
 		MESSAGE("Create texture");
 
 		bool sRGB = (_Bm->GetFlags()&BM_SRGB) ? true : false;
@@ -450,7 +453,7 @@ static void GetSurfaceInfo( UINT width, UINT height, DXGI_FORMAT fmt, UINT* pNum
 
 		if(_Bm->GetType()&BM_TYPE_2D)
 		{
-			HRESULT hr = m_pD3D11Device->CreateTexture2D(&desc,pData,&tex->Tex2D);
+			HRESULT hr = GetDevice()->CreateTexture2D(&desc,pData,&tex->Tex2D);
 			if(hr!=S_OK)
 			{
 				MESSAGE("Failed create texture");
@@ -464,7 +467,7 @@ static void GetSurfaceInfo( UINT width, UINT height, DXGI_FORMAT fmt, UINT* pNum
 			SRVDesc.Format = desc.Format;
 			SRVDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
 			SRVDesc.Texture2D.MipLevels = desc.MipLevels;
-			m_pD3D11Device->CreateShaderResourceView(tex->Resource,&SRVDesc,&tex->ShaderView);
+			GetDevice()->CreateShaderResourceView(tex->Resource,&SRVDesc,&tex->ShaderView);
 		}
 
 		if(_Bm->GetType()&BM_TYPE_RT)
@@ -473,14 +476,16 @@ static void GetSurfaceInfo( UINT width, UINT height, DXGI_FORMAT fmt, UINT* pNum
 			DescRT.Format = desc.Format;
 			DescRT.ViewDimension = D3D11_RTV_DIMENSION_TEXTURE2D;
 			DescRT.Texture2D.MipSlice = 0;
-			m_pD3D11Device->CreateRenderTargetView(tex->Resource,&DescRT,&tex->Surface);
+			GetDevice()->CreateRenderTargetView(tex->Resource,&DescRT,&tex->Surface);
 		}
 
+#endif
 		MESSAGE("DX resource created");
 	}
 
 	ID3D11Buffer * CreateConstantBuffer(void* _DataPtr,U32 _DataSize)
 	{
+#ifdef _PCDX11
 		ID3D11Buffer * pCstBuffer;
 
 		D3D11_BUFFER_DESC desc;
@@ -496,6 +501,9 @@ static void GetSurfaceInfo( UINT width, UINT height, DXGI_FORMAT fmt, UINT* pNum
 		initialData.SysMemSlicePitch = 0;
 		((DXRenderer*)gData.Rdr)->GetDevice()->CreateBuffer(&desc,&initialData,&pCstBuffer);
 		return pCstBuffer;
+#else
+		return NULL;
+#endif
 	}
 
 };

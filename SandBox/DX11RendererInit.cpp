@@ -25,73 +25,14 @@ namespace sys
 		SizeX = 1280;
 		SizeY = 720;
 
-#if WINAPI_FAMILY==WINAPI_FAMILY_APP
-		// Store the window bounds so the next time we get a SizeChanged event we can
-		// avoid rebuilding everything if the size is identical.
-		Windows::Foundation::Rect m_windowBounds = sys::pc::m_App->GetWindow()->Bounds;
+		GetHAL().Init(SizeX, SizeY, this);
 
-		// Calculate the necessary swap chain and render target size in pixels.
-		float windowWidth = ConvertDipsToPixels(m_windowBounds.Width);
-		float windowHeight = ConvertDipsToPixels(m_windowBounds.Height);
 
-		// The width and height of the swap chain must be based on the window's
-		// landscape-oriented width and height. If the window is in a portrait
-		// orientation, the dimensions must be reversed.
-		DisplayOrientations m_orientation = DisplayProperties::CurrentOrientation;
-		bool swapDimensions =
-			m_orientation == DisplayOrientations::Portrait ||
-			m_orientation == DisplayOrientations::PortraitFlipped;
-		SizeX = swapDimensions ? windowHeight : windowWidth;
-		SizeY = swapDimensions ? windowWidth : windowHeight;
-#else
-        // Make a window rect with a client rect that is the same size as the backbuffer
-        RECT rcWindow = {0};
-        rcWindow.right = ( long )( SizeX );
-        rcWindow.bottom = ( long )( SizeY );
-		AdjustWindowRect( &rcWindow, GetWindowLong( sys::pc::hWnd, GWL_STYLE ), true );
-
-        // Resize the window.  It is important to adjust the window size 
-        // after resetting the device rather than beforehand to ensure 
-        // that the monitor resolution is correct and does not limit the size of the new window.
-        int cx = ( int )( rcWindow.right - rcWindow.left );
-        int cy = ( int )( rcWindow.bottom - rcWindow.top );
-        SetWindowPos( sys::pc::hWnd, 0, 0, 0, cx, cy, SWP_NOZORDER | SWP_NOMOVE );
-#endif
-
-		HRESULT hr;
-
-		D3D_FEATURE_LEVEL returnedFeatureLevel;
-		U32 Flags = 0;
-		#ifdef _DEBUG
-		//	Flags |= D3D11_CREATE_DEVICE_DEBUG;
-		#endif
-		
-#if defined(_PCDX11)
-		D3D11CreateDevice(NULL,D3D_DRIVER_TYPE_HARDWARE,NULL,Flags,NULL,0,D3D11_SDK_VERSION,&m_pD3D11Device,&returnedFeatureLevel,&m_ImmediateDeviceContext);
-#elif defined(_PCDX12)
-		D3D12CreateDevice(NULL, D3D_FEATURE_LEVEL_12_0, __uuidof(ID3D12Device), (void**)&m_pD3D12Device);
-#endif
-
-		DXGI_SWAP_CHAIN_DESC sd;
-		ZeroMemory( &sd, sizeof( sd ) );
-		sd.BufferCount = 1;
-		sd.BufferDesc.Width = SizeX;
-		sd.BufferDesc.Height = SizeY;
-		sd.BufferDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
-		sd.BufferDesc.RefreshRate.Numerator = 60;
-		sd.BufferDesc.RefreshRate.Denominator = 1;
-		sd.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;
-		sd.OutputWindow = sys::pc::hWnd;
-		sd.SampleDesc.Count = 1;
-		sd.SampleDesc.Quality = 0;
-		sd.Windowed = TRUE;
-		hr = CreateDXGIFactory1(__uuidof(IDXGIFactory1), (void**)(&m_DxgiFactory) );
-		hr = m_DxgiFactory->CreateSwapChain(GetDevice(),&sd,&SwapChain);
-
+#ifdef _PCDX11
 		// Create a render target view
 		ID3D11Texture2D* pBackBuffer = NULL;
-		hr = SwapChain->GetBuffer( 0, __uuidof( ID3D11Texture2D ), ( LPVOID* )&pBackBuffer );
-		if( FAILED( hr ) )
+		HRESULT hr = GetHAL().GetSwapChain()->GetBuffer(0, __uuidof(ID3D11Texture2D), (LPVOID*)&pBackBuffer);
+		if (FAILED(hr))
 			return hr;
 
 		hr = GetDevice()->CreateRenderTargetView( pBackBuffer, NULL, &m_BackBuffer );
@@ -106,7 +47,6 @@ namespace sys
                 SRVfmt = DXGI_FORMAT_R24_UNORM_X8_TYPELESS;
                DSVfmt = DXGI_FORMAT_D24_UNORM_S8_UINT;
 			*/
- 
 
         // Create depth stencil texture
         ID3D11Texture2D* pDepthStencil = NULL;
@@ -116,8 +56,8 @@ namespace sys
         descDepth.MipLevels = 1;
         descDepth.ArraySize = 1;
         descDepth.Format = DXGI_FORMAT_R24G8_TYPELESS;//DXGI_FORMAT_D24_UNORM_S8_UINT;
-        descDepth.SampleDesc.Count = sd.SampleDesc.Count;
-        descDepth.SampleDesc.Quality = sd.SampleDesc.Quality;
+        descDepth.SampleDesc.Count = 1;
+        descDepth.SampleDesc.Quality = 0;
         descDepth.Usage = D3D11_USAGE_DEFAULT;
         descDepth.BindFlags = D3D11_BIND_DEPTH_STENCIL|D3D11_BIND_SHADER_RESOURCE;
         descDepth.CPUAccessFlags = 0;
@@ -148,7 +88,7 @@ namespace sys
         if( FAILED( hr ) )
             return hr;
 
-		m_ImmediateDeviceContext->OMSetRenderTargets( 1, &m_BackBuffer, m_DepthBuffer );
+		GetDeviceContext()->OMSetRenderTargets( 1, &m_BackBuffer, m_DepthBuffer );
 
 		// Fill in a buffer description.
 		D3D11_BUFFER_DESC cbDesc;
@@ -211,6 +151,7 @@ namespace sys
 		ss.ComparisonFunc = D3D11_COMPARISON_ALWAYS;
 		ss.MaxLOD = D3D11_FLOAT32_MAX;
 		GetDevice()->CreateSamplerState(&ss,&m_NoBilinearSS);
+#endif
 
 		InitShaders();
 		InitSurface();
@@ -223,6 +164,8 @@ namespace sys
 		if(!Renderer::InitStaticDatas())
 			return FALSE;
 
+
+#ifdef _PCDX11
 		XMFLOAT3	lightDir;
 
 		#define SH_ORDER		2
@@ -273,6 +216,7 @@ namespace sys
 		m_CameraConstant = (ID3D11Buffer*)CameraConstant::CreateHwRes();
 		m_PostProcessConstant = (ID3D11Buffer*)PostProcessConstant::CreateHwRes();
 
+#endif
 		return TRUE;
 	}
 

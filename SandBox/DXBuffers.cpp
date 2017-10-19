@@ -4,6 +4,7 @@
 
 void DXVertexBuffer::Create(U32 _Size,U32 _Usage,void * _Datas)
 {
+#ifdef _PCDX11
 	HRESULT hr;
 	ID3D11Device * Device = GET_RDR_INSTANCE()->GetDevice();
 
@@ -33,10 +34,12 @@ void DXVertexBuffer::Create(U32 _Size,U32 _Usage,void * _Datas)
 
 	// Create the vertex buffer.
 	hr = Device->CreateBuffer( &bufferDesc, pInitData, &res );
+#endif
 }
 
 void DXIndexBuffer::Create(U32 _Size,U32 _Usage,U32 _Fmt,void * _Datas)
 {
+#ifdef _PCDX11
 	HRESULT hr;
 	ID3D11Device * Device = GET_RDR_INSTANCE()->GetDevice();
 	U32 _ItemSize = (_Fmt==FMT_IDX_16) ? 2 : 4;
@@ -68,36 +71,49 @@ void DXIndexBuffer::Create(U32 _Size,U32 _Usage,U32 _Fmt,void * _Datas)
 	// Create the vertex buffer.
 	hr = Device->CreateBuffer( &bufferDesc, pInitData, &res );
 	ASSERT(hr==S_OK);
+#endif
 }
 
 bool DXVertexBuffer::Lock(U32 OffsetToLock,U32 SizeToLock,void **pData,U32 Flags)
 {
+#ifdef _PCDX11
 	ID3D11DeviceContext * DeviceContext = GET_RDR_INSTANCE()->GetDeviceContext();
 	D3D11_MAPPED_SUBRESOURCE pMappedResource;
 	DeviceContext->Map(res,0,D3D11_MAP_WRITE_NO_OVERWRITE,0,&pMappedResource);
 	*pData = pMappedResource.pData;
 	return pMappedResource.pData!=NULL;
+#else
+	return FALSE;
+#endif
 }
 
 bool DXIndexBuffer::Lock(U32 OffsetToLock,U32 SizeToLock,void **pData,U32 Flags)
 {
+#ifdef _PCDX11
 	ID3D11DeviceContext * DeviceContext = GET_RDR_INSTANCE()->GetDeviceContext();
 	D3D11_MAPPED_SUBRESOURCE pMappedResource;
 	DeviceContext->Map(res,0,D3D11_MAP_WRITE_NO_OVERWRITE,0,&pMappedResource);
 	*pData = pMappedResource.pData;
 	return pMappedResource.pData!=NULL;
+#else
+	return FALSE;
+#endif
 }
 
 void DXVertexBuffer::Unlock()
 {
+#ifdef _PCDX11
 	ID3D11DeviceContext * DeviceContext = GET_RDR_INSTANCE()->GetDeviceContext();
 	DeviceContext->Unmap(res,0);
+#endif
 }
 
 void DXIndexBuffer::Unlock()
 {
+#ifdef _PCDX11
 	ID3D11DeviceContext * DeviceContext = GET_RDR_INSTANCE()->GetDeviceContext();
 	DeviceContext->Unmap(res,0);
+#endif
 }
 
 #define SET_D3DDECL_END(_PTR_,_ID_,_Stream,_Offset,_Type,_Method,_Usage,_UsageIndex) \
@@ -110,6 +126,7 @@ void DXIndexBuffer::Unlock()
 
 void DXVertexDeclaration::Create(VertexElement *Decl,U32 _ShaderUID)
 {
+#ifdef _PCDX11
 	ID3D11Device * Device = GET_RDR_INSTANCE()->GetDevice();
 
 	D3D11_INPUT_ELEMENT_DESC pElts[32];
@@ -201,6 +218,7 @@ void DXVertexDeclaration::Create(VertexElement *Decl,U32 _ShaderUID)
 	}
 	ID3DBlob * pCode = GET_RDR_INSTANCE()->GetShaderBlob(_ShaderUID);
 	Device->CreateInputLayout(pElts,nCurElt,pCode->GetBufferPointer(),pCode->GetBufferSize(),&res);
+#endif
 }
 
 #endif //_PC

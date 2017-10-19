@@ -84,8 +84,11 @@
     <Filter Include="Assets">
       <UniqueIdentifier>{f2e75475-53ea-4f0b-9c5f-f4bd37caeb32}</UniqueIdentifier>
     </Filter>
-    <Filter Include="PC\DX11">
+    <Filter Include="PC\D3D11">
       <UniqueIdentifier>{665beda8-144c-439d-8be8-29cb2cbeaf3a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="PC\D3D12">
+      <UniqueIdentifier>{e12b9704-806a-4220-be6b-fd045eab7013}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -205,6 +208,12 @@
     </ClCompile>
     <ClCompile Include="DX11RendererInit.cpp">
       <Filter>PC</Filter>
+    </ClCompile>
+    <ClCompile Include="D3D11HALSwapChain.cpp">
+      <Filter>PC\D3D11</Filter>
+    </ClCompile>
+    <ClCompile Include="D3D12HALSwapChain.cpp">
+      <Filter>PC\D3D12</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -334,6 +343,12 @@
     </ClInclude>
     <ClInclude Include="Includes\DX11Renderer.h">
       <Filter>PC</Filter>
+    </ClInclude>
+    <ClInclude Include="Includes\D3D12HAL.h">
+      <Filter>PC\D3D12</Filter>
+    </ClInclude>
+    <ClInclude Include="Includes\D3D11HAL.h">
+      <Filter>PC\D3D11</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
