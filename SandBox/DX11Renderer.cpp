@@ -19,12 +19,18 @@ namespace sys {
 	{
 		m_Camera->Update();
 
-#if defined(_PCDX11)
 		HRESULT hr;
 
+#if defined(_PCDX12)
 		float ClearColor[4] = { 0.0f, 0.125f, 0.3f, 1.0f }; // red,green,blue,alpha
-		GetDeviceContext()->ClearRenderTargetView( m_BackBuffer, ClearColor );
-		GetDeviceContext()->ClearDepthStencilView( m_DepthBuffer, D3D11_CLEAR_DEPTH|D3D11_CLEAR_STENCIL, 1.f, 0 );
+		GetCommandList()->ClearRenderTargetView(GetHAL().GetCurrentBackBufferView(), ClearColor, 0, nullptr);
+#elif defined(_PCDX11)
+		float ClearColor[4] = { 0.0f, 0.125f, 0.3f, 1.0f }; // red,green,blue,alpha
+		GetDeviceContext()->ClearRenderTargetView(m_BackBuffer, ClearColor);
+		GetDeviceContext()->ClearDepthStencilView(m_DepthBuffer, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.f, 0);
+#endif
+
+
 
 		//une view et une proj de base
 		XMMATRIX m,proj,view;
@@ -43,7 +49,10 @@ namespace sys {
 		XMVECTOR det;
 		camCst.InvProjMatrix = XMMatrixTranspose(XMMatrixInverse(&det,proj));
 		//camCst.InvViewProjMatrix = ;
+
+#if defined(_PCDX11_)
 		UpdateConstantBuffer(m_CameraConstant,&camCst,sizeof(camCst));
+#endif
 
 		XMMATRIX * _mat = (XMMATRIX*)(m_VSConstantCache);
 		_mat[0] = XMMatrixTranspose(proj);
@@ -51,6 +60,7 @@ namespace sys {
 		Vec4f * _vec = (Vec4f*)(m_VSConstantCache);
 		_vec[EYE_CST] = m_Camera->GetWorldPosition();
 
+#if defined(_PCDX11_)
 		// No geometry shader
 		GetDeviceContext()->GSSetShader(NULL,NULL,0);
 
@@ -65,6 +75,7 @@ namespace sys {
 
 		GetDeviceContext()->VSSetConstantBuffers(9,1,&m_CameraConstant);
 		GetDeviceContext()->PSSetConstantBuffers(9,1,&m_CameraConstant);
+#endif
 
 /*
 		//
@@ -153,6 +164,8 @@ namespace sys {
 
 */
 
+#if defined(_PCDX11_)
+
 //		D3DPERF_BeginEvent(0,L"Forward");
 		{
 			ID3D11RasterizerState *	m_TempRS;
@@ -198,21 +211,39 @@ namespace sys {
 			//m_TempRS->Release();
 		}
 //		D3DPERF_EndEvent();
+#endif
 
 //		D3DPERF_BeginEvent(0,L"PostProcess");
 
 		//TextureLink * tex = reinterpret_cast<TextureLink*>(m_lightBuffer->GetBinHwResId());
 		TextureLink * hdrtex = reinterpret_cast<TextureLink*>(m_HdrRenderTarget->GetBinHwResId());
 		TextureLink * rtex = reinterpret_cast<TextureLink*>(m_RenderTarget->GetBinHwResId());
-			
+		
+#if defined(_PCDX11_)
 		GetDeviceContext()->OMSetRenderTargets( 1, &rtex->Surface, m_DepthBuffer );
 		GetDeviceContext()->PSSetShaderResources(0,1,&hdrtex->ShaderView);
 		PushShader(SHADER_VS_BASE_SCREENVERTEX);
 		PushShader(SHADER_PS_POSTPROC_COLORGRADING);
 		FullScreenQuad(Vec2f(1.f,1.f),Vec2f(0.f,0.f));
+#endif
 
-		GetDeviceContext()->OMSetRenderTargets( 1, &m_BackBuffer, m_DepthBuffer );
-		GetDeviceContext()->PSSetShaderResources(0,1,&rtex->ShaderView);
+		// Setup the viewport
+		D3D11_VIEWPORT vp;
+		vp.Width = (FLOAT)SizeX;
+		vp.Height = (FLOAT)SizeY;
+		vp.MinDepth = 0.0f;
+		vp.MaxDepth = 1.0f;
+		vp.TopLeftX = 0;
+		vp.TopLeftY = 0;
+
+#if defined(_PCDX12)
+		GetHAL().GetCommandList()->RSSetViewports(1, reinterpret_cast<D3D12_VIEWPORT*>(&vp));
+#else
+		GetDeviceContext()->RSSetViewports(1, &vp);
+		GetDeviceContext()->OMSetRenderTargets(1, &m_BackBuffer, m_DepthBuffer);
+		GetDeviceContext()->PSSetShaderResources(0, 1, &rtex->ShaderView);
+#endif
+
 		PushShader(SHADER_VS_BASE_SCREENVERTEX);
 		PushShader(SHADER_PS_POSTPROC_FXAA);
 		FullScreenQuad(Vec2f(1.f,1.f),Vec2f(0.f,0.f));
@@ -242,6 +273,7 @@ namespace sys {
 			*/
 		}
 
+#if defined(_PCDX11)
 		ID3D11ShaderResourceView* ppSRVNULL[1] = { NULL };
 		GetDeviceContext()->PSSetShaderResources(0,1,ppSRVNULL);
 #endif

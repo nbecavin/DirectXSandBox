@@ -135,6 +135,15 @@ void D3D12HAL::Init(int sizeX, int sizeY, sys::Renderer* owner)
 
 	m_Device->CreateFence(0, D3D12_FENCE_FLAG_NONE, IID_PPV_ARGS(&m_SyncFence));
 
+	D3D12_RESOURCE_BARRIER barrier;
+	barrier.Type = D3D12_RESOURCE_BARRIER_TYPE_TRANSITION;
+	barrier.Flags = D3D12_RESOURCE_BARRIER_FLAG_NONE;
+	barrier.Transition.pResource = m_RenderTargets[m_FrameIndex].Get();
+	barrier.Transition.Subresource = 0;
+	barrier.Transition.StateBefore = D3D12_RESOURCE_STATE_PRESENT;
+	barrier.Transition.StateAfter = D3D12_RESOURCE_STATE_RENDER_TARGET;
+	m_CommandList->ResourceBarrier(1, &barrier);
+
 	OutputDebugString("DX12 Renderer is up and running");
 }
 
@@ -149,12 +158,6 @@ void D3D12HAL::Shut()
 
 void D3D12HAL::PresentFrame()
 {
-	{ // test code
-
-		float ClearColor[2][4] = { 0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.125f, 0.3f, 1.0f }; // red,green,blue,alpha
-		m_CommandList->ClearRenderTargetView(m_RenderTargetsView[m_FrameIndex], ClearColor[m_FrameIndex], 0, nullptr);
-	}
-
 	// Indicate that the back buffer will now be used to present.
 	D3D12_RESOURCE_BARRIER barrierpresent;
 	barrierpresent.Type = D3D12_RESOURCE_BARRIER_TYPE_TRANSITION;

@@ -42,7 +42,6 @@ namespace sys {
 
 	void DXRenderer::RegisterShaderFromSourceFile(U32 _ShaderUID,const char* src,const char* epoint)
 	{
-#ifdef _PCDX11
 		HRESULT hr;
 
 		char profile[32]="";
@@ -55,17 +54,15 @@ namespace sys {
 
 		if(Type==SHADER_TYPE_VERTEX)
 		{
-			strcpy(profile,"vs_4_0");
-		//	strcpy(profile,"vs_4_0_level_9_1");
+			strcpy(profile,"vs_5_0");
 		}
 		if(Type==SHADER_TYPE_PIXEL)
 		{
-			strcpy(profile,"ps_4_0");
-		//	strcpy(profile,"ps_4_0_level_9_1");
+			strcpy(profile,"ps_5_0");
 		}
 		if(Type==SHADER_TYPE_COMPUTE)
 		{
-			strcpy(profile,"cs_4_0");
+			strcpy(profile,"cs_5_0");
 		}
 
 		DWORD CpFlag = 0;//*D3DCOMPILE_ENABLE_STRICTNESS;
@@ -84,6 +81,11 @@ namespace sys {
 		mac[macnb].Name = "_PCDX11";
 		mac[macnb].Definition = "1";
 		macnb++;
+#ifdef _PCDX12
+		mac[macnb].Name = "_PCDX12";
+		mac[macnb].Definition = "1";
+		macnb++;
+#endif
 		mac[macnb].Name = 0;
 		mac[macnb].Definition = 0;
 		macnb++;
@@ -91,13 +93,9 @@ namespace sys {
 		ID3DBlob * pError = NULL;
 		ID3DBlob * pCode = NULL;
 
-	#if 1 //WINAPI_FAMILY_ONE_PARTITION( WINAPI_FAMILY, WINAPI_PARTITION_APP )
 		WCHAR wpath[2049];
 		MultiByteToWideChar(CP_ACP,0,path,-1,wpath,2048);
 		hr = D3DCompileFromFile(wpath,mac,D3D_COMPILE_STANDARD_FILE_INCLUDE,epoint,profile,CpFlag,0,&pCode,&pError);
-	#else
-		hr = D3DX11CompileFromFileA(path,mac,NULL,epoint,profile,CpFlag,0,NULL,&pCode,&pError,NULL);
-	#endif
 		if(hr!=S_OK)
 		{
 			if(hr==D3D11_ERROR_FILE_NOT_FOUND)
@@ -119,6 +117,8 @@ namespace sys {
 			if(Type==SHADER_TYPE_VERTEX)
 			{
 				m_VSDABlob[SID] = pCode;
+
+				#ifdef _PCDX11
 				hr = GetDevice()->CreateVertexShader(pCode->GetBufferPointer(),pCode->GetBufferSize(),NULL,&m_VSDA[SID]);
 				if(hr!=S_OK)
 					MessageBox(NULL,"Cannot create pixel shader","Shader Error",MB_OK);
@@ -126,10 +126,13 @@ namespace sys {
 				{
 					D3DReflect(pCode->GetBufferPointer(),pCode->GetBufferSize(),IID_ID3D11ShaderReflection,(void**)&m_VSDAReflection[SID]);
 				}
+				#endif
 			}
 			if(Type==SHADER_TYPE_PIXEL)
 			{
 				m_PSDABlob[SID] = pCode;
+
+				#ifdef _PCDX11
 				hr = GetDevice()->CreatePixelShader(pCode->GetBufferPointer(),pCode->GetBufferSize(),NULL,&m_PSDA[SID]);
 				if(hr!=S_OK)
 					MessageBox(NULL,"Cannot create pixel shader","Shader Error",MB_OK);
@@ -137,10 +140,13 @@ namespace sys {
 				{
 					D3DReflect(pCode->GetBufferPointer(),pCode->GetBufferSize(),IID_ID3D11ShaderReflection,(void**)&m_PSDAReflection[SID]);
 				}
+				#endif
 			}
 			if(Type==SHADER_TYPE_COMPUTE)
 			{
 				m_CSDABlob[SID] = pCode;
+
+				#ifdef _PCDX11
 				hr = GetDevice()->CreateComputeShader(pCode->GetBufferPointer(),pCode->GetBufferSize(),NULL,&m_CSDA[SID]);
 				if(hr!=S_OK)
 					MessageBox(NULL,"Cannot create compute shader","Shader Error",MB_OK);
@@ -148,9 +154,9 @@ namespace sys {
 				{
 					D3DReflect(pCode->GetBufferPointer(),pCode->GetBufferSize(),IID_ID3D11ShaderReflection,(void**)&m_CSDAReflection[SID]);
 				}
+				#endif
 			}
 		}
-#endif
 	}
 
 	#if defined(_PCDX11) || defined(_PCDX12)

@@ -66,6 +66,7 @@ namespace sys {
 
 #ifdef _PCDX12
 		ID3D12Device *			GetDevice() { return GetHAL().GetDevice(); }
+		ID3D12GraphicsCommandList *	GetCommandList() { return GetHAL().GetCommandList(); }
 		ID3D11DeviceContext *	GetDeviceContext() { return GetHAL().GetImmediateDeviceContext(); }
 #else
 		ID3D11Device *			GetDevice() { return GetHAL().GetDevice(); }

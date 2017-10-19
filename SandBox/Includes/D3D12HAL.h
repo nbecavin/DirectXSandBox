@@ -11,6 +11,11 @@ public:
 	void PresentFrame();
 
 	ID3D12Device* GetDevice() { return m_Device.Get(); }
+	ID3D12GraphicsCommandList* GetCommandList() { return m_CommandList.Get(); }
+
+	D3D12_CPU_DESCRIPTOR_HANDLE& GetCurrentBackBufferView() {
+		return m_RenderTargetsView[m_FrameIndex];
+	}
 
 	// --- to remove
 	ID3D11DeviceContext* GetImmediateDeviceContext() { return (ID3D11DeviceContext*)nullptr; }
