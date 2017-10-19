@@ -8,6 +8,8 @@ public:
 	void Init(int sizeX,int sizeY, sys::Renderer* owner);
 	void Shut();
 
+	void PresentFrame();
+
 	ID3D12Device* GetDevice() { return m_Device.Get(); }
 
 	// --- to remove
@@ -23,4 +25,15 @@ private:
 	ComPtr<ID3D12CommandQueue>			m_CommandQueue;
 	ComPtr<ID3D12RootSignature>			m_RootSignature;
 	ComPtr<ID3D12GraphicsCommandList>	m_CommandList;
+	ComPtr<ID3D12Fence>					m_SyncFence;
+
+	UINT								m_FrameIndex = 0;
+	static const UINT					m_BufferCount = 2;
+	UINT								m_FrameCount = 1;
+
+	// je ne sais pas ce que c'est pour l'instant
+	ComPtr<ID3D12DescriptorHeap>		m_RtvHeap;
+	UINT								m_RtvDescriptorSize;
+	ComPtr<ID3D12Resource>				m_RenderTargets[m_BufferCount];
+	D3D12_CPU_DESCRIPTOR_HANDLE			m_RenderTargetsView[m_BufferCount];
 };

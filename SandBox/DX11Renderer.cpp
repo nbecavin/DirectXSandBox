@@ -246,7 +246,7 @@ namespace sys {
 		GetDeviceContext()->PSSetShaderResources(0,1,ppSRVNULL);
 #endif
 
-		GetHAL().GetSwapChain()->Present(1,0);
+		GetHAL().PresentFrame();
 	}
 
 	void DXRenderer::InitSurface()

@@ -53,4 +53,9 @@ void D3D11HAL::Shut()
 	m_SwapChain.Get()->Release();
 }
 
+void D3D11HAL::PresentFrame()
+{
+	m_SwapChain->Present(1, 0);
+}
+
 #endif

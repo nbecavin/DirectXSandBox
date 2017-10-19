@@ -8,6 +8,8 @@ public:
 	void Init(int sizeX, int sizeY, sys::Renderer* owner);
 	void Shut();
 
+	void PresentFrame();
+
 	ID3D11Device* GetDevice() { return m_Device.Get(); }
 
 	// --- to remove
