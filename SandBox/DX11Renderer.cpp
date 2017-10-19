@@ -242,10 +242,10 @@ namespace sys {
 		GetDeviceContext()->RSSetViewports(1, &vp);
 		GetDeviceContext()->OMSetRenderTargets(1, &m_BackBuffer, m_DepthBuffer);
 		GetDeviceContext()->PSSetShaderResources(0, 1, &rtex->ShaderView);
-#endif
-
 		PushShader(SHADER_VS_BASE_SCREENVERTEX);
 		PushShader(SHADER_PS_POSTPROC_FXAA);
+#endif
+
 		FullScreenQuad(Vec2f(1.f,1.f),Vec2f(0.f,0.f));
 
 //		D3DPERF_EndEvent();
