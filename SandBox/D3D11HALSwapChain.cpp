@@ -1,5 +1,6 @@
 #include "stdafx.h"
 #if defined(_PCDX11)
+#include <Renderer.h>
 #include <D3D11HAL.h>
 #include <WinMain.h>
 

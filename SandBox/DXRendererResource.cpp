@@ -114,68 +114,16 @@ namespace sys {
 
 		if(pCode)
 		{
-			if(Type==SHADER_TYPE_VERTEX)
-			{
-				m_VSDABlob[SID] = pCode;
-
-				#ifdef _PCDX11
-				hr = GetDevice()->CreateVertexShader(pCode->GetBufferPointer(),pCode->GetBufferSize(),NULL,&m_VSDA[SID]);
-				if(hr!=S_OK)
-					MessageBox(NULL,"Cannot create pixel shader","Shader Error",MB_OK);
-				else
-				{
-					D3DReflect(pCode->GetBufferPointer(),pCode->GetBufferSize(),IID_ID3D11ShaderReflection,(void**)&m_VSDAReflection[SID]);
-				}
-				#endif
-			}
-			if(Type==SHADER_TYPE_PIXEL)
-			{
-				m_PSDABlob[SID] = pCode;
-
-				#ifdef _PCDX11
-				hr = GetDevice()->CreatePixelShader(pCode->GetBufferPointer(),pCode->GetBufferSize(),NULL,&m_PSDA[SID]);
-				if(hr!=S_OK)
-					MessageBox(NULL,"Cannot create pixel shader","Shader Error",MB_OK);
-				else
-				{
-					D3DReflect(pCode->GetBufferPointer(),pCode->GetBufferSize(),IID_ID3D11ShaderReflection,(void**)&m_PSDAReflection[SID]);
-				}
-				#endif
-			}
-			if(Type==SHADER_TYPE_COMPUTE)
-			{
-				m_CSDABlob[SID] = pCode;
-
-				#ifdef _PCDX11
-				hr = GetDevice()->CreateComputeShader(pCode->GetBufferPointer(),pCode->GetBufferSize(),NULL,&m_CSDA[SID]);
-				if(hr!=S_OK)
-					MessageBox(NULL,"Cannot create compute shader","Shader Error",MB_OK);
-				else
-				{
-					D3DReflect(pCode->GetBufferPointer(),pCode->GetBufferSize(),IID_ID3D11ShaderReflection,(void**)&m_CSDAReflection[SID]);
-				}
-				#endif
-			}
+			GetHAL().CreateShaderResource(pCode, Type, SID);
 		}
 	}
 
-	#if defined(_PCDX11) || defined(_PCDX12)
-	ID3DBlob * DXRenderer::GetShaderBlob(U32 _ShaderUID) const
+	ID3DBlob * DXRenderer::GetShaderBlob(U32 _ShaderUID)
 	{
 		U32 Type = (_ShaderUID&SHADER_TYPE_MASK)>>SHADER_TYPE_BITS;
 		U32 SID = (_ShaderUID&(~SHADER_TYPE_MASK));
-	
-		if(Type==SHADER_TYPE_VERTEX)
-		{
-			return m_VSDABlob[SID];
-		}
-		if(Type==SHADER_TYPE_PIXEL)
-		{
-			return m_PSDABlob[SID];
-		}
-		return NULL;
+		return GetHAL().GetShaderBlob(Type, SID);
 	}
-	#endif
 
 static UINT BitsPerPixel( DXGI_FORMAT fmt )
 {

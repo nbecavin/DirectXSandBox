@@ -67,12 +67,11 @@ namespace sys {
 #ifdef _PCDX12
 		ID3D12Device *			GetDevice() { return GetHAL().GetDevice(); }
 		ID3D12GraphicsCommandList *	GetCommandList() { return GetHAL().GetCommandList(); }
-		ID3D11DeviceContext *	GetDeviceContext() { return GetHAL().GetImmediateDeviceContext(); }
 #else
 		ID3D11Device *			GetDevice() { return GetHAL().GetDevice(); }
-		ID3D11DeviceContext *	GetDeviceContext() { return GetHAL().GetImmediateDeviceContext(); }
+		ID3D11DeviceContext *	GetCommandList() { return GetHAL().GetImmediateDeviceContext(); }
 #endif
-		ID3DBlob *				GetShaderBlob(U32 _ShaderUID) const;
+		ID3DBlob *				GetShaderBlob(U32 _ShaderUID);
 
 	private:
 #ifdef _PCDX12
@@ -82,16 +81,6 @@ namespace sys {
 		D3D11HAL							m_HAL;
 		D3D11HAL&						GetHAL() { return m_HAL; }
 #endif
-
-		IDirect3DVertexShader *			m_VSDA[SHADER_VS_COUNT];
-		IDirect3DPixelShader *			m_PSDA[SHADER_PS_COUNT];
-		ID3D11ComputeShader *			m_CSDA[SHADER_CS_COUNT];
-		ID3DBlob *						m_VSDABlob[SHADER_VS_COUNT];
-		ID3DBlob *						m_PSDABlob[SHADER_PS_COUNT];
-		ID3DBlob *						m_CSDABlob[SHADER_CS_COUNT];
-		ID3D11ShaderReflection *		m_VSDAReflection[SHADER_VS_COUNT];
-		ID3D11ShaderReflection *		m_PSDAReflection[SHADER_PS_COUNT];
-		ID3D11ShaderReflection *		m_CSDAReflection[SHADER_CS_COUNT];
 
 		// Surfaces
 		ID3D11RenderTargetView *		m_BackBuffer;

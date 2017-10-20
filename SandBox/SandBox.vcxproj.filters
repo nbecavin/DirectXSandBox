@@ -215,6 +215,12 @@
     <ClCompile Include="D3D12HALSwapChain.cpp">
       <Filter>PC\D3D12</Filter>
     </ClCompile>
+    <ClCompile Include="D3D12HALShaders.cpp">
+      <Filter>PC\D3D12</Filter>
+    </ClCompile>
+    <ClCompile Include="D3D11HALShaders.cpp">
+      <Filter>PC\D3D11</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="SandBox.h">

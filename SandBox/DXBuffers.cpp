@@ -77,7 +77,7 @@ void DXIndexBuffer::Create(U32 _Size,U32 _Usage,U32 _Fmt,void * _Datas)
 bool DXVertexBuffer::Lock(U32 OffsetToLock,U32 SizeToLock,void **pData,U32 Flags)
 {
 #ifdef _PCDX11
-	ID3D11DeviceContext * DeviceContext = GET_RDR_INSTANCE()->GetDeviceContext();
+	ID3D11DeviceContext * DeviceContext = GET_RDR_INSTANCE()->GetCommandList();
 	D3D11_MAPPED_SUBRESOURCE pMappedResource;
 	DeviceContext->Map(res,0,D3D11_MAP_WRITE_NO_OVERWRITE,0,&pMappedResource);
 	*pData = pMappedResource.pData;
@@ -90,7 +90,7 @@ bool DXVertexBuffer::Lock(U32 OffsetToLock,U32 SizeToLock,void **pData,U32 Flags
 bool DXIndexBuffer::Lock(U32 OffsetToLock,U32 SizeToLock,void **pData,U32 Flags)
 {
 #ifdef _PCDX11
-	ID3D11DeviceContext * DeviceContext = GET_RDR_INSTANCE()->GetDeviceContext();
+	ID3D11DeviceContext * DeviceContext = GET_RDR_INSTANCE()->GetCommandList();
 	D3D11_MAPPED_SUBRESOURCE pMappedResource;
 	DeviceContext->Map(res,0,D3D11_MAP_WRITE_NO_OVERWRITE,0,&pMappedResource);
 	*pData = pMappedResource.pData;
@@ -103,7 +103,7 @@ bool DXIndexBuffer::Lock(U32 OffsetToLock,U32 SizeToLock,void **pData,U32 Flags)
 void DXVertexBuffer::Unlock()
 {
 #ifdef _PCDX11
-	ID3D11DeviceContext * DeviceContext = GET_RDR_INSTANCE()->GetDeviceContext();
+	ID3D11DeviceContext * DeviceContext = GET_RDR_INSTANCE()->GetCommandList();
 	DeviceContext->Unmap(res,0);
 #endif
 }
@@ -111,7 +111,7 @@ void DXVertexBuffer::Unlock()
 void DXIndexBuffer::Unlock()
 {
 #ifdef _PCDX11
-	ID3D11DeviceContext * DeviceContext = GET_RDR_INSTANCE()->GetDeviceContext();
+	ID3D11DeviceContext * DeviceContext = GET_RDR_INSTANCE()->GetCommandList();
 	DeviceContext->Unmap(res,0);
 #endif
 }

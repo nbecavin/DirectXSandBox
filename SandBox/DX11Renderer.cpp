@@ -26,8 +26,8 @@ namespace sys {
 		GetCommandList()->ClearRenderTargetView(GetHAL().GetCurrentBackBufferView(), ClearColor, 0, nullptr);
 #elif defined(_PCDX11)
 		float ClearColor[4] = { 0.0f, 0.125f, 0.3f, 1.0f }; // red,green,blue,alpha
-		GetDeviceContext()->ClearRenderTargetView(m_BackBuffer, ClearColor);
-		GetDeviceContext()->ClearDepthStencilView(m_DepthBuffer, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.f, 0);
+		GetCommandList()->ClearRenderTargetView(m_BackBuffer, ClearColor);
+		GetCommandList()->ClearDepthStencilView(m_DepthBuffer, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.f, 0);
 #endif
 
 
@@ -62,19 +62,19 @@ namespace sys {
 
 #if defined(_PCDX11_)
 		// No geometry shader
-		GetDeviceContext()->GSSetShader(NULL,NULL,0);
+		GetCommandList()->GSSetShader(NULL,NULL,0);
 
-		GetDeviceContext()->RSSetState(m_DefaultRS);
-		GetDeviceContext()->OMSetDepthStencilState(m_DefaultDS,0);
-		GetDeviceContext()->PSSetSamplers(0,1,&m_DefaultSS);
-		GetDeviceContext()->PSSetSamplers(1,1,&m_DefaultSS);
-		GetDeviceContext()->PSSetSamplers(2,1,&m_DefaultSS);
+		GetCommandList()->RSSetState(m_DefaultRS);
+		GetCommandList()->OMSetDepthStencilState(m_DefaultDS,0);
+		GetCommandList()->PSSetSamplers(0,1,&m_DefaultSS);
+		GetCommandList()->PSSetSamplers(1,1,&m_DefaultSS);
+		GetCommandList()->PSSetSamplers(2,1,&m_DefaultSS);
 
-		GetDeviceContext()->VSSetConstantBuffers(8,1,&m_SHHemisphere);
-		GetDeviceContext()->PSSetConstantBuffers(8,1,&m_SHHemisphere);
+		GetCommandList()->VSSetConstantBuffers(8,1,&m_SHHemisphere);
+		GetCommandList()->PSSetConstantBuffers(8,1,&m_SHHemisphere);
 
-		GetDeviceContext()->VSSetConstantBuffers(9,1,&m_CameraConstant);
-		GetDeviceContext()->PSSetConstantBuffers(9,1,&m_CameraConstant);
+		GetCommandList()->VSSetConstantBuffers(9,1,&m_CameraConstant);
+		GetCommandList()->PSSetConstantBuffers(9,1,&m_CameraConstant);
 #endif
 
 /*
@@ -184,12 +184,12 @@ namespace sys {
 			//DeviceContext->RSSetState(m_TempRS);
 
 			TextureLink * rtex = reinterpret_cast<TextureLink*>(m_HdrRenderTarget->GetBinHwResId());
-			GetDeviceContext()->OMSetRenderTargets(1,&rtex->Surface,m_DepthBuffer);
+			GetCommandList()->OMSetRenderTargets(1,&rtex->Surface,m_DepthBuffer);
 			float ClearColor2[4] = { 1.0f, 1.f, 1.f, 1.0f }; // red,green,blue,alpha
-			GetDeviceContext()->ClearRenderTargetView( rtex->Surface, ClearColor2 );
+			GetCommandList()->ClearRenderTargetView( rtex->Surface, ClearColor2 );
 
 			rtex = reinterpret_cast<TextureLink*>(m_ssaoBuffer->GetBinHwResId());
-			GetDeviceContext()->PSSetShaderResources(7,1,&rtex->ShaderView);
+			GetCommandList()->PSSetShaderResources(7,1,&rtex->ShaderView);
 
 			// Setup the viewport
 			D3D11_VIEWPORT vp;
@@ -199,7 +199,7 @@ namespace sys {
 			vp.MaxDepth = 1.0f;
 			vp.TopLeftX = 0;
 			vp.TopLeftY = 0;
-			GetDeviceContext()->RSSetViewports( 1, &vp );
+			GetCommandList()->RSSetViewports( 1, &vp );
 
 			for(int i=0;i<gData.m_GraphObjectDA.GetSize();i++)
 			{
@@ -207,7 +207,7 @@ namespace sys {
 				it->Draw();
 			}
 
-			GetDeviceContext()->RSSetState(m_DefaultRS);
+			GetCommandList()->RSSetState(m_DefaultRS);
 			//m_TempRS->Release();
 		}
 //		D3DPERF_EndEvent();
@@ -220,8 +220,8 @@ namespace sys {
 		TextureLink * rtex = reinterpret_cast<TextureLink*>(m_RenderTarget->GetBinHwResId());
 		
 #if defined(_PCDX11_)
-		GetDeviceContext()->OMSetRenderTargets( 1, &rtex->Surface, m_DepthBuffer );
-		GetDeviceContext()->PSSetShaderResources(0,1,&hdrtex->ShaderView);
+		GetCommandList()->OMSetRenderTargets( 1, &rtex->Surface, m_DepthBuffer );
+		GetCommandList()->PSSetShaderResources(0,1,&hdrtex->ShaderView);
 		PushShader(SHADER_VS_BASE_SCREENVERTEX);
 		PushShader(SHADER_PS_POSTPROC_COLORGRADING);
 		FullScreenQuad(Vec2f(1.f,1.f),Vec2f(0.f,0.f));
@@ -236,15 +236,16 @@ namespace sys {
 		vp.TopLeftX = 0;
 		vp.TopLeftY = 0;
 
-#if defined(_PCDX12)
-		GetHAL().GetCommandList()->RSSetViewports(1, reinterpret_cast<D3D12_VIEWPORT*>(&vp));
+		
+#if defined(_PCDX11)
+		GetCommandList()->RSSetViewports(1, &vp);
+		GetCommandList()->OMSetRenderTargets(1, &m_BackBuffer, m_DepthBuffer);
+		GetCommandList()->PSSetShaderResources(0, 1, &rtex->ShaderView);
 #else
-		GetDeviceContext()->RSSetViewports(1, &vp);
-		GetDeviceContext()->OMSetRenderTargets(1, &m_BackBuffer, m_DepthBuffer);
-		GetDeviceContext()->PSSetShaderResources(0, 1, &rtex->ShaderView);
+		GetCommandList()->RSSetViewports(1, reinterpret_cast<D3D12_VIEWPORT*>(&vp));
+#endif
 		PushShader(SHADER_VS_BASE_SCREENVERTEX);
 		PushShader(SHADER_PS_POSTPROC_FXAA);
-#endif
 
 		FullScreenQuad(Vec2f(1.f,1.f),Vec2f(0.f,0.f));
 
@@ -275,7 +276,7 @@ namespace sys {
 
 #if defined(_PCDX11)
 		ID3D11ShaderResourceView* ppSRVNULL[1] = { NULL };
-		GetDeviceContext()->PSSetShaderResources(0,1,ppSRVNULL);
+		GetCommandList()->PSSetShaderResources(0,1,ppSRVNULL);
 #endif
 
 		GetHAL().PresentFrame();
@@ -287,12 +288,7 @@ namespace sys {
 
 	void DXRenderer::InitShaders()
 	{
-		HRESULT hr;
-
-		memset(m_VSDA,0,sizeof(m_VSDA));
-		memset(m_PSDA,0,sizeof(m_PSDA));
-		memset(m_VSDABlob,0,sizeof(m_VSDABlob));
-		memset(m_PSDABlob,0,sizeof(m_PSDABlob));
+		GetHAL().InitShaders();
 
 		// Register common shaders
 		Renderer::InitShaders();
@@ -302,8 +298,8 @@ namespace sys {
 	{
 		ReleaseAllResources();
 #ifdef _PCDX11
-		GetDeviceContext()->ClearState();
-		GetDeviceContext()->Release();
+		GetCommandList()->ClearState();
+		GetCommandList()->Release();
 #endif
 		GetHAL().Shut();
 	}
@@ -321,8 +317,19 @@ namespace sys {
 		_vec[USER_CST+0] = XMVectorSet(scale.x,scale.y,offset.x,offset.y);
 
 		UpdateVSConstants();
-		GetDeviceContext()->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP);
-		GetDeviceContext()->Draw(4,0);
+
+#ifdef _PCDX12
+		ID3D12PipelineState* PSO;
+		GetDevice()->CreateGraphicsPipelineState(&GetHAL().GetPipelineState(), IID_PPV_ARGS(&PSO));
+		GetCommandList()->SetPipelineState(PSO);
+#endif
+
+		GetCommandList()->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP);
+		GetCommandList()->DrawInstanced(4,1,0,0);
+
+#ifdef _PCDX12
+		PSO->Release();
+#endif
 	}
 
 	void DXRenderer::PostProcess()
@@ -337,43 +344,40 @@ namespace sys {
 
 	void DXRenderer::PushVertexDeclaration(VertexDeclaration* Decl)
 	{
+#ifdef _PCDX11
 		DXVertexDeclaration* dxbuffer = reinterpret_cast<DXVertexDeclaration*>(Decl);
-		GetDeviceContext()->IASetInputLayout(dxbuffer->GetRes());
+		GetCommandList()->IASetInputLayout(dxbuffer->GetRes());
 		//m_StateCache.VB = dxbuffer;
+#endif
 	}
 
 	void DXRenderer::PushStreamSource(U32 StreamNumber,VertexBuffer* Buffer,U32 Offset,U32 Stride)
 	{
+#ifdef _PCDX11
 		DXVertexBuffer* dxbuffer = reinterpret_cast<DXVertexBuffer*>(Buffer);
 		ID3D11Buffer * pBuffer = dxbuffer->GetRes();
 		UINT _Stride = Stride;
 		UINT _Offset = Offset;
-		GetDeviceContext()->IASetVertexBuffers(StreamNumber,1,&pBuffer,&_Stride,&_Offset);
+		GetCommandList()->IASetVertexBuffers(StreamNumber,1,&pBuffer,&_Stride,&_Offset);
 		m_StateCache.VB = dxbuffer;
+#endif
 	}
 
 	void DXRenderer::PushIndices(IndexBuffer* Buffer,U32 _Fmt)
 	{
+#ifdef _PCDX11
 		if(Buffer)
 		{
 			DXIndexBuffer* dxbuffer = reinterpret_cast<DXIndexBuffer*>(Buffer);
-			GetDeviceContext()->IASetIndexBuffer(dxbuffer->GetRes(),(_Fmt==FMT_IDX_32)?DXGI_FORMAT_R32_UINT:DXGI_FORMAT_R16_UINT,0);
+			GetCommandList()->IASetIndexBuffer(dxbuffer->GetRes(),(_Fmt==FMT_IDX_32)?DXGI_FORMAT_R32_UINT:DXGI_FORMAT_R16_UINT,0);
 			m_StateCache.IB = dxbuffer;
 		}
+#endif
 	}
 
 	void DXRenderer::PushDrawIndexed(PrimitiveType Type,U32 BaseVertexIndex,U32 MinVertexIndex,U32 NumVertices,U32 StartIndex,U32 PrimCount)
 	{
-	#if defined(_PCDX9)
-		D3DPRIMITIVETYPE _primType;
-		switch(Type){
-		case PRIM_TRIANGLESTRIP:	_primType=D3DPT_TRIANGLESTRIP; break;
-		case PRIM_TRIANGLELIST:		_primType=D3DPT_TRIANGLELIST; break;
-		default:
-			return;
-		}
-		Device->DrawIndexedPrimitive(_primType,BaseVertexIndex,MinVertexIndex,NumVertices,StartIndex,PrimCount);
-	#elif defined(_PCDX11)
+	
 		int index_count = 0;
 		D3D11_PRIMITIVE_TOPOLOGY _primType;
 		switch(Type){
@@ -389,8 +393,9 @@ namespace sys {
 			return;
 		}
 		UpdateVSConstants();
-		GetDeviceContext()->IASetPrimitiveTopology( _primType );
-		GetDeviceContext()->DrawIndexed(index_count,StartIndex,BaseVertexIndex);
+		GetCommandList()->IASetPrimitiveTopology( _primType );
+	#if defined(_PCDX11)
+		GetCommandList()->DrawIndexed(index_count,StartIndex,BaseVertexIndex);
 	#elif defined(_PCDX12)
 	#endif
 	}
@@ -399,54 +404,53 @@ namespace sys {
 	{
 		U32 Type = (_ShaderUID&SHADER_TYPE_MASK)>>SHADER_TYPE_BITS;
 		U32 SID = (_ShaderUID&(~SHADER_TYPE_MASK));
-		if(Type==SHADER_TYPE_VERTEX)
-		{
-			GetDeviceContext()->VSSetShader(m_VSDA[SID],NULL,0);
-		}
-		if(Type==SHADER_TYPE_PIXEL)
-		{
-			GetDeviceContext()->PSSetShader(m_PSDA[SID],NULL,0);
-		}
+		GetHAL().SetShaders(Type, SID);
 	}
 
 	void DXRenderer::PushMaterial(Material* Mat)
 	{
+#if defined(_PCDX11)
 		Bitmap* bm = NULL;
 		bm = Mat->GetBitmap(MTL_STAGE_DIFFUSE);
 		if(bm)
 		{
 			TextureLink * tex = reinterpret_cast<TextureLink*>(bm->GetBinHwResId());
-			GetDeviceContext()->PSSetShaderResources(0,1,&tex->ShaderView);
+			GetCommandList()->PSSetShaderResources(0,1,&tex->ShaderView);
 		}
 		bm = Mat->GetBitmap(MTL_STAGE_NORMAL);
 		if(bm)
 		{
 			TextureLink * tex = reinterpret_cast<TextureLink*>(bm->GetBinHwResId());
-			GetDeviceContext()->PSSetShaderResources(1,1,&tex->ShaderView);
+			GetCommandList()->PSSetShaderResources(1,1,&tex->ShaderView);
 		}
 		bm = Mat->GetBitmap(MTL_STAGE_SPEC);
 		if(bm)
 		{
 			TextureLink * tex = reinterpret_cast<TextureLink*>(bm->GetBinHwResId());
-			GetDeviceContext()->PSSetShaderResources(2,1,&tex->ShaderView);
+			GetCommandList()->PSSetShaderResources(2,1,&tex->ShaderView);
 		}
+#endif
 	}
 
 	void DXRenderer::UpdateVSConstants()
 	{
+#if defined(_PCDX11)
 		D3D11_MAPPED_SUBRESOURCE pMappedResource;
-		GetDeviceContext()->Map(m_VSConstant,0,D3D11_MAP_WRITE_DISCARD,0,&pMappedResource);
+		GetCommandList()->Map(m_VSConstant,0,D3D11_MAP_WRITE_DISCARD,0,&pMappedResource);
 		memcpy(pMappedResource.pData,m_VSConstantCache,VS_CONSTANT_BUFFER_SIZE);
-		GetDeviceContext()->Unmap(m_VSConstant,0);
-		GetDeviceContext()->VSSetConstantBuffers( 0, 1, &m_VSConstant );
+		GetCommandList()->Unmap(m_VSConstant,0);
+		GetCommandList()->VSSetConstantBuffers( 0, 1, &m_VSConstant );
+#endif
 	}
 
 	void DXRenderer::UpdateConstantBuffer(ID3D11Buffer * _Buffer,void* _DataPtr,U32 _DataSize)
 	{
+#if defined(_PCDX11)
 		D3D11_MAPPED_SUBRESOURCE pMappedResource;
-		GetDeviceContext()->Map(_Buffer,0,D3D11_MAP_WRITE_DISCARD,0,&pMappedResource);
+		GetCommandList()->Map(_Buffer,0,D3D11_MAP_WRITE_DISCARD,0,&pMappedResource);
 		memcpy(pMappedResource.pData,_DataPtr,_DataSize);
-		GetDeviceContext()->Unmap(_Buffer,0);
+		GetCommandList()->Unmap(_Buffer,0);
+#endif
 	}
 	
 };

@@ -10,17 +10,30 @@ public:
 
 	void PresentFrame();
 
+	void CreateShaderResource(ID3DBlob * pCode, UINT Type, UINT SID);
+
+	void InitShaders();
+	void SetShaders(UINT Type, UINT SID);
+	ID3DBlob * GetShaderBlob(UINT Type, UINT SID)
+	{
+		if (Type == SHADER_TYPE_VERTEX)
+		{
+			return m_VSDABlob[SID];
+		}
+		if (Type == SHADER_TYPE_PIXEL)
+		{
+			return m_PSDABlob[SID];
+		}
+		return NULL;
+	}
+
 	ID3D12Device* GetDevice() { return m_Device.Get(); }
 	ID3D12GraphicsCommandList* GetCommandList() { return m_CommandList.Get(); }
+	D3D12_GRAPHICS_PIPELINE_STATE_DESC& GetPipelineState() { return m_CurrentPSO; }
 
 	D3D12_CPU_DESCRIPTOR_HANDLE& GetCurrentBackBufferView() {
 		return m_RenderTargetsView[m_FrameIndex];
 	}
-
-	// --- to remove
-	ID3D11DeviceContext* GetImmediateDeviceContext() { return (ID3D11DeviceContext*)nullptr; }
-	IDXGISwapChain* GetSwapChain() { return m_SwapChain.Get(); }
-	// --- to remove
 
 private:
 	ComPtr<IDXGIFactory4>				m_DxgiFactory;
@@ -41,4 +54,19 @@ private:
 	UINT								m_RtvDescriptorSize;
 	ComPtr<ID3D12Resource>				m_RenderTargets[m_BufferCount];
 	D3D12_CPU_DESCRIPTOR_HANDLE			m_RenderTargetsView[m_BufferCount];
+
+	// Current PSO
+	D3D12_GRAPHICS_PIPELINE_STATE_DESC	m_CurrentPSO;
+
+	//
+	D3D12_SHADER_BYTECODE			m_VSDA[SHADER_VS_COUNT];
+	D3D12_SHADER_BYTECODE			m_PSDA[SHADER_PS_COUNT];
+	D3D12_SHADER_BYTECODE			m_CSDA[SHADER_CS_COUNT];
+	ID3DBlob *						m_VSDABlob[SHADER_VS_COUNT];
+	ID3DBlob *						m_PSDABlob[SHADER_PS_COUNT];
+	ID3DBlob *						m_CSDABlob[SHADER_CS_COUNT];
+	ID3D12ShaderReflection *		m_VSDAReflection[SHADER_VS_COUNT];
+	ID3D12ShaderReflection *		m_PSDAReflection[SHADER_PS_COUNT];
+	ID3D12ShaderReflection *		m_CSDAReflection[SHADER_CS_COUNT];
+
 };

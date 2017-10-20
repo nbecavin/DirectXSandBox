@@ -1,5 +1,6 @@
 #include "stdafx.h"
 #if defined(_PCDX12)
+#include <Renderer.h>
 #include <D3D12HAL.h>
 #include <WinMain.h>
 
@@ -143,6 +144,24 @@ void D3D12HAL::Init(int sizeX, int sizeY, sys::Renderer* owner)
 	barrier.Transition.StateBefore = D3D12_RESOURCE_STATE_PRESENT;
 	barrier.Transition.StateAfter = D3D12_RESOURCE_STATE_RENDER_TARGET;
 	m_CommandList->ResourceBarrier(1, &barrier);
+
+	memset(&m_CurrentPSO, 0, sizeof(m_CurrentPSO));
+
+	D3D12_RASTERIZER_DESC rs;
+	rs.AntialiasedLineEnable = FALSE;
+	rs.CullMode = D3D12_CULL_MODE_NONE;
+	rs.DepthBias = 0.f;
+	rs.DepthBiasClamp = 0.f;
+	rs.DepthClipEnable = TRUE;
+	rs.FillMode = D3D12_FILL_MODE_SOLID;
+	rs.FrontCounterClockwise = FALSE;
+	rs.MultisampleEnable = FALSE;
+	rs.SlopeScaledDepthBias = 0.f;
+	rs.ForcedSampleCount = 1;
+	rs.ConservativeRaster = D3D12_CONSERVATIVE_RASTERIZATION_MODE_OFF;
+	m_CurrentPSO.RasterizerState = rs;
+
+	m_CurrentPSO.pRootSignature = m_RootSignature.Get();
 
 	OutputDebugString("DX12 Renderer is up and running");
 }

@@ -88,7 +88,7 @@ namespace sys
         if( FAILED( hr ) )
             return hr;
 
-		GetDeviceContext()->OMSetRenderTargets( 1, &m_BackBuffer, m_DepthBuffer );
+		GetCommandList()->OMSetRenderTargets( 1, &m_BackBuffer, m_DepthBuffer );
 
 		// Fill in a buffer description.
 		D3D11_BUFFER_DESC cbDesc;
