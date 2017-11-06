@@ -1,8 +1,15 @@
 #if defined(_PC)
 
-#include <DXRenderer.h>
+#include <DX11Renderer.h>
 #include <WinMain.h>
 #include <DXBuffers.h>
+#if defined(_PCDX12)
+#include <D3D12HAL.h>
+#include <D3D12HALBuffers.h>
+#elif defined(_PCDX11)
+#include <D3D11HAL.h>
+#include <D3D11HALBuffers.h>
+#endif
 #include <Material.h>
 #include <Bitmap.h>
 
@@ -14,20 +21,22 @@ namespace sys {
 
 	VertexBuffer*	DXRenderer::CreateVertexBuffer(U32 _Size,U32 _Usage,void* _Datas)
 	{
-		DXVertexBuffer * buffer = m_VertexBufferDA.Add();
+		DXVertexBuffer ** buffer = m_VertexBufferDA.Add();
+		buffer[0] = new DXVertexBuffer();
 		MESSAGE("Begin create VB");
-		buffer->Create(_Size,_Usage,_Datas);
+		buffer[0]->Create(_Size,_Usage,_Datas);
 		MESSAGE("End create VB");
-		return (buffer->IsInited()) ? buffer : NULL;
+		return (buffer[0]->IsInited()) ? buffer[0] : NULL;
 	}
 
 	IndexBuffer*	DXRenderer::CreateIndexBuffer(U32 _Size,U32 _Usage,U32 _Fmt,void* _Datas)
 	{
-		DXIndexBuffer * buffer = m_IndexBufferDA.Add();
+		DXIndexBuffer ** buffer = m_IndexBufferDA.Add();
+		buffer[0] = new DXIndexBuffer();
 		MESSAGE("Begin create IB");
-		buffer->Create(_Size,_Usage,_Fmt,_Datas);
+		buffer[0]->Create(_Size,_Usage,_Fmt,_Datas);
 		MESSAGE("End create IB");
-		return (buffer->IsInited()) ? buffer : NULL;
+		return (buffer[0]->IsInited()) ? buffer[0] : NULL;
 	}
 
 	VertexDeclaration*	DXRenderer::CreateVertexDecl(VertexElement *Decl,U32 _ShaderUID)

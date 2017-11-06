@@ -3,13 +3,13 @@
 
 #include <Renderer.h>
 #include <ShaderConstants.h>
-#include <DXBuffers.h>
 
 #if defined(_PCDX12)
 #include <D3D12HAL.h>
 #elif defined(_PCDX11)
 #include <D3D11HAL.h>
 #endif
+#include <DXBuffers.h>
 
 #if defined(_PCDX11) || defined(_PCDX12)
 

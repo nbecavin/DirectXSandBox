@@ -221,6 +221,12 @@
     <ClCompile Include="D3D11HALShaders.cpp">
       <Filter>PC\D3D11</Filter>
     </ClCompile>
+    <ClCompile Include="D3D11HALBuffers.cpp">
+      <Filter>PC\D3D11</Filter>
+    </ClCompile>
+    <ClCompile Include="D3D12HALBuffers.cpp">
+      <Filter>PC\D3D12</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="SandBox.h">
@@ -355,6 +361,12 @@
     </ClInclude>
     <ClInclude Include="Includes\D3D11HAL.h">
       <Filter>PC\D3D11</Filter>
+    </ClInclude>
+    <ClInclude Include="Includes\D3D11HALBuffers.h">
+      <Filter>PC\D3D11</Filter>
+    </ClInclude>
+    <ClInclude Include="Includes\D3D12HALBuffers.h">
+      <Filter>PC\D3D12</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

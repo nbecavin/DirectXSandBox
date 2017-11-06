@@ -1,5 +1,7 @@
 #pragma once
 
+#include <D3D11HALBuffers.h>
+
 using namespace Microsoft::WRL;
 
 class D3D11HAL
