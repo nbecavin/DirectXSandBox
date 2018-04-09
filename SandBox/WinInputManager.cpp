@@ -18,7 +18,6 @@ namespace sys
 	{
 		InputManager::Init();
 
-	#if WINAPI_FAMILY_ONE_PARTITION( WINAPI_FAMILY, WINAPI_PARTITION_DESKTOP )
 		//
 		// Create DirectInput
 		HRESULT hr = DirectInput8Create(sys::pc::hInstance, DIRECTINPUT_VERSION, IID_IDirectInput8, (void**)(&m_DirectInput),NULL);
@@ -26,14 +25,11 @@ namespace sys
 	
 		hr = m_DirectInput->CreateDevice(GUID_SysMouse,&m_DeviceMouse,NULL);
 		m_DeviceMouse->SetDataFormat(&c_dfDIMouse2);
-	#endif
 	}
 
 	void WinInputManager::Shut()
 	{
-	#if WINAPI_FAMILY_ONE_PARTITION( WINAPI_FAMILY, WINAPI_PARTITION_DESKTOP )
 		m_DirectInput->Release();
-	#endif
 
 		InputManager::Shut();
 	}
@@ -84,12 +80,10 @@ namespace sys
 
 	void WinInputManager::Update(float dTime)
 	{
-	#if WINAPI_FAMILY_ONE_PARTITION( WINAPI_FAMILY, WINAPI_PARTITION_DESKTOP )
 		// Update from mouse
 		m_DeviceMouse->Acquire();
 		DIMOUSESTATE2 lMouseState;
 		m_DeviceMouse->GetDeviceState(sizeof(lMouseState),&lMouseState);
-	#endif
 		
 		for(int i=0;i<XUSER_MAX_COUNT;i++)
 		{

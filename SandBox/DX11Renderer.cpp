@@ -321,6 +321,9 @@ namespace sys {
 #ifdef _PCDX12
 		ID3D12PipelineState* PSO;
 		GetDevice()->CreateGraphicsPipelineState(&GetHAL().GetPipelineState(), IID_PPV_ARGS(&PSO));
+
+		PSO->SetName(L"test");
+
 		GetCommandList()->SetPipelineState(PSO);
 #endif
 
@@ -353,26 +356,34 @@ namespace sys {
 
 	void DXRenderer::PushStreamSource(U32 StreamNumber,VertexBuffer* Buffer,U32 Offset,U32 Stride)
 	{
-#ifdef _PCDX11
 		DXVertexBuffer* dxbuffer = reinterpret_cast<DXVertexBuffer*>(Buffer);
+#ifdef _PCDX11
 		ID3D11Buffer * pBuffer = dxbuffer->GetRes();
 		UINT _Stride = Stride;
 		UINT _Offset = Offset;
 		GetCommandList()->IASetVertexBuffers(StreamNumber,1,&pBuffer,&_Stride,&_Offset);
-		m_StateCache.VB = dxbuffer;
+#else
+		D3D12_VERTEX_BUFFER_VIEW view = dxbuffer->GetView();
+		view.BufferLocation += Offset*Stride;
+		view.StrideInBytes = Stride;
+		GetCommandList()->IASetVertexBuffers(StreamNumber, 1, &view);
 #endif
+		m_StateCache.VB = dxbuffer;
 	}
 
 	void DXRenderer::PushIndices(IndexBuffer* Buffer,U32 _Fmt)
 	{
-#ifdef _PCDX11
 		if(Buffer)
 		{
 			DXIndexBuffer* dxbuffer = reinterpret_cast<DXIndexBuffer*>(Buffer);
+#ifdef _PCDX11
 			GetCommandList()->IASetIndexBuffer(dxbuffer->GetRes(),(_Fmt==FMT_IDX_32)?DXGI_FORMAT_R32_UINT:DXGI_FORMAT_R16_UINT,0);
+#else
+			GetCommandList()->IASetIndexBuffer(&dxbuffer->GetView());
+#endif
 			m_StateCache.IB = dxbuffer;
 		}
-#endif
+
 	}
 
 	void DXRenderer::PushDrawIndexed(PrimitiveType Type,U32 BaseVertexIndex,U32 MinVertexIndex,U32 NumVertices,U32 StartIndex,U32 PrimCount)
@@ -440,6 +451,9 @@ namespace sys {
 		memcpy(pMappedResource.pData,m_VSConstantCache,VS_CONSTANT_BUFFER_SIZE);
 		GetCommandList()->Unmap(m_VSConstant,0);
 		GetCommandList()->VSSetConstantBuffers( 0, 1, &m_VSConstant );
+#else
+
+		//GetCommandList()->SetGraphicsRootConstantBufferView(0, );
 #endif
 	}
 

@@ -164,7 +164,6 @@ namespace sys
 		if(!Renderer::InitStaticDatas())
 			return FALSE;
 
-
 #ifdef _PCDX11
 		XMFLOAT3	lightDir;
 

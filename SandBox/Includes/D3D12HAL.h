@@ -1,6 +1,7 @@
 #pragma once
 
 #include <D3D12HALBuffers.h>
+#include <D3D12HALConstantBuffer.h>
 
 using namespace Microsoft::WRL;
 
@@ -59,6 +60,8 @@ private:
 
 	// Current PSO
 	D3D12_GRAPHICS_PIPELINE_STATE_DESC	m_CurrentPSO;
+
+	D3D12ConstantBuffer					m_GlobalConstantBuffer;
 
 	//
 	D3D12_SHADER_BYTECODE			m_VSDA[SHADER_VS_COUNT];

@@ -412,7 +412,7 @@ static void GetSurfaceInfo( UINT width, UINT height, DXGI_FORMAT fmt, UINT* pNum
 			pData = Data;
 		}
 
-		_Bm->BinHwResId((U32)tex);
+		_Bm->BinHwResId((U64)tex);
 
 		if(_Bm->GetType()&BM_TYPE_2D)
 		{

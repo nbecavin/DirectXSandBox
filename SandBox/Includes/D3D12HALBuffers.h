@@ -7,10 +7,13 @@ typedef ID3D12Resource				IDirect3DVertexBuffer;
 
 class D3D12VertexBuffer : public VertexBuffer {
 private:
-	IDirect3DVertexBuffer *	res;
+	IDirect3DVertexBuffer *		res;
+	D3D12_RANGE					m_LockedRange;
+	D3D12_VERTEX_BUFFER_VIEW	m_BufferView;
 public:
 	D3D12VertexBuffer() : res(NULL) {}
 	IDirect3DVertexBuffer * GetRes() { return res; }
+	D3D12_VERTEX_BUFFER_VIEW GetView() { return m_BufferView; }
 	virtual void Create(U32 _Size, U32 _Usage, void * _Datas);
 	virtual bool IsInited() { return res != NULL; }
 	virtual void operator = (D3D12VertexBuffer& _buffer)
@@ -24,10 +27,13 @@ typedef D3D12VertexBuffer DXVertexBuffer;
 
 class D3D12IndexBuffer : public IndexBuffer {
 private:
-	IDirect3DIndexBuffer *	res;
+	IDirect3DIndexBuffer *		res;
+	D3D12_RANGE					m_LockedRange;
+	D3D12_INDEX_BUFFER_VIEW		m_BufferView;
 public:
 	D3D12IndexBuffer() : res(NULL) {}
 	IDirect3DIndexBuffer * GetRes() { return res; }
+	D3D12_INDEX_BUFFER_VIEW GetView() { return m_BufferView; }
 	virtual void Create(U32 _Size, U32 _Usage, U32 _Fmt = FMT_IDX_16, void * _Datas = NULL);
 	virtual bool IsInited() { return res != NULL; }
 	virtual void operator = (D3D12IndexBuffer& _buffer)

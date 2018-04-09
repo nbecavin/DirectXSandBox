@@ -163,6 +163,8 @@ void D3D12HAL::Init(int sizeX, int sizeY, sys::Renderer* owner)
 
 	m_CurrentPSO.pRootSignature = m_RootSignature.Get();
 
+	m_GlobalConstantBuffer.Init();
+
 	OutputDebugString("DX12 Renderer is up and running");
 }
 
