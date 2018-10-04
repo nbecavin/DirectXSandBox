@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project DefaultTargets="Build" ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug DX11|Win32">
       <Configuration>Debug DX11</Configuration>
@@ -31,40 +31,40 @@
     <RootNamespace>SandBox</RootNamespace>
     <Keyword>Win32Proj</Keyword>
     <MinimumVisualStudioVersion>11.0</MinimumVisualStudioVersion>
-    <WindowsTargetPlatformVersion>10.0.14393.0</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformVersion>10.0.17134.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release DX11|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <CharacterSet>MultiByte</CharacterSet>
     <WholeProgramOptimization>true</WholeProgramOptimization>
-    <PlatformToolset>v110</PlatformToolset>
+    <PlatformToolset>v141</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release DX11|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <CharacterSet>MultiByte</CharacterSet>
     <WholeProgramOptimization>true</WholeProgramOptimization>
-    <PlatformToolset>v110</PlatformToolset>
+    <PlatformToolset>v141</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug DX11|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <CharacterSet>MultiByte</CharacterSet>
-    <PlatformToolset>v140</PlatformToolset>
+    <PlatformToolset>v141</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug DX11|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <CharacterSet>MultiByte</CharacterSet>
-    <PlatformToolset>v140</PlatformToolset>
+    <PlatformToolset>v141</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug DX12|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <CharacterSet>MultiByte</CharacterSet>
-    <PlatformToolset>v140</PlatformToolset>
+    <PlatformToolset>v141</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug DX12|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <CharacterSet>MultiByte</CharacterSet>
-    <PlatformToolset>v140</PlatformToolset>
+    <PlatformToolset>v141</PlatformToolset>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
   <ImportGroup Label="ExtensionSettings">
@@ -268,12 +268,6 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="AndroidFile.cpp" />
-    <ClCompile Include="AndroidInputManager.cpp" />
-    <ClCompile Include="AndroidMain.cpp" />
-    <ClCompile Include="AndroidRenderer.cpp" />
-    <ClCompile Include="AndroidRendererResource.cpp" />
-    <ClCompile Include="AndroidTimer.cpp" />
     <ClCompile Include="AssetCache.cpp" />
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="CameraFree.cpp" />
@@ -284,7 +278,6 @@
     <ClCompile Include="D3D12HALConstantBuffer.cpp" />
     <ClCompile Include="D3D12HALShaders.cpp" />
     <ClCompile Include="D3D12HALSwapChain.cpp" />
-    <ClCompile Include="GLBuffers.cpp" />
     <ClCompile Include="GraphObject.cpp" />
     <ClCompile Include="SandBox.cpp" />
     <ClCompile Include="SandBoxFile.cpp" />
@@ -326,10 +319,6 @@
     <Text Include="..\Shaders\fxaa.h" />
     <Text Include="..\Shaders\fxaa2.h" />
     <Text Include="..\Shaders\sh_shadow.h" />
-    <ClInclude Include="Includes\AndroidFile.h" />
-    <ClInclude Include="Includes\AndroidInputManager.h" />
-    <ClInclude Include="Includes\AndroidMain.h" />
-    <ClInclude Include="Includes\AndroidRenderer.h" />
     <ClInclude Include="Includes\AssetCache.h" />
     <ClInclude Include="Includes\Camera.h" />
     <ClInclude Include="Includes\CameraFree.h" />
@@ -339,7 +328,6 @@
     <ClInclude Include="Includes\D3D12HALBuffers.h" />
     <ClInclude Include="Includes\D3D12HALConstantBuffer.h" />
     <ClInclude Include="Includes\d3dx12.h" />
-    <ClInclude Include="Includes\GLBuffers.h" />
     <ClInclude Include="Includes\SandBoxFile.h" />
     <ClInclude Include="Includes\ScriptObject.h" />
     <ClInclude Include="Includes\WinFile.h" />
@@ -410,7 +398,6 @@
     </Text>
     <None Include="d3dcompiler_46.dll" />
     <None Include="SandBox.ico" />
-    <None Include="SandBox_TemporaryKey.pfx" />
     <None Include="small.ico" />
     <None Include="ReadMe.txt" />
   </ItemGroup>

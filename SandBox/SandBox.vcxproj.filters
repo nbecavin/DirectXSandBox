@@ -78,9 +78,6 @@
     <Filter Include="Shaders\Compute">
       <UniqueIdentifier>{2ff3407c-25bd-47e9-b544-7580d4e4f057}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Android">
-      <UniqueIdentifier>{2c4aa372-6192-4a93-9de5-e42cdbce2f5e}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Assets">
       <UniqueIdentifier>{f2e75475-53ea-4f0b-9c5f-f4bd37caeb32}</UniqueIdentifier>
     </Filter>
@@ -176,32 +173,11 @@
     <ClCompile Include="AssetCache.cpp">
       <Filter>Common Platform\Assets</Filter>
     </ClCompile>
-    <ClCompile Include="AndroidMain.cpp">
-      <Filter>Android</Filter>
-    </ClCompile>
-    <ClCompile Include="AndroidRenderer.cpp">
-      <Filter>Android</Filter>
-    </ClCompile>
-    <ClCompile Include="AndroidInputManager.cpp">
-      <Filter>Android</Filter>
-    </ClCompile>
-    <ClCompile Include="AndroidRendererResource.cpp">
-      <Filter>Android</Filter>
-    </ClCompile>
-    <ClCompile Include="AndroidTimer.cpp">
-      <Filter>Android</Filter>
-    </ClCompile>
-    <ClCompile Include="GLBuffers.cpp">
-      <Filter>Android</Filter>
-    </ClCompile>
     <ClCompile Include="SandBoxFile.cpp">
       <Filter>Common Platform\System</Filter>
     </ClCompile>
     <ClCompile Include="WinFile.cpp">
       <Filter>PC</Filter>
-    </ClCompile>
-    <ClCompile Include="AndroidFile.cpp">
-      <Filter>Android</Filter>
     </ClCompile>
     <ClCompile Include="DX11Renderer.cpp">
       <Filter>PC</Filter>
@@ -335,23 +311,8 @@
     <ClInclude Include="Includes\AssetCache.h">
       <Filter>Common Platform\Assets</Filter>
     </ClInclude>
-    <ClInclude Include="Includes\AndroidMain.h">
-      <Filter>Android</Filter>
-    </ClInclude>
-    <ClInclude Include="Includes\AndroidRenderer.h">
-      <Filter>Android</Filter>
-    </ClInclude>
-    <ClInclude Include="Includes\AndroidInputManager.h">
-      <Filter>Android</Filter>
-    </ClInclude>
-    <ClInclude Include="Includes\GLBuffers.h">
-      <Filter>Android</Filter>
-    </ClInclude>
     <ClInclude Include="Includes\WinFile.h">
       <Filter>PC</Filter>
-    </ClInclude>
-    <ClInclude Include="Includes\AndroidFile.h">
-      <Filter>Android</Filter>
     </ClInclude>
     <ClInclude Include="Includes\SandBoxFile.h">
       <Filter>Common Platform\System</Filter>
@@ -389,7 +350,6 @@
     <None Include="..\Shaders\shaders.compile.bat">
       <Filter>Shaders</Filter>
     </None>
-    <None Include="SandBox_TemporaryKey.pfx" />
     <None Include="d3dcompiler_46.dll" />
   </ItemGroup>
   <ItemGroup>
