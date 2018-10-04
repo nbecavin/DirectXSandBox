@@ -30,8 +30,6 @@ namespace sys {
 		GetCommandList()->ClearDepthStencilView(m_DepthBuffer, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.f, 0);
 #endif
 
-
-
 		//une view et une proj de base
 		XMMATRIX m,proj,view;
 		XMVECTOR eye = XMVectorSet(0,1,-5,0);
@@ -50,7 +48,7 @@ namespace sys {
 		camCst.InvProjMatrix = XMMatrixTranspose(XMMatrixInverse(&det,proj));
 		//camCst.InvViewProjMatrix = ;
 
-#if defined(_PCDX11_)
+#if defined(_PCDX11)
 		UpdateConstantBuffer(m_CameraConstant,&camCst,sizeof(camCst));
 #endif
 
@@ -60,7 +58,7 @@ namespace sys {
 		Vec4f * _vec = (Vec4f*)(m_VSConstantCache);
 		_vec[EYE_CST] = m_Camera->GetWorldPosition();
 
-#if defined(_PCDX11_)
+#if defined(_PCDX11)
 		// No geometry shader
 		GetCommandList()->GSSetShader(NULL,NULL,0);
 
@@ -82,9 +80,9 @@ namespace sys {
 //		D3DPERF_BeginEvent(0,L"GBuffer");
 		{
 			TextureLink * rtex = reinterpret_cast<TextureLink*>( m_gBuffer[0]->GetBinHwResId());
-			DeviceContext->OMSetRenderTargets(1,&rtex->Surface,m_DepthBuffer);
+			GetCommandList()->OMSetRenderTargets(1,&rtex->Surface,m_DepthBuffer);
 			float ClearColor2[4] = { 1.0f, 1.f, 1.f, 1.0f }; // red,green,blue,alpha
-			DeviceContext->ClearRenderTargetView( rtex->Surface, ClearColor2 );
+			GetCommandList()->ClearRenderTargetView( rtex->Surface, ClearColor2 );
 
 			// Setup the viewport
 			D3D11_VIEWPORT vp;
@@ -94,7 +92,7 @@ namespace sys {
 			vp.MaxDepth = 1.0f;
 			vp.TopLeftX = 0;
 			vp.TopLeftY = 0;
-			DeviceContext->RSSetViewports( 1, &vp );
+			GetCommandList()->RSSetViewports( 1, &vp );
 
 			for(int i=0;i<gData.m_GraphObjectDA.GetSize();i++)
 			{
@@ -107,19 +105,19 @@ namespace sys {
 //		D3DPERF_BeginEvent(0xff0000ff,L"Deferred");
 		{
 			TextureLink * rtex = reinterpret_cast<TextureLink*>(m_lightBuffer->GetBinHwResId());
-			DeviceContext->OMSetRenderTargets(1,&rtex->Surface,m_DepthBuffer);
+			GetCommandList()->OMSetRenderTargets(1,&rtex->Surface,m_DepthBuffer);
 			float ClearColor2[4] = { 0.0f, 0.f, 0.f, 1.0f }; // red,green,blue,alpha
-			DeviceContext->ClearRenderTargetView( rtex->Surface, ClearColor2 );
-			DeviceContext->OMSetDepthStencilState(m_DSS_NoZWrite,0);
+			GetCommandList()->ClearRenderTargetView( rtex->Surface, ClearColor2 );
+			GetCommandList()->OMSetDepthStencilState(m_DSS_NoZWrite,0);
 			PushShader(SHADER_VS_BASE_SCREENVERTEX);
 			PushShader(SHADER_PS_POSTPROC_PASSTHROUGH);
 			FullScreenQuad(Vec2f(1.f,1.f),Vec2f(0.f,0.f));
-			DeviceContext->OMSetDepthStencilState(m_DefaultDS,0);
+			GetCommandList()->OMSetDepthStencilState(m_DefaultDS,0);
 
 			// SSAO
 //			D3DPERF_BeginEvent(0,L"SSAO");
 			{
-				DeviceContext->OMSetDepthStencilState(m_DSS_NoZWrite,0);
+				GetCommandList()->OMSetDepthStencilState(m_DSS_NoZWrite,0);
 
 				PostProcessConstant m_ShaderConstant;
 
@@ -134,37 +132,36 @@ namespace sys {
    				m_ShaderConstant.gPostProcess[3].z = 0.15f;
    				m_ShaderConstant.gPostProcess[3].w = 0.45f;
 
-				DeviceContext->PSSetSamplers(0,1,&m_NoBilinearSS);
+				GetCommandList()->PSSetSamplers(0,1,&m_NoBilinearSS);
 
 				TextureLink * linearDepthBuffer = reinterpret_cast<TextureLink*>(m_linearZBuffer->GetBinHwResId());
-				DeviceContext->OMSetRenderTargets(1,&linearDepthBuffer->Surface,NULL);
-				DeviceContext->PSSetShaderResources(0,1,&m_ZBuffer);
+				GetCommandList()->OMSetRenderTargets(1,&linearDepthBuffer->Surface,NULL);
+				GetCommandList()->PSSetShaderResources(0,1,&m_ZBuffer);
 				PushShader(SHADER_VS_BASE_SCREENVERTEX);
 				PushShader(SHADER_PS_LINEAR_DEPTH);
 				UpdateConstantBuffer(m_PostProcessConstant,&m_ShaderConstant,sizeof(m_ShaderConstant));
-				DeviceContext->PSSetConstantBuffers(10,1,&m_PostProcessConstant);
+				GetCommandList()->PSSetConstantBuffers(10,1,&m_PostProcessConstant);
 				FullScreenQuad(Vec2f(1.f,1.f),Vec2f(0.f,0.f));
 
 				rtex = reinterpret_cast<TextureLink*>(m_ssaoBuffer->GetBinHwResId());
-				DeviceContext->OMSetRenderTargets(1,&rtex->Surface,NULL);
+				GetCommandList()->OMSetRenderTargets(1,&rtex->Surface,NULL);
 				//DeviceContext->ClearRenderTargetView( rtex->Surface, ClearColor2 );
-				DeviceContext->PSSetShaderResources(0,1,&linearDepthBuffer->ShaderView);
+				GetCommandList()->PSSetShaderResources(0,1,&linearDepthBuffer->ShaderView);
 				PushShader(SHADER_VS_BASE_SCREENVERTEX);
 				PushShader(SHADER_PS_SSAO);
 				UpdateConstantBuffer(m_PostProcessConstant,&m_ShaderConstant,sizeof(m_ShaderConstant));
-				DeviceContext->PSSetConstantBuffers(10,1,&m_PostProcessConstant);
+				GetCommandList()->PSSetConstantBuffers(10,1,&m_PostProcessConstant);
 				FullScreenQuad(Vec2f(1.f,1.f),Vec2f(0.f,0.f));
-				DeviceContext->OMSetDepthStencilState(m_DefaultDS,0);
-				DeviceContext->PSSetShaderResources(0,0,NULL);
-				DeviceContext->PSSetSamplers(0,1,&m_DefaultSS);
+				GetCommandList()->OMSetDepthStencilState(m_DefaultDS,0);
+				GetCommandList()->PSSetShaderResources(0,0,NULL);
+				GetCommandList()->PSSetSamplers(0,1,&m_DefaultSS);
 			}
 //			D3DPERF_EndEvent();
 		}
 //		D3DPERF_EndEvent();
-
 */
 
-#if defined(_PCDX11_)
+#if defined(_PCDX11)
 
 //		D3DPERF_BeginEvent(0,L"Forward");
 		{
@@ -219,7 +216,7 @@ namespace sys {
 		TextureLink * hdrtex = reinterpret_cast<TextureLink*>(m_HdrRenderTarget->GetBinHwResId());
 		TextureLink * rtex = reinterpret_cast<TextureLink*>(m_RenderTarget->GetBinHwResId());
 		
-#if defined(_PCDX11_)
+#if defined(_PCDX11)
 		GetCommandList()->OMSetRenderTargets( 1, &rtex->Surface, m_DepthBuffer );
 		GetCommandList()->PSSetShaderResources(0,1,&hdrtex->ShaderView);
 		PushShader(SHADER_VS_BASE_SCREENVERTEX);
@@ -453,7 +450,7 @@ namespace sys {
 		GetCommandList()->VSSetConstantBuffers( 0, 1, &m_VSConstant );
 #else
 
-		//GetCommandList()->SetGraphicsRootConstantBufferView(0, );
+		GetCommandList()->SetGraphicsRootConstantBufferView(0, 0, 0);
 #endif
 	}
 
