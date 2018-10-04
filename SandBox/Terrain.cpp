@@ -153,14 +153,14 @@ MESSAGE("CREATE VBIB for TERRAIN");
 		m_IB = gData.Rdr->CreateIndexBuffer(num_index*sizeof(U16),0,FMT_IDX_16,NULL);
 
 		VertexTerrain * pVtxData;
-		if(m_VB && m_VB->Lock(0,0,(void**)&pVtxData,0)==true)
+		if(m_VB && m_VB->Lock(0,0,(void**)&pVtxData)==true)
 		{
 			memcpy(pVtxData,VtxDA.GetArrayPtr(),VtxDA.GetArraySize());
 			m_VB->Unlock();
 		}
 
 		U16 * pIdxData;
-		if(m_IB && m_IB->Lock(0,0,(void**)&pIdxData,0)==true)
+		if(m_IB && m_IB->Lock(0,0,(void**)&pIdxData)==true)
 		{
 			memcpy(pIdxData,FaceDA.GetArrayPtr(),FaceDA.GetArraySize());
 			m_IB->Unlock();

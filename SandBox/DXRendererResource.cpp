@@ -24,7 +24,7 @@ namespace sys {
 		DXVertexBuffer ** buffer = m_VertexBufferDA.Add();
 		buffer[0] = new DXVertexBuffer();
 		MESSAGE("Begin create VB");
-		buffer[0]->Create(_Size,_Usage,_Datas);
+		buffer[0]->Create(_Size,_Usage,0,_Datas);
 		MESSAGE("End create VB");
 		return (buffer[0]->IsInited()) ? buffer[0] : NULL;
 	}

@@ -36,6 +36,7 @@ void D3D12VertexBuffer::Create(U32 _Size, U32 _Usage, void * _Datas)
 		//bufferDesc.MiscFlags = 0;
 	}
 	
+	Size = bufferDesc.ByteWidth;
 	//D3D12_HEAP_PROPERTIES
 
 	Device->CreateCommittedResource(

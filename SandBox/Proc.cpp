@@ -170,7 +170,7 @@ void Proc::Update(F32 dTime)
 			//m_IB = gData.Rdr->CreateIndexBuffer(num_index*sizeof(U16),0,NULL);
 
 			VertexTerrain * pVtxData;
-			if(m_VB && m_VB->Lock(0,0,(void**)&pVtxData,0)==true)
+			if(m_VB && m_VB->Lock(0,0,(void**)&pVtxData)==true)
 			{
 				memcpy(pVtxData,VtxDA.GetArrayPtr(),VtxDA.GetArraySize());
 				m_VB->Unlock();

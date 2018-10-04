@@ -63,6 +63,10 @@ namespace sys {
 
 		// Viewports and camera
 		Camera				*	m_Camera;
+
+		// ImGui data
+		VertexBuffer* m_ImGuiVB = nullptr;
+		IndexBuffer* m_ImGuiIB = nullptr;
 	};
 
 };
