@@ -67,6 +67,7 @@
     <PlatformToolset>v141</PlatformToolset>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <Import Project="PropertySheets\Common.props" />
   <ImportGroup Label="ExtensionSettings">
   </ImportGroup>
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release DX11|Win32'" Label="PropertySheets">
@@ -268,6 +269,10 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="..\Tools\imgui\imgui.cpp" />
+    <ClCompile Include="..\Tools\imgui\imgui_demo.cpp" />
+    <ClCompile Include="..\Tools\imgui\imgui_draw.cpp" />
+    <ClCompile Include="..\Tools\imgui\imgui_widgets.cpp" />
     <ClCompile Include="AssetCache.cpp" />
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="CameraFree.cpp" />
@@ -279,6 +284,7 @@
     <ClCompile Include="D3D12HALShaders.cpp" />
     <ClCompile Include="D3D12HALSwapChain.cpp" />
     <ClCompile Include="GraphObject.cpp" />
+    <ClCompile Include="RendererImGui.cpp" />
     <ClCompile Include="SandBox.cpp" />
     <ClCompile Include="SandBoxFile.cpp" />
     <ClCompile Include="ScriptObject.cpp" />
@@ -319,6 +325,12 @@
     <Text Include="..\Shaders\fxaa.h" />
     <Text Include="..\Shaders\fxaa2.h" />
     <Text Include="..\Shaders\sh_shadow.h" />
+    <ClInclude Include="..\Tools\imgui\imconfig.h" />
+    <ClInclude Include="..\Tools\imgui\imgui.h" />
+    <ClInclude Include="..\Tools\imgui\imgui_internal.h" />
+    <ClInclude Include="..\Tools\imgui\imstb_rectpack.h" />
+    <ClInclude Include="..\Tools\imgui\imstb_textedit.h" />
+    <ClInclude Include="..\Tools\imgui\imstb_truetype.h" />
     <ClInclude Include="Includes\AssetCache.h" />
     <ClInclude Include="Includes\Camera.h" />
     <ClInclude Include="Includes\CameraFree.h" />

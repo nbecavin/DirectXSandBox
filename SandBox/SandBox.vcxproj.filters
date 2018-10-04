@@ -87,6 +87,12 @@
     <Filter Include="PC\D3D12">
       <UniqueIdentifier>{e12b9704-806a-4220-be6b-fd045eab7013}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Tools">
+      <UniqueIdentifier>{1c3cc334-dcab-4b25-b004-6b147b39fde8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Tools\ImGui">
+      <UniqueIdentifier>{47e044ba-9cc1-48fb-8128-f4e500d94409}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="SandBox.cpp">
@@ -205,6 +211,21 @@
     </ClCompile>
     <ClCompile Include="D3D12HALConstantBuffer.cpp">
       <Filter>PC\D3D12</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Tools\imgui\imgui.cpp">
+      <Filter>Tools\ImGui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Tools\imgui\imgui_demo.cpp">
+      <Filter>Tools\ImGui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Tools\imgui\imgui_draw.cpp">
+      <Filter>Tools\ImGui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Tools\imgui\imgui_widgets.cpp">
+      <Filter>Tools\ImGui</Filter>
+    </ClCompile>
+    <ClCompile Include="RendererImGui.cpp">
+      <Filter>Common Platform\Renderer</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -337,6 +358,24 @@
     </ClInclude>
     <ClInclude Include="Includes\D3D12HALConstantBuffer.h">
       <Filter>PC\D3D12</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Tools\imgui\imconfig.h">
+      <Filter>Tools\ImGui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Tools\imgui\imgui.h">
+      <Filter>Tools\ImGui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Tools\imgui\imgui_internal.h">
+      <Filter>Tools\ImGui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Tools\imgui\imstb_rectpack.h">
+      <Filter>Tools\ImGui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Tools\imgui\imstb_textedit.h">
+      <Filter>Tools\ImGui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Tools\imgui\imstb_truetype.h">
+      <Filter>Tools\ImGui</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

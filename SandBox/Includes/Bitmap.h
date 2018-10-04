@@ -19,6 +19,10 @@ protected:
 public:
 	Bitmap() : Flags(BM_SRGB), Datas(NULL), DataSize(0), Sx(0), Sy(0), Sz(1), Format(BM_FORMAT_ABGR8888), Mips(1), MultisampleType(BM_MSAA_NONE), Type(BM_TYPE_2D), HwResId(BM_INVALIDHWRESID) {}
 
+	inline	void	SetData(void* pixels, U32 bytesize) {
+		Datas = (U8*)pixels; DataSize = bytesize;
+	}
+
 	inline	void	SetSize(U32 _Sx,U32 _Sy,U32 _Sz=1);
 	inline	void	SetFormat(U32 _Format) { Format=_Format; }
 	inline	void	SetType(U32 _Type) { Type=_Type; }

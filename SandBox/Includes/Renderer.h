@@ -5,6 +5,7 @@
 #include <RendererShader.h>
 #include <Material.h>
 #include <Camera.h>
+#include <imgui.h>
 
 namespace sys {
 	
@@ -18,6 +19,10 @@ namespace sys {
 		virtual void MainLoop() = 0;
 		virtual void InitShaders();
 		virtual void SetSize(U32 _SizeX,U32 _SizeY) { SizeX=_SizeX; SizeY=_SizeY; }
+
+		// ImGui integration
+		virtual void InitImGUI();
+		virtual void DrawImGUI();
 
 		// Set current scene camera
 				void	SetCamera(Camera * _Cam) { m_Camera=_Cam; }
