@@ -27,7 +27,7 @@ namespace sys {
 			// Generate runtime buffers
 			m_FullscreenQuadVB = CreateVertexBuffer(sizeof(svQuad),0,NULL);
 			SCREEN_VERTEX * pVtxData;
-			if(m_FullscreenQuadVB && m_FullscreenQuadVB->Lock(0,0,(void**)&pVtxData,0)==true)
+			if(m_FullscreenQuadVB && m_FullscreenQuadVB->Lock(0,0,(void**)&pVtxData)==true)
 			{
 				memcpy(pVtxData,svQuad,sizeof(svQuad));
 				m_FullscreenQuadVB->Unlock();

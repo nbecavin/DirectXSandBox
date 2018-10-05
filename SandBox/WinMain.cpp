@@ -97,7 +97,7 @@ ATOM MyRegisterClass(HINSTANCE hInstance)
 	wcex.hIcon			= LoadIcon(hInstance, MAKEINTRESOURCE(IDI_SANDBOX));
 	wcex.hCursor		= LoadCursor(NULL, IDC_ARROW);
 	wcex.hbrBackground	= (HBRUSH)(COLOR_WINDOW+1);
-	wcex.lpszMenuName	= MAKEINTRESOURCE(IDC_SANDBOX);
+	wcex.lpszMenuName	= "";//MAKEINTRESOURCE(IDC_SANDBOX);
 	wcex.lpszClassName	= szWindowClass;
 	wcex.hIconSm		= LoadIcon(wcex.hInstance, MAKEINTRESOURCE(IDI_SMALL));
 
@@ -106,6 +106,7 @@ ATOM MyRegisterClass(HINSTANCE hInstance)
 	return 0;
 #endif
 }
+
 
 //
 //   FONCTION : InitInstance(HINSTANCE, int)
@@ -120,7 +121,8 @@ ATOM MyRegisterClass(HINSTANCE hInstance)
 BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
 {
 #if WINAPI_FAMILY!=WINAPI_FAMILY_APP
-	sys::pc::hWnd = CreateWindow(szWindowClass, szTitle, WS_OVERLAPPEDWINDOW, 0, 0, 0, 0, NULL, NULL, hInstance, NULL);
+	DWORD ws = WS_OVERLAPPED | WS_CAPTION | WS_SYSMENU | WS_THICKFRAME | WS_MINIMIZEBOX | WS_MAXIMIZEBOX;
+	sys::pc::hWnd = CreateWindow(szWindowClass, szTitle, ws, 0, 0, 0, 0, NULL, NULL, hInstance, NULL);
 	if (!sys::pc::hWnd)
 		return FALSE;
 	ShowWindow(sys::pc::hWnd, nCmdShow);
@@ -274,7 +276,7 @@ void sys::pc::LowLevelEndFrame()
 	*/
 }
 
-#if WINAPI_FAMILY_ONE_PARTITION( WINAPI_FAMILY, WINAPI_PARTITION_APP )
+#if 0 //WINAPI_FAMILY_ONE_PARTITION( WINAPI_FAMILY, WINAPI_PARTITION_APP )
 
 using namespace sys::pc;
 
