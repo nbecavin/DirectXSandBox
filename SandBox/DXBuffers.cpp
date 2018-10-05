@@ -94,6 +94,10 @@ void DXVertexDeclaration::Create(VertexElement *Decl,U32 _ShaderUID)
 			pElts[nCurElt].SemanticName = "BINORMAL";
 			pElts[nCurElt].SemanticIndex = 0;
 			break;
+		case DECL_COLOR0:
+			pElts[nCurElt].SemanticName = "COLOR";
+			pElts[nCurElt].SemanticIndex = 0;
+			break;
 		case DECL_POSITION:
 		default:
 			pElts[nCurElt].SemanticName = "POSITION";
@@ -103,7 +107,11 @@ void DXVertexDeclaration::Create(VertexElement *Decl,U32 _ShaderUID)
 		nCurElt++;
 	}
 	ID3DBlob * pCode = GET_RDR_INSTANCE()->GetShaderBlob(_ShaderUID);
-	Device->CreateInputLayout(pElts,nCurElt,pCode->GetBufferPointer(),pCode->GetBufferSize(),&res);
+	HRESULT hr = Device->CreateInputLayout(pElts,nCurElt,pCode->GetBufferPointer(),pCode->GetBufferSize(),&res);
+	if (hr != S_OK)
+	{
+		OutputDebugString("ERROR");
+	}
 #endif
 }
 

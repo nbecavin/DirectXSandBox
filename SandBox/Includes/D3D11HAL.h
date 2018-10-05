@@ -32,6 +32,9 @@ public:
 	ID3D11Device* GetDevice() { return m_Device.Get(); }
 	ID3D11DeviceContext* GetImmediateDeviceContext() { return m_ImmediateDeviceContext.Get(); }
 
+	// Graphics command list
+	inline void DrawIndexed(UINT IndexCount,UINT StartIndexLocation,INT BaseVertexLocation);
+
 	// --- to remove
 	IDXGISwapChain* GetSwapChain() { return m_SwapChain.Get(); }
 	// --- to remove
@@ -52,3 +55,8 @@ private:
 	ID3D11ShaderReflection *		m_PSDAReflection[SHADER_PS_COUNT];
 	ID3D11ShaderReflection *		m_CSDAReflection[SHADER_CS_COUNT];
 };
+
+inline void D3D11HAL::DrawIndexed(UINT IndexCount, UINT StartIndexLocation, INT BaseVertexLocation)
+{
+	GetImmediateDeviceContext()->DrawIndexed(IndexCount, StartIndexLocation, BaseVertexLocation);
+}

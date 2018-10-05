@@ -45,6 +45,12 @@ namespace sys {
 		virtual void	PushMaterial(Material* Mat) {}
 		virtual void	RegisterShaderFromSourceFile(U32 _SUID,const char* src,const char* epoint) = 0;
 
+		// Graphics command list
+		virtual void DSSetDefault() = 0;
+		virtual void RSSetDefault() = 0;
+		virtual void SetPrimitiveTopology(PrimitiveType Topology) = 0;
+		virtual void DrawIndexed(UINT IndexCount, UINT StartIndexLocation, INT BaseVertexLocation) = 0;
+
 	protected:
 		int		SizeX, SizeY;
 
@@ -65,6 +71,7 @@ namespace sys {
 		Camera				*	m_Camera;
 
 		// ImGui data
+		VertexDeclaration* m_ImGuiVertexDeclaration = nullptr;
 		VertexBuffer* m_ImGuiVB = nullptr;
 		IndexBuffer* m_ImGuiIB = nullptr;
 	};

@@ -32,6 +32,16 @@ void Renderer::InitImGUI()
 	bmap->SetData(pixels, width*height*bpp);	
 	CreateTexture(bmap);
 	io.Fonts->TexID = (void*)bmap;
+
+	VertexElement DeclDesc[] =
+	{
+		{ 0, 0, DECL_FMT_FLOAT2, DECL_POSITION },
+		{ 0, 8, DECL_FMT_FLOAT2, DECL_TEXCOORD0 },
+		{ 0, 16, DECL_FMT_COLOR, DECL_COLOR0 },
+		DECL_END()
+	};
+
+	m_ImGuiVertexDeclaration = gData.Rdr->CreateVertexDecl(DeclDesc, SHADER_VS_IMGUI);
 }
 
 void Renderer::DrawImGUI()
@@ -96,22 +106,23 @@ void Renderer::DrawImGUI()
 	//}
 
 	//// Bind shader and vertex buffers
-	//unsigned int stride = sizeof(ImDrawVert);
-	//unsigned int offset = 0;
-	//ctx->IASetInputLayout(g_pInputLayout);
-	//ctx->IASetVertexBuffers(0, 1, &g_pVB, &stride, &offset);
+	PushVertexDeclaration(m_ImGuiVertexDeclaration);
+	PushStreamSource(0, m_ImGuiVB, 0, sizeof(ImDrawVert));
+	PushIndices(m_ImGuiIB);
 	//ctx->IASetIndexBuffer(g_pIB, sizeof(ImDrawIdx) == 2 ? DXGI_FORMAT_R16_UINT : DXGI_FORMAT_R32_UINT, 0);
-	//ctx->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-	//ctx->VSSetShader(g_pVertexShader, NULL, 0);
+
+	SetPrimitiveTopology(PRIM_TRIANGLELIST);
+	PushShader(SHADER_VS_IMGUI);
+	PushShader(SHADER_PS_IMGUI);
+
 	//ctx->VSSetConstantBuffers(0, 1, &g_pVertexConstantBuffer);
-	//ctx->PSSetShader(g_pPixelShader, NULL, 0);
 	//ctx->PSSetSamplers(0, 1, &g_pFontSampler);
 
 	//// Setup render state
 	//const float blend_factor[4] = { 0.f, 0.f, 0.f, 0.f };
 	//ctx->OMSetBlendState(g_pBlendState, blend_factor, 0xffffffff);
-	//ctx->OMSetDepthStencilState(g_pDepthStencilState, 0);
-	//ctx->RSSetState(g_pRasterizerState);
+	DSSetDefault();
+	RSSetDefault();
 
 	// Render command lists
 	int vtx_offset = 0;
@@ -138,29 +149,10 @@ void Renderer::DrawImGUI()
 				Bitmap* bmap = static_cast<Bitmap*>(pcmd->TextureId);
 				//ID3D11ShaderResourceView* texture_srv = (ID3D11ShaderResourceView*)pcmd->TextureId;
 				//ctx->PSSetShaderResources(0, 1, &texture_srv);
-				//ctx->DrawIndexed(pcmd->ElemCount, idx_offset, vtx_offset);
+				DrawIndexed(pcmd->ElemCount, idx_offset, vtx_offset);
 			}
 			idx_offset += pcmd->ElemCount;
 		}
 		vtx_offset += cmd_list->VtxBuffer.Size;
 	}
-
-	//// Restore modified DX state
-	//ctx->RSSetScissorRects(old.ScissorRectsCount, old.ScissorRects);
-	//ctx->RSSetViewports(old.ViewportsCount, old.Viewports);
-	//ctx->RSSetState(old.RS); if (old.RS) old.RS->Release();
-	//ctx->OMSetBlendState(old.BlendState, old.BlendFactor, old.SampleMask); if (old.BlendState) old.BlendState->Release();
-	//ctx->OMSetDepthStencilState(old.DepthStencilState, old.StencilRef); if (old.DepthStencilState) old.DepthStencilState->Release();
-	//ctx->PSSetShaderResources(0, 1, &old.PSShaderResource); if (old.PSShaderResource) old.PSShaderResource->Release();
-	//ctx->PSSetSamplers(0, 1, &old.PSSampler); if (old.PSSampler) old.PSSampler->Release();
-	//ctx->PSSetShader(old.PS, old.PSInstances, old.PSInstancesCount); if (old.PS) old.PS->Release();
-	//for (UINT i = 0; i < old.PSInstancesCount; i++) if (old.PSInstances[i]) old.PSInstances[i]->Release();
-	//ctx->VSSetShader(old.VS, old.VSInstances, old.VSInstancesCount); if (old.VS) old.VS->Release();
-	//ctx->VSSetConstantBuffers(0, 1, &old.VSConstantBuffer); if (old.VSConstantBuffer) old.VSConstantBuffer->Release();
-	//for (UINT i = 0; i < old.VSInstancesCount; i++) if (old.VSInstances[i]) old.VSInstances[i]->Release();
-	//ctx->IASetPrimitiveTopology(old.PrimitiveTopology);
-	//ctx->IASetIndexBuffer(old.IndexBuffer, old.IndexBufferFormat, old.IndexBufferOffset); if (old.IndexBuffer) old.IndexBuffer->Release();
-	//ctx->IASetVertexBuffers(0, 1, &old.VertexBuffer, &old.VertexBufferStride, &old.VertexBufferOffset); if (old.VertexBuffer) old.VertexBuffer->Release();
-	//ctx->IASetInputLayout(old.InputLayout); if (old.InputLayout) old.InputLayout->Release();
-
 }

@@ -25,7 +25,7 @@ void D3D11HAL::Init(int sizeX, int sizeY, sys::Renderer* owner)
 	D3D_FEATURE_LEVEL returnedFeatureLevel;
 	U32 Flags = 0;
 #ifdef _DEBUG
-	//	Flags |= D3D11_CREATE_DEVICE_DEBUG;
+		Flags |= D3D11_CREATE_DEVICE_DEBUG;
 #endif
 
 	D3D11CreateDevice(NULL, D3D_DRIVER_TYPE_HARDWARE, NULL, Flags, NULL, 0, D3D11_SDK_VERSION, m_Device.GetAddressOf(), &returnedFeatureLevel, m_ImmediateDeviceContext.GetAddressOf());

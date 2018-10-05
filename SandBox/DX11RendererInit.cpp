@@ -153,10 +153,10 @@ namespace sys
 		GetDevice()->CreateSamplerState(&ss,&m_NoBilinearSS);
 #endif
 
-		InitImGUI();
 		InitShaders();
 		InitSurface();
 		InitStaticDatas();
+		InitImGUI();
 		return 0;
 	}
 

@@ -19,6 +19,12 @@ namespace sys {
 	{
 		m_Camera->Update();
 
+		ImGuiIO& io = ImGui::GetIO();
+		io.DeltaTime = 1.0f / 60.0f;              // set the time elapsed since the previous frame (in seconds)
+		io.DisplaySize.x = SizeX;             // set the current display width
+		io.DisplaySize.y = SizeY;             // set the current display height here
+		ImGui::NewFrame();
+
 		HRESULT hr;
 
 #if defined(_PCDX12)
@@ -30,7 +36,8 @@ namespace sys {
 		GetCommandList()->ClearDepthStencilView(m_DepthBuffer, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.f, 0);
 #endif
 
-
+		RSSetDefault();
+		DSSetDefault();
 
 		//une view et une proj de base
 		XMMATRIX m, proj, view;
@@ -247,7 +254,7 @@ namespace sys {
 		PushShader(SHADER_VS_BASE_SCREENVERTEX);
 		PushShader(SHADER_PS_POSTPROC_FXAA);
 
-		FullScreenQuad(Vec2f(1.f, 1.f), Vec2f(0.f, 0.f));
+//		FullScreenQuad(Vec2f(1.f, 1.f), Vec2f(0.f, 0.f));
 
 		//		D3DPERF_EndEvent();
 
@@ -279,12 +286,6 @@ namespace sys {
 		GetCommandList()->PSSetShaderResources(0, 1, ppSRVNULL);
 #endif
 
-		ImGuiIO& io = ImGui::GetIO();
-		io.DeltaTime = 1.0f / 60.0f;              // set the time elapsed since the previous frame (in seconds)
-		io.DisplaySize.x = SizeX;             // set the current display width
-		io.DisplaySize.y = SizeY;             // set the current display height here
-
-		ImGui::NewFrame();
 		DrawImGUI();
 
 		GetHAL().PresentFrame();
@@ -394,6 +395,22 @@ namespace sys {
 
 	}
 
+	void DXRenderer::SetPrimitiveTopology(PrimitiveType Topology)
+	{
+		int index_count = 0;
+		D3D11_PRIMITIVE_TOPOLOGY _primType = D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
+		switch (Topology) {
+		case PRIM_TRIANGLESTRIP:
+			_primType = D3D11_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP;
+			break;
+		case PRIM_TRIANGLELIST:
+		default:
+			_primType = D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
+			break;
+		}
+		GetCommandList()->IASetPrimitiveTopology(_primType);
+	}
+
 	void DXRenderer::PushDrawIndexed(PrimitiveType Type,U32 BaseVertexIndex,U32 MinVertexIndex,U32 NumVertices,U32 StartIndex,U32 PrimCount)
 	{
 	
@@ -412,7 +429,7 @@ namespace sys {
 			return;
 		}
 		UpdateVSConstants();
-		GetCommandList()->IASetPrimitiveTopology( _primType );
+		SetPrimitiveTopology(Type);
 	#if defined(_PCDX11)
 		GetCommandList()->DrawIndexed(index_count,StartIndex,BaseVertexIndex);
 	#elif defined(_PCDX12)

@@ -401,6 +401,7 @@
     <Text Include="..\Shaders\post_process.psh">
       <FileType>Document</FileType>
     </Text>
+    <None Include="..\Shaders\ImGui.shader" />
     <None Include="..\Shaders\shaders.compile.bat" />
     <Text Include="..\Shaders\ssao.psh">
       <FileType>Document</FileType>

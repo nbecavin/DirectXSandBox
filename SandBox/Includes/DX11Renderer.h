@@ -53,7 +53,15 @@ namespace sys {
 		virtual void	PushIndices(IndexBuffer* Buffer,U32 _Fmt);
 		virtual void	PushMaterial(Material* Mat);
 
+		virtual void DSSetDefault() { GetCommandList()->OMSetDepthStencilState(m_DSS_NoZWrite,0); }
+		virtual void RSSetDefault() { GetCommandList()->RSSetState(m_DefaultRS); }
+		virtual void SetPrimitiveTopology(PrimitiveType Topology);
 		virtual void	PushDrawIndexed(PrimitiveType Type,U32 BaseVertexIndex,U32 MinVertexIndex,U32 NumVertices,U32 StartIndex,U32 PrimCount);
+		
+		void DrawIndexed(UINT IndexCount, UINT StartIndexLocation, INT BaseVertexLocation)
+		{
+			GetHAL().DrawIndexed(IndexCount, StartIndexLocation, BaseVertexLocation);
+		}
 
 		virtual void	RegisterShaderFromSourceFile(U32 _SUID,const char* src,const char* epoint);
 
