@@ -16,6 +16,10 @@ public:
 	void CreateShaderResource(ID3DBlob * pCode, UINT Type, UINT SID);
 
 	void InitShaders();
+	void SetPrimitiveTopology(PrimitiveType Topology);
+	void SetVertexDeclaration(VertexDeclaration* Decl);
+	void SetIndices(IndexBuffer* Buffer, U32 _Fmt);
+	void SetStreamSource(U32 StreamNumber, VertexBuffer* Buffer, U32 Offset, U32 Stride);
 	void SetShaders(UINT Type, UINT SID);
 	ID3DBlob * GetShaderBlob(UINT Type, UINT SID)
 	{
@@ -33,6 +37,12 @@ public:
 	ID3D12Device* GetDevice() { return m_Device.Get(); }
 	ID3D12GraphicsCommandList* GetCommandList() { return m_CommandList.Get(); }
 	D3D12_GRAPHICS_PIPELINE_STATE_DESC& GetPipelineState() { return m_CurrentPSO; }
+
+	// Graphics command list
+	inline void SetBlendState(D3D11_BLEND_DESC& desc);
+	inline void SetSampler(U32 Slot, EShaderType Type, ID3D11SamplerState* Sampler);
+	inline void SetShaderResource(U32 Slot, EShaderType Type, ID3D11ShaderResourceView* View);
+	inline void DrawIndexed(UINT IndexCount, UINT StartIndexLocation, INT BaseVertexLocation);
 
 	D3D12_CPU_DESCRIPTOR_HANDLE& GetCurrentBackBufferView() {
 		return m_RenderTargetsView[m_FrameIndex];

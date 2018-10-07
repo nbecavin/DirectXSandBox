@@ -53,6 +53,9 @@ namespace sys {
 		virtual void	PushIndices(IndexBuffer* Buffer,U32 _Fmt);
 		virtual void	PushMaterial(Material* Mat);
 
+		virtual void SetBlendState(D3D11_BLEND_DESC& desc);
+		virtual void SetSampler(U32 Slot, EShaderType Type, void* Sampler);		
+		virtual void SetShaderResource(U32 Slot, EShaderType Type, Bitmap* Texture);
 		virtual void DSSetDefault() { GetCommandList()->OMSetDepthStencilState(m_DSS_NoZWrite,0); }
 		virtual void RSSetDefault() { GetCommandList()->RSSetState(m_DefaultRS); }
 		virtual void SetPrimitiveTopology(PrimitiveType Topology);
@@ -73,15 +76,15 @@ namespace sys {
 				void PostProcess();
 
 #ifdef _PCDX12
-		ID3D12Device *			GetDevice() { return GetHAL().GetDevice(); }
-		ID3D12GraphicsCommandList *	GetCommandList() { return GetHAL().GetCommandList(); }
+//		ID3D12Device *			GetDevice() { return GetHAL().GetDevice(); }
+//		ID3D12GraphicsCommandList *	GetCommandList() { return GetHAL().GetCommandList(); }
 #else
-		ID3D11Device *			GetDevice() { return GetHAL().GetDevice(); }
-		ID3D11DeviceContext *	GetCommandList() { return GetHAL().GetImmediateDeviceContext(); }
+//		ID3D11Device *			GetDevice() { return GetHAL().GetDevice(); }
+//		ID3D11DeviceContext *	GetCommandList() { return GetHAL().GetImmediateDeviceContext(); }
 #endif
 		ID3DBlob *				GetShaderBlob(U32 _ShaderUID);
 
-	private:
+
 #ifdef _PCDX12
 		D3D12HAL							m_HAL;
 		D3D12HAL&						GetHAL() { return m_HAL; }
@@ -90,6 +93,7 @@ namespace sys {
 		D3D11HAL&						GetHAL() { return m_HAL; }
 #endif
 
+	private:
 		// Surfaces
 		ID3D11RenderTargetView *		m_BackBuffer;
 		ID3D11DepthStencilView *		m_DepthBuffer;

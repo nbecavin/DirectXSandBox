@@ -1,5 +1,6 @@
 #include <Renderer.h>
 #include <Bitmap.h>
+#include <WinMain.h>
 using namespace sys;
 
 void Renderer::InitImGUI()
@@ -10,6 +11,33 @@ void Renderer::InitImGUI()
 
 	//ImGui_ImplWin32_Init(hwnd);
 	//ImGui_ImplDX11_Init(g_pd3dDevice, g_pd3dDeviceContext);
+
+	io.BackendFlags |= ImGuiBackendFlags_HasMouseCursors;         // We can honor GetMouseCursor() values (optional)
+	io.BackendFlags |= ImGuiBackendFlags_HasSetMousePos;          // We can honor io.WantSetMousePos requests (optional, rarely used)
+	io.ImeWindowHandle = sys::pc::hWnd;
+
+	// Keyboard mapping. ImGui will use those indices to peek into the io.KeysDown[] array that we will update during the application lifetime.
+	io.KeyMap[ImGuiKey_Tab] = VK_TAB;
+	io.KeyMap[ImGuiKey_LeftArrow] = VK_LEFT;
+	io.KeyMap[ImGuiKey_RightArrow] = VK_RIGHT;
+	io.KeyMap[ImGuiKey_UpArrow] = VK_UP;
+	io.KeyMap[ImGuiKey_DownArrow] = VK_DOWN;
+	io.KeyMap[ImGuiKey_PageUp] = VK_PRIOR;
+	io.KeyMap[ImGuiKey_PageDown] = VK_NEXT;
+	io.KeyMap[ImGuiKey_Home] = VK_HOME;
+	io.KeyMap[ImGuiKey_End] = VK_END;
+	io.KeyMap[ImGuiKey_Insert] = VK_INSERT;
+	io.KeyMap[ImGuiKey_Delete] = VK_DELETE;
+	io.KeyMap[ImGuiKey_Backspace] = VK_BACK;
+	io.KeyMap[ImGuiKey_Space] = VK_SPACE;
+	io.KeyMap[ImGuiKey_Enter] = VK_RETURN;
+	io.KeyMap[ImGuiKey_Escape] = VK_ESCAPE;
+	io.KeyMap[ImGuiKey_A] = 'A';
+	io.KeyMap[ImGuiKey_C] = 'C';
+	io.KeyMap[ImGuiKey_V] = 'V';
+	io.KeyMap[ImGuiKey_X] = 'X';
+	io.KeyMap[ImGuiKey_Y] = 'Y';
+	io.KeyMap[ImGuiKey_Z] = 'Z';
 
 	// Setup style
 	ImGui::StyleColorsDark();
@@ -117,8 +145,16 @@ void Renderer::DrawImGUI()
 
 	//ctx->VSSetConstantBuffers(0, 1, &g_pVertexConstantBuffer);
 	//ctx->PSSetSamplers(0, 1, &g_pFontSampler);
+	SetSampler(0, SHADER_TYPE_PIXEL, nullptr);
 
 	//// Setup render state
+	CD3D11_DEFAULT def;
+	CD3D11_BLEND_DESC desc(def);
+	desc.RenderTarget[0].BlendEnable = TRUE;
+	desc.RenderTarget[0].SrcBlend = D3D11_BLEND_SRC_ALPHA;
+	desc.RenderTarget[0].DestBlend = D3D11_BLEND_INV_SRC_ALPHA;
+	SetBlendState(desc);
+	 
 	//const float blend_factor[4] = { 0.f, 0.f, 0.f, 0.f };
 	//ctx->OMSetBlendState(g_pBlendState, blend_factor, 0xffffffff);
 	DSSetDefault();
@@ -147,8 +183,7 @@ void Renderer::DrawImGUI()
 
 				// Bind texture, Draw
 				Bitmap* bmap = static_cast<Bitmap*>(pcmd->TextureId);
-				//ID3D11ShaderResourceView* texture_srv = (ID3D11ShaderResourceView*)pcmd->TextureId;
-				//ctx->PSSetShaderResources(0, 1, &texture_srv);
+				SetShaderResource(0, SHADER_TYPE_PIXEL, bmap);
 				DrawIndexed(pcmd->ElemCount, idx_offset, vtx_offset);
 			}
 			idx_offset += pcmd->ElemCount;

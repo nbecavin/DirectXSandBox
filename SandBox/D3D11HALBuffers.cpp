@@ -5,7 +5,7 @@
 void D3D11VertexBuffer::Create(U32 _Size, U32 _Usage, U32 _Fmt, void * _Datas)
 {
 	HRESULT hr;
-	ID3D11Device * Device = GET_RDR_INSTANCE()->GetDevice();
+	ID3D11Device * Device = GET_RDR_INSTANCE()->GetHAL().GetDevice();
 
 	// Fill in a buffer description.
 	D3D11_BUFFER_DESC bufferDesc;
@@ -40,7 +40,7 @@ void D3D11VertexBuffer::Create(U32 _Size, U32 _Usage, U32 _Fmt, void * _Datas)
 void D3D11IndexBuffer::Create(U32 _Size, U32 _Usage, U32 _Fmt, void * _Datas)
 {
 	HRESULT hr;
-	ID3D11Device * Device = GET_RDR_INSTANCE()->GetDevice();
+	ID3D11Device * Device = GET_RDR_INSTANCE()->GetHAL().GetDevice();
 	U32 _ItemSize = (_Fmt == FMT_IDX_16) ? 2 : 4;
 
 	// Fill in a buffer description.
@@ -90,7 +90,7 @@ static D3D11_MAP GetD3D11MapFromEMap(Buffer::EMap v)
 
 bool D3D11VertexBuffer::Lock(U32 OffsetToLock, U32 SizeToLock, void **pData, EMap Flags)
 {
-	ID3D11DeviceContext * DeviceContext = GET_RDR_INSTANCE()->GetCommandList();
+	ID3D11DeviceContext * DeviceContext = GET_RDR_INSTANCE()->GetHAL().GetImmediateDeviceContext();
 	D3D11_MAPPED_SUBRESOURCE pMappedResource;
 	DeviceContext->Map(res, 0, GetD3D11MapFromEMap(Flags), 0, &pMappedResource);
 	*pData = pMappedResource.pData;
@@ -99,7 +99,7 @@ bool D3D11VertexBuffer::Lock(U32 OffsetToLock, U32 SizeToLock, void **pData, EMa
 
 bool D3D11IndexBuffer::Lock(U32 OffsetToLock, U32 SizeToLock, void **pData, EMap Flags)
 {
-	ID3D11DeviceContext * DeviceContext = GET_RDR_INSTANCE()->GetCommandList();
+	ID3D11DeviceContext * DeviceContext = GET_RDR_INSTANCE()->GetHAL().GetImmediateDeviceContext();
 	D3D11_MAPPED_SUBRESOURCE pMappedResource;
 	DeviceContext->Map(res, 0, GetD3D11MapFromEMap(Flags), 0, &pMappedResource);
 	*pData = pMappedResource.pData;
@@ -108,13 +108,13 @@ bool D3D11IndexBuffer::Lock(U32 OffsetToLock, U32 SizeToLock, void **pData, EMap
 
 void D3D11VertexBuffer::Unlock()
 {
-	ID3D11DeviceContext * DeviceContext = GET_RDR_INSTANCE()->GetCommandList();
+	ID3D11DeviceContext * DeviceContext = GET_RDR_INSTANCE()->GetHAL().GetImmediateDeviceContext();
 	DeviceContext->Unmap(res, 0);
 }
 
 void D3D11IndexBuffer::Unlock()
 {
-	ID3D11DeviceContext * DeviceContext = GET_RDR_INSTANCE()->GetCommandList();
+	ID3D11DeviceContext * DeviceContext = GET_RDR_INSTANCE()->GetHAL().GetImmediateDeviceContext();
 	DeviceContext->Unmap(res, 0);
 }
 

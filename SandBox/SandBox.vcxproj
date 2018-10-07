@@ -201,7 +201,7 @@
     <ClCompile>
       <Optimization>Disabled</Optimization>
       <AdditionalIncludeDirectories>Includes;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;_PCDX12;_PC;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;_PCDX12;_PCDX11;_PC;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
       <StructMemberAlignment>Default</StructMemberAlignment>
@@ -279,6 +279,7 @@
     <ClCompile Include="D3D11HALBuffers.cpp" />
     <ClCompile Include="D3D11HALShaders.cpp" />
     <ClCompile Include="D3D11HALSwapChain.cpp" />
+    <ClCompile Include="D3D11HALTexture.cpp" />
     <ClCompile Include="D3D12HALBuffers.cpp" />
     <ClCompile Include="D3D12HALConstantBuffer.cpp" />
     <ClCompile Include="D3D12HALShaders.cpp" />

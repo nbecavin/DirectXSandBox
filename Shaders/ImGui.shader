@@ -19,7 +19,7 @@ struct ImGuiVsPs
 
 float4 PsMain(in ImGuiVsPs i) : SV_Target0
 {
-	float4 color = /*t.Sample(s, i.uv) **/ i.color;
+	float4 color = t.Sample(s, i.uv) * i.color;
 	return float4(color);
 }
 

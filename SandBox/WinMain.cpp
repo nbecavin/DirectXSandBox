@@ -133,6 +133,9 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
 
 #if WINAPI_FAMILY!=WINAPI_FAMILY_APP
 
+static bool ImGui_ImplWin32_UpdateMouseCursor();
+IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam);
+
 //
 //  FONCTION : WndProc(HWND, UINT, WPARAM, LPARAM)
 //
@@ -148,6 +151,8 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 	int wmId, wmEvent;
 	PAINTSTRUCT ps;
 	HDC hdc;
+
+	ImGui_ImplWin32_WndProcHandler(hWnd, message, wParam, lParam);
 
 	switch (message)
 	{
@@ -182,6 +187,128 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		return DefWindowProc(hWnd, message, wParam, lParam);
 	}
 	return 0;
+}
+
+// Process Win32 mouse/keyboard inputs. 
+// You can read the io.WantCaptureMouse, io.WantCaptureKeyboard flags to tell if dear imgui wants to use your inputs.
+// - When io.WantCaptureMouse is true, do not dispatch mouse input data to your main application.
+// - When io.WantCaptureKeyboard is true, do not dispatch keyboard input data to your main application.
+// Generally you may always pass all inputs to dear imgui, and hide them from your application based on those two flags.
+// PS: In this Win32 handler, we use the capture API (GetCapture/SetCapture/ReleaseCapture) to be able to read mouse coordinations when dragging mouse outside of our window bounds.
+// PS: We treat DBLCLK messages as regular mouse down messages, so this code will work on windows classes that have the CS_DBLCLKS flag set. Our own example app code doesn't set this flag.
+IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
+{
+	if (ImGui::GetCurrentContext() == NULL)
+		return 0;
+
+	ImGuiIO& io = ImGui::GetIO();
+	switch (msg)
+	{
+	case WM_LBUTTONDOWN: case WM_LBUTTONDBLCLK:
+	case WM_RBUTTONDOWN: case WM_RBUTTONDBLCLK:
+	case WM_MBUTTONDOWN: case WM_MBUTTONDBLCLK:
+	{
+		int button = 0;
+		if (msg == WM_LBUTTONDOWN || msg == WM_LBUTTONDBLCLK) button = 0;
+		if (msg == WM_RBUTTONDOWN || msg == WM_RBUTTONDBLCLK) button = 1;
+		if (msg == WM_MBUTTONDOWN || msg == WM_MBUTTONDBLCLK) button = 2;
+		if (!ImGui::IsAnyMouseDown() && ::GetCapture() == NULL)
+			::SetCapture(hwnd);
+		io.MouseDown[button] = true;
+		return 0;
+	}
+	case WM_LBUTTONUP:
+	case WM_RBUTTONUP:
+	case WM_MBUTTONUP:
+	{
+		int button = 0;
+		if (msg == WM_LBUTTONUP) button = 0;
+		if (msg == WM_RBUTTONUP) button = 1;
+		if (msg == WM_MBUTTONUP) button = 2;
+		io.MouseDown[button] = false;
+		if (!ImGui::IsAnyMouseDown() && ::GetCapture() == hwnd)
+			::ReleaseCapture();
+		return 0;
+	}
+	case WM_MOUSEWHEEL:
+		io.MouseWheel += (float)GET_WHEEL_DELTA_WPARAM(wParam) / (float)WHEEL_DELTA;
+		return 0;
+	case WM_MOUSEHWHEEL:
+		io.MouseWheelH += (float)GET_WHEEL_DELTA_WPARAM(wParam) / (float)WHEEL_DELTA;
+		return 0;
+	case WM_KEYDOWN:
+	case WM_SYSKEYDOWN:
+		if (wParam < 256)
+			io.KeysDown[wParam] = 1;
+		return 0;
+	case WM_KEYUP:
+	case WM_SYSKEYUP:
+		if (wParam < 256)
+			io.KeysDown[wParam] = 0;
+		return 0;
+	case WM_CHAR:
+		// You can also use ToAscii()+GetKeyboardState() to retrieve characters.
+		if (wParam > 0 && wParam < 0x10000)
+			io.AddInputCharacter((unsigned short)wParam);
+		return 0;
+	case WM_SETCURSOR:
+		if (LOWORD(lParam) == HTCLIENT && ImGui_ImplWin32_UpdateMouseCursor())
+			return 1;
+		return 0;
+	}
+	return 0;
+}
+
+static bool ImGui_ImplWin32_UpdateMouseCursor()
+{
+	ImGuiIO& io = ImGui::GetIO();
+	if (io.ConfigFlags & ImGuiConfigFlags_NoMouseCursorChange)
+		return false;
+
+	ImGuiMouseCursor imgui_cursor = ImGui::GetMouseCursor();
+	if (imgui_cursor == ImGuiMouseCursor_None || io.MouseDrawCursor)
+	{
+		// Hide OS mouse cursor if imgui is drawing it or if it wants no cursor
+		::SetCursor(NULL);
+	}
+	else
+	{
+		// Show OS mouse cursor
+		LPTSTR win32_cursor = IDC_ARROW;
+		switch (imgui_cursor)
+		{
+		case ImGuiMouseCursor_Arrow:        win32_cursor = IDC_ARROW; break;
+		case ImGuiMouseCursor_TextInput:    win32_cursor = IDC_IBEAM; break;
+		case ImGuiMouseCursor_ResizeAll:    win32_cursor = IDC_SIZEALL; break;
+		case ImGuiMouseCursor_ResizeEW:     win32_cursor = IDC_SIZEWE; break;
+		case ImGuiMouseCursor_ResizeNS:     win32_cursor = IDC_SIZENS; break;
+		case ImGuiMouseCursor_ResizeNESW:   win32_cursor = IDC_SIZENESW; break;
+		case ImGuiMouseCursor_ResizeNWSE:   win32_cursor = IDC_SIZENWSE; break;
+		case ImGuiMouseCursor_Hand:         win32_cursor = IDC_HAND; break;
+		}
+		::SetCursor(::LoadCursor(NULL, win32_cursor));
+	}
+	return true;
+}
+
+void ImGui_ImplWin32_UpdateMousePos()
+{
+	ImGuiIO& io = ImGui::GetIO();
+
+	// Set OS mouse position if requested (rarely used, only when ImGuiConfigFlags_NavEnableSetMousePos is enabled by user)
+	if (io.WantSetMousePos)
+	{
+		POINT pos = { (int)io.MousePos.x, (int)io.MousePos.y };
+		::ClientToScreen(sys::pc::hWnd, &pos);
+		::SetCursorPos(pos.x, pos.y);
+	}
+
+	// Set mouse position
+	io.MousePos = ImVec2(-FLT_MAX, -FLT_MAX);
+	POINT pos;
+	if (::GetActiveWindow() == sys::pc::hWnd && ::GetCursorPos(&pos))
+		if (::ScreenToClient(sys::pc::hWnd, &pos))
+			io.MousePos = ImVec2((float)pos.x, (float)pos.y);
 }
 
 // Gestionnaire de messages pour la boîte de dialogue À propos de.
@@ -248,9 +375,10 @@ void sys::pc::LowLevelEndFrame()
 	MSG	msg;
 	
 #ifndef _MASTER
-
 //	sys::Console->SetMemUsed( MemManager.GetMemUsed() );
 #endif
+
+	ImGui_ImplWin32_UpdateMousePos();
 
 	// Empty the message queue for this window
 #if WINAPI_FAMILY==WINAPI_FAMILY_APP

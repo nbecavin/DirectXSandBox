@@ -8,7 +8,7 @@
 #include <imgui.h>
 
 namespace sys {
-	
+
 	class Renderer
 	{
 	public:
@@ -46,6 +46,9 @@ namespace sys {
 		virtual void	RegisterShaderFromSourceFile(U32 _SUID,const char* src,const char* epoint) = 0;
 
 		// Graphics command list
+		virtual void SetBlendState(D3D11_BLEND_DESC& desc) = 0;
+		virtual void SetSampler(U32 Slot, EShaderType Type, void* Sampler) = 0;
+		virtual void SetShaderResource(U32 Slot, EShaderType Type, Bitmap* Texture) = 0;
 		virtual void DSSetDefault() = 0;
 		virtual void RSSetDefault() = 0;
 		virtual void SetPrimitiveTopology(PrimitiveType Topology) = 0;

@@ -50,6 +50,8 @@ void D3D11HAL::Init(int sizeX, int sizeY, sys::Renderer* owner)
 
 void D3D11HAL::Shut()
 {
+	m_ImmediateDeviceContext->ClearState();
+	m_ImmediateDeviceContext->Release();
 	m_Device.Get()->Release();
 	m_SwapChain.Get()->Release();
 }

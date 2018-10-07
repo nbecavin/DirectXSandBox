@@ -67,6 +67,8 @@ namespace sys {
 		Vec4f * _vec = (Vec4f*)(m_VSConstantCache);
 		_vec[EYE_CST] = m_Camera->GetWorldPosition();
 
+
+#if 0
 #if defined(_PCDX11_)
 		// No geometry shader
 		GetCommandList()->GSSetShader(NULL, NULL, 0);
@@ -286,9 +288,34 @@ namespace sys {
 		GetCommandList()->PSSetShaderResources(0, 1, ppSRVNULL);
 #endif
 
+#endif
+
 		DrawImGUI();
 
 		GetHAL().PresentFrame();
+	}
+
+	void DXRenderer::SetShaderResource(U32 Slot, EShaderType Type, Bitmap* Texture)
+	{
+		TextureLink * tex = reinterpret_cast<TextureLink*>(Texture->GetBinHwResId());
+		GetHAL().SetShaderResource(Slot, Type, tex->ShaderView);
+	}
+
+	void DXRenderer::SetSampler(U32 Slot, EShaderType Type, void* Sampler)
+	{
+		if (!Sampler)
+		{
+			GetHAL().SetSampler(Slot, Type, m_DefaultSS);
+		}
+		else
+		{
+
+		}
+	}
+
+	void DXRenderer::SetBlendState(D3D11_BLEND_DESC& desc)
+	{
+		GetHAL().SetBlendState(desc);
 	}
 
 	void DXRenderer::InitSurface()
@@ -306,10 +333,6 @@ namespace sys {
 	void DXRenderer::Shut()
 	{
 		ReleaseAllResources();
-#ifdef _PCDX11
-		GetCommandList()->ClearState();
-		GetCommandList()->Release();
-#endif
 		GetHAL().Shut();
 	}
 
@@ -319,6 +342,7 @@ namespace sys {
 
 	void DXRenderer::FullScreenQuad(Vec2f scale,Vec2f offset)
 	{
+#if 0
 		PushVertexDeclaration(m_ScreenVertexDecl);
 		PushStreamSource(0,m_FullscreenQuadVB,0,32);
 
@@ -342,6 +366,7 @@ namespace sys {
 #ifdef _PCDX12
 		PSO->Release();
 #endif
+#endif
 	}
 
 	void DXRenderer::PostProcess()
@@ -356,64 +381,32 @@ namespace sys {
 
 	void DXRenderer::PushVertexDeclaration(VertexDeclaration* Decl)
 	{
-#ifdef _PCDX11
-		DXVertexDeclaration* dxbuffer = reinterpret_cast<DXVertexDeclaration*>(Decl);
-		GetCommandList()->IASetInputLayout(dxbuffer->GetRes());
-		//m_StateCache.VB = dxbuffer;
-#endif
+		GetHAL().SetVertexDeclaration(Decl);
 	}
 
 	void DXRenderer::PushStreamSource(U32 StreamNumber,VertexBuffer* Buffer,U32 Offset,U32 Stride)
 	{
-		DXVertexBuffer* dxbuffer = reinterpret_cast<DXVertexBuffer*>(Buffer);
-#ifdef _PCDX11
-		ID3D11Buffer * pBuffer = dxbuffer->GetRes();
-		UINT _Stride = Stride;
-		UINT _Offset = Offset;
-		GetCommandList()->IASetVertexBuffers(StreamNumber,1,&pBuffer,&_Stride,&_Offset);
-#else
-		D3D12_VERTEX_BUFFER_VIEW view = dxbuffer->GetView();
-		view.BufferLocation += Offset*Stride;
-		view.StrideInBytes = Stride;
-		GetCommandList()->IASetVertexBuffers(StreamNumber, 1, &view);
-#endif
-		m_StateCache.VB = dxbuffer;
+		GetHAL().SetStreamSource(StreamNumber, Buffer, Offset, Stride);
+		//m_StateCache.VB = dxbuffer;
 	}
 
 	void DXRenderer::PushIndices(IndexBuffer* Buffer,U32 _Fmt)
 	{
 		if(Buffer)
 		{
-			DXIndexBuffer* dxbuffer = reinterpret_cast<DXIndexBuffer*>(Buffer);
-#ifdef _PCDX11
-			GetCommandList()->IASetIndexBuffer(dxbuffer->GetRes(),(_Fmt==FMT_IDX_32)?DXGI_FORMAT_R32_UINT:DXGI_FORMAT_R16_UINT,0);
-#else
-			GetCommandList()->IASetIndexBuffer(&dxbuffer->GetView());
-#endif
-			m_StateCache.IB = dxbuffer;
+			GetHAL().SetIndices(Buffer, _Fmt);
+			//m_StateCache.IB = Buffer;
 		}
-
 	}
 
 	void DXRenderer::SetPrimitiveTopology(PrimitiveType Topology)
 	{
-		int index_count = 0;
-		D3D11_PRIMITIVE_TOPOLOGY _primType = D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
-		switch (Topology) {
-		case PRIM_TRIANGLESTRIP:
-			_primType = D3D11_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP;
-			break;
-		case PRIM_TRIANGLELIST:
-		default:
-			_primType = D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
-			break;
-		}
-		GetCommandList()->IASetPrimitiveTopology(_primType);
+		GetHAL().SetPrimitiveTopology(Topology);
 	}
 
 	void DXRenderer::PushDrawIndexed(PrimitiveType Type,U32 BaseVertexIndex,U32 MinVertexIndex,U32 NumVertices,U32 StartIndex,U32 PrimCount)
 	{
-	
+#if 0	
 		int index_count = 0;
 		D3D11_PRIMITIVE_TOPOLOGY _primType;
 		switch(Type){
@@ -434,6 +427,7 @@ namespace sys {
 		GetCommandList()->DrawIndexed(index_count,StartIndex,BaseVertexIndex);
 	#elif defined(_PCDX12)
 	#endif
+#endif
 	}
 
 	void DXRenderer::PushShader(U32 _ShaderUID)
@@ -445,6 +439,7 @@ namespace sys {
 
 	void DXRenderer::PushMaterial(Material* Mat)
 	{
+#if 0
 #if defined(_PCDX11)
 		Bitmap* bm = NULL;
 		bm = Mat->GetBitmap(MTL_STAGE_DIFFUSE);
@@ -466,10 +461,12 @@ namespace sys {
 			GetCommandList()->PSSetShaderResources(2,1,&tex->ShaderView);
 		}
 #endif
+#endif
 	}
 
 	void DXRenderer::UpdateVSConstants()
 	{
+#if 0
 #if defined(_PCDX11)
 		D3D11_MAPPED_SUBRESOURCE pMappedResource;
 		GetCommandList()->Map(m_VSConstant,0,D3D11_MAP_WRITE_DISCARD,0,&pMappedResource);
@@ -480,15 +477,18 @@ namespace sys {
 
 		//GetCommandList()->SetGraphicsRootConstantBufferView(0, );
 #endif
+#endif
 	}
 
 	void DXRenderer::UpdateConstantBuffer(ID3D11Buffer * _Buffer,void* _DataPtr,U32 _DataSize)
 	{
+#if 0
 #if defined(_PCDX11)
 		D3D11_MAPPED_SUBRESOURCE pMappedResource;
 		GetCommandList()->Map(_Buffer,0,D3D11_MAP_WRITE_DISCARD,0,&pMappedResource);
 		memcpy(pMappedResource.pData,_DataPtr,_DataSize);
 		GetCommandList()->Unmap(_Buffer,0);
+#endif
 #endif
 	}
 	

@@ -78,4 +78,28 @@ void D3D12HAL::SetShaders(UINT Type, UINT SID)
 	}
 }
 
+void D3D11HAL::SetIndices(IndexBuffer* Buffer, U32 _Fmt)
+{
+	DXIndexBuffer* dxbuffer = reinterpret_cast<DXIndexBuffer*>(Buffer);
+	m_ImmediateDeviceContext->IASetIndexBuffer(dxbuffer->GetRes(), (_Fmt == FMT_IDX_32) ? DXGI_FORMAT_R32_UINT : DXGI_FORMAT_R16_UINT, 0);
+	GetCommandList()->IASetIndexBuffer(&dxbuffer->GetView());
+}
+
+void D3D12HAL::SetStreamSource(U32 StreamNumber, VertexBuffer* Buffer, U32 Offset, U32 Stride)
+{
+	DXVertexBuffer* dxbuffer = reinterpret_cast<DXVertexBuffer*>(Buffer);
+#ifdef _PCDX11
+	ID3D11Buffer * pBuffer = dxbuffer->GetRes();
+	UINT _Stride = Stride;
+	UINT _Offset = Offset;
+	GetCommandList()->IASetVertexBuffers(StreamNumber, 1, &pBuffer, &_Stride, &_Offset);
+#else
+	D3D12_VERTEX_BUFFER_VIEW view = dxbuffer->GetView();
+	view.BufferLocation += Offset * Stride;
+	view.StrideInBytes = Stride;
+	GetCommandList()->IASetVertexBuffers(StreamNumber, 1, &view);
+#endif
+	m_StateCache.VB = dxbuffer;
+}
+
 #endif

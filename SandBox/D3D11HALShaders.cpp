@@ -2,6 +2,7 @@
 #if defined(_PCDX11)
 #include <Renderer.h>
 #include <D3D11HAL.h>
+#include <D3D11HALBuffers.h>
 #include <WinMain.h>
 
 void D3D11HAL::InitShaders()
@@ -53,6 +54,43 @@ void D3D11HAL::CreateShaderResource(ID3DBlob * pCode, UINT Type, UINT SID)
 			D3DReflect(pCode->GetBufferPointer(), pCode->GetBufferSize(), IID_ID3D11ShaderReflection, (void**)&m_CSDAReflection[SID]);
 		}
 	}
+}
+
+void D3D11HAL::SetIndices(IndexBuffer* Buffer, U32 _Fmt)
+{
+	DXIndexBuffer* dxbuffer = reinterpret_cast<DXIndexBuffer*>(Buffer);
+	m_ImmediateDeviceContext->IASetIndexBuffer(dxbuffer->GetRes(), (_Fmt == FMT_IDX_32) ? DXGI_FORMAT_R32_UINT : DXGI_FORMAT_R16_UINT, 0);
+}
+
+void D3D11HAL::SetPrimitiveTopology(PrimitiveType Topology)
+{
+	int index_count = 0;
+	D3D11_PRIMITIVE_TOPOLOGY _primType = D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
+	switch (Topology) {
+	case PRIM_TRIANGLESTRIP:
+		_primType = D3D11_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP;
+		break;
+	case PRIM_TRIANGLELIST:
+	default:
+		_primType = D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
+		break;
+	}
+	m_ImmediateDeviceContext->IASetPrimitiveTopology(_primType);
+}
+
+void D3D11HAL::SetStreamSource(U32 StreamNumber, VertexBuffer* Buffer, U32 Offset, U32 Stride)
+{
+	DXVertexBuffer* dxbuffer = reinterpret_cast<DXVertexBuffer*>(Buffer);
+	ID3D11Buffer * pBuffer = dxbuffer->GetRes();
+	UINT _Stride = Stride;
+	UINT _Offset = Offset;
+	m_ImmediateDeviceContext->IASetVertexBuffers(StreamNumber, 1, &pBuffer, &_Stride, &_Offset);
+}
+
+void D3D11HAL::SetVertexDeclaration(VertexDeclaration* Decl)
+{
+	DXVertexDeclaration* dxbuffer = reinterpret_cast<DXVertexDeclaration*>(Decl);
+	m_ImmediateDeviceContext->IASetInputLayout(dxbuffer->GetRes());
 }
 
 void D3D11HAL::SetShaders(UINT Type, UINT SID)

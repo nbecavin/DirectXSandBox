@@ -1,7 +1,7 @@
 #ifndef __RENDERER_SHADER_HH__
 #define __RENDERER_SHADER_HH__
 
-enum 
+enum EShaderType
 {
 	SHADER_TYPE_VERTEX=1,
 	SHADER_TYPE_PIXEL,

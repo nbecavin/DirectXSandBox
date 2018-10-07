@@ -227,6 +227,9 @@
     <ClCompile Include="RendererImGui.cpp">
       <Filter>Common Platform\Renderer</Filter>
     </ClCompile>
+    <ClCompile Include="D3D11HALTexture.cpp">
+      <Filter>PC\D3D11</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="SandBox.h">
