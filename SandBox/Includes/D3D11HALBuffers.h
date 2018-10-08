@@ -41,16 +41,16 @@ public:
 };
 typedef D3D11IndexBuffer DXIndexBuffer;
 
-/*
-class DXVertexDeclaration : public VertexDeclaration {
+class D3D11VertexDeclaration : public VertexDeclaration {
 private:
-	IDirect3DVertexDeclaration	*	res;
+	ID3D11InputLayout *	res;
 public:
-	DXVertexDeclaration() : res(NULL) {}
-	IDirect3DVertexDeclaration * GetRes() { return res; }
+	D3D11VertexDeclaration() : res(NULL) {}
+	ID3D11InputLayout * GetRes() { return res; }
 	virtual void Create(VertexElement* Decl, U32 _ShaderUID);
 };
 
+/*
 class DXVertexShader : public VertexShader
 {
 private:
@@ -74,12 +74,12 @@ public:
 class DXGeometryShader : public GeometryShader
 {
 };
-
-typedef DynArray<DXVertexBuffer, 2048>		DXVertexBufferDA;
-typedef DynArray<DXIndexBuffer, 2048>		DXIndexBufferDA;
-typedef DynArray<DXVertexDeclaration, 2048>	DXVertexDeclarationDA;
-typedef DynArray<DXVertexShader, 2048>		DXVertexShaderDA;
-typedef DynArray<DXPixelShader, 2048>			DXPixelShaderDA;
 */
+
+//typedef DynArray<DXVertexBuffer, 2048>		DXVertexBufferDA;
+//typedef DynArray<DXIndexBuffer, 2048>		DXIndexBufferDA;
+typedef DynArray<D3D11VertexDeclaration, 2048>	D3D11VertexDeclarationDA;
+//typedef DynArray<DXVertexShader, 2048>		DXVertexShaderDA;
+//typedef DynArray<DXPixelShader, 2048>			DXPixelShaderDA;
 
 #endif //__DX11BUFFERS_HH__

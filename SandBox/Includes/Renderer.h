@@ -3,6 +3,7 @@
 
 #include <PrimitiveBuffers.h>
 #include <RendererShader.h>
+#include <RendererPipelineState.h>
 #include <Material.h>
 #include <Camera.h>
 #include <imgui.h>
@@ -49,8 +50,8 @@ namespace sys {
 		virtual void SetBlendState(D3D11_BLEND_DESC& desc) = 0;
 		virtual void SetSampler(U32 Slot, EShaderType Type, void* Sampler) = 0;
 		virtual void SetShaderResource(U32 Slot, EShaderType Type, Bitmap* Texture) = 0;
-		virtual void DSSetDefault() = 0;
-		virtual void RSSetDefault() = 0;
+		virtual void SetDepthStencilState(DepthStencilStateDesc& Desc) = 0;
+		virtual void SetRasterizerState(RasterizerStateDesc& Desc) = 0;
 		virtual void SetPrimitiveTopology(PrimitiveType Topology) = 0;
 		virtual void DrawIndexed(UINT IndexCount, UINT StartIndexLocation, INT BaseVertexLocation) = 0;
 

@@ -42,7 +42,10 @@ namespace sys {
 
 		virtual VertexBuffer *		CreateVertexBuffer(U32 _Size,U32 _Usage,void * _Datas);
 		virtual IndexBuffer *		CreateIndexBuffer(U32 _Size,U32 _Usage,U32 _Fmt,void * _Datas);
-		virtual VertexDeclaration *	CreateVertexDecl(VertexElement* Decl,U32 _ShaderUID);
+		virtual VertexDeclaration *	CreateVertexDecl(VertexElement* Decl, U32 _ShaderUID)
+		{
+			return GetHAL().CreateVertexDecl(Decl, _ShaderUID);
+		}
 		virtual void				CreateTexture(Bitmap * _Bmap);
 
 		virtual void	PushWorldMatrix( Mat4x4* _m );
@@ -56,15 +59,21 @@ namespace sys {
 		virtual void SetBlendState(D3D11_BLEND_DESC& desc);
 		virtual void SetSampler(U32 Slot, EShaderType Type, void* Sampler);		
 		virtual void SetShaderResource(U32 Slot, EShaderType Type, Bitmap* Texture);
-		virtual void DSSetDefault() { GetCommandList()->OMSetDepthStencilState(m_DSS_NoZWrite,0); }
-		virtual void RSSetDefault() { GetCommandList()->RSSetState(m_DefaultRS); }
-		virtual void SetPrimitiveTopology(PrimitiveType Topology);
-		virtual void	PushDrawIndexed(PrimitiveType Type,U32 BaseVertexIndex,U32 MinVertexIndex,U32 NumVertices,U32 StartIndex,U32 PrimCount);
-		
+		virtual void SetDepthStencilState(DepthStencilStateDesc& Desc)
+		{
+			GetHAL().SetDepthStencilState(Desc);
+		}
+		virtual void SetRasterizerState(RasterizerStateDesc& Desc)
+		{
+			GetHAL().SetRasterizerState(Desc);
+		}
+		virtual void SetPrimitiveTopology(PrimitiveType Topology);		
 		void DrawIndexed(UINT IndexCount, UINT StartIndexLocation, INT BaseVertexLocation)
 		{
 			GetHAL().DrawIndexed(IndexCount, StartIndexLocation, BaseVertexLocation);
 		}
+
+		virtual void PushDrawIndexed(PrimitiveType Type,U32 BaseVertexIndex,U32 MinVertexIndex,U32 NumVertices,U32 StartIndex,U32 PrimCount);
 
 		virtual void	RegisterShaderFromSourceFile(U32 _SUID,const char* src,const char* epoint);
 
@@ -100,7 +109,6 @@ namespace sys {
 
 		DXVertexBufferDA				m_VertexBufferDA;
 		DXIndexBufferDA					m_IndexBufferDA;
-		DXVertexDeclarationDA			m_VertexDeclarationDA;
 		DXVertexShaderDA				m_VertexShaderDA;
 		DXPixelShaderDA					m_PixelShaderDA;
 

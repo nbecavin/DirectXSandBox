@@ -230,6 +230,9 @@
     <ClCompile Include="D3D11HALTexture.cpp">
       <Filter>PC\D3D11</Filter>
     </ClCompile>
+    <ClCompile Include="D3D11HALPipelineState.cpp">
+      <Filter>PC\D3D11</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="SandBox.h">
@@ -379,6 +382,9 @@
     </ClInclude>
     <ClInclude Include="..\Tools\imgui\imstb_truetype.h">
       <Filter>Tools\ImGui</Filter>
+    </ClInclude>
+    <ClInclude Include="Includes\RendererPipelineState.h">
+      <Filter>Common Platform\Renderer</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -277,6 +277,7 @@
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="CameraFree.cpp" />
     <ClCompile Include="D3D11HALBuffers.cpp" />
+    <ClCompile Include="D3D11HALPipelineState.cpp" />
     <ClCompile Include="D3D11HALShaders.cpp" />
     <ClCompile Include="D3D11HALSwapChain.cpp" />
     <ClCompile Include="D3D11HALTexture.cpp" />
@@ -341,6 +342,7 @@
     <ClInclude Include="Includes\D3D12HALBuffers.h" />
     <ClInclude Include="Includes\D3D12HALConstantBuffer.h" />
     <ClInclude Include="Includes\d3dx12.h" />
+    <ClInclude Include="Includes\RendererPipelineState.h" />
     <ClInclude Include="Includes\SandBoxFile.h" />
     <ClInclude Include="Includes\ScriptObject.h" />
     <ClInclude Include="Includes\WinFile.h" />

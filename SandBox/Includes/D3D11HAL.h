@@ -12,6 +12,7 @@ public:
 
 	void PresentFrame();
 
+	VertexDeclaration *	CreateVertexDecl(VertexElement* Decl, U32 _ShaderUID);
 	void CreateShaderResource(ID3DBlob * pCode, UINT Type, UINT SID);
 	void CreateTexture(Bitmap * _Bm);
 
@@ -38,6 +39,8 @@ public:
 	ID3D11DeviceContext* GetImmediateDeviceContext() { return m_ImmediateDeviceContext.Get(); }
 
 	// Graphics command list
+	void SetDepthStencilState(DepthStencilStateDesc& Desc);
+	void SetRasterizerState(RasterizerStateDesc& Desc);
 	inline void SetBlendState(D3D11_BLEND_DESC& desc);
 	inline void SetSampler(U32 Slot, EShaderType Type, ID3D11SamplerState* Sampler);
 	inline void SetShaderResource(U32 Slot, EShaderType Type, ID3D11ShaderResourceView* View);
@@ -62,6 +65,8 @@ private:
 	ID3D11ShaderReflection *		m_VSDAReflection[SHADER_VS_COUNT];
 	ID3D11ShaderReflection *		m_PSDAReflection[SHADER_PS_COUNT];
 	ID3D11ShaderReflection *		m_CSDAReflection[SHADER_CS_COUNT];
+
+	D3D11VertexDeclarationDA		m_InputLayoutDA;
 };
 
 inline void D3D11HAL::DrawIndexed(UINT IndexCount, UINT StartIndexLocation, INT BaseVertexLocation)

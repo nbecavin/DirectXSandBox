@@ -39,16 +39,6 @@ namespace sys {
 		return (buffer[0]->IsInited()) ? buffer[0] : NULL;
 	}
 
-	VertexDeclaration*	DXRenderer::CreateVertexDecl(VertexElement *Decl,U32 _ShaderUID)
-	{
-		DXVertexDeclaration * buffer = m_VertexDeclarationDA.Add();
-		MESSAGE("Begin create Decl");
-		buffer->Create(Decl,_ShaderUID);
-		//return (buffer->IsInited()) ? buffer : NULL;
-		MESSAGE("End create Decl");
-		return buffer;
-	}
-
 	void DXRenderer::RegisterShaderFromSourceFile(U32 _ShaderUID,const char* src,const char* epoint)
 	{
 		HRESULT hr;

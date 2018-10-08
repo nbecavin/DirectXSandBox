@@ -87,9 +87,19 @@ void D3D11HAL::SetStreamSource(U32 StreamNumber, VertexBuffer* Buffer, U32 Offse
 	m_ImmediateDeviceContext->IASetVertexBuffers(StreamNumber, 1, &pBuffer, &_Stride, &_Offset);
 }
 
+VertexDeclaration* D3D11HAL::CreateVertexDecl(VertexElement *Decl, U32 _ShaderUID)
+{
+	D3D11VertexDeclaration * buffer = m_InputLayoutDA.Add();
+	MESSAGE("Begin create Decl");
+	buffer->Create(Decl, _ShaderUID);
+	//return (buffer->IsInited()) ? buffer : NULL;
+	MESSAGE("End create Decl");
+	return buffer;
+}
+
 void D3D11HAL::SetVertexDeclaration(VertexDeclaration* Decl)
 {
-	DXVertexDeclaration* dxbuffer = reinterpret_cast<DXVertexDeclaration*>(Decl);
+	D3D11VertexDeclaration* dxbuffer = reinterpret_cast<D3D11VertexDeclaration*>(Decl);
 	m_ImmediateDeviceContext->IASetInputLayout(dxbuffer->GetRes());
 }
 

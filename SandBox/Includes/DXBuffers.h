@@ -19,7 +19,6 @@ public:
 	virtual bool Lock(U32 OffsetToLock,U32 SizeToLock,void **pData,U32 Flags);
 	virtual void Unlock();
 };
-*/
 
 class DXVertexDeclaration : public VertexDeclaration {
 private:
@@ -29,6 +28,7 @@ public:
 	IDirect3DVertexDeclaration * GetRes() { return res; }
 	virtual void Create(VertexElement* Decl,U32 _ShaderUID);
 };
+*/
 
 class DXVertexShader : public VertexShader
 {
@@ -56,7 +56,6 @@ class DXGeometryShader : public GeometryShader
 
 typedef DynArray<DXVertexBuffer*,2048>		DXVertexBufferDA;
 typedef DynArray<DXIndexBuffer*,2048>		DXIndexBufferDA;
-typedef DynArray<DXVertexDeclaration,2048>	DXVertexDeclarationDA;
 typedef DynArray<DXVertexShader,2048>		DXVertexShaderDA;
 typedef DynArray<DXPixelShader,2048>		DXPixelShaderDA;
 
