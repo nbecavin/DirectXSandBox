@@ -145,20 +145,28 @@ void Renderer::DrawImGUI()
 
 	//ctx->VSSetConstantBuffers(0, 1, &g_pVertexConstantBuffer);
 	//ctx->PSSetSamplers(0, 1, &g_pFontSampler);
-	SetSampler(0, SHADER_TYPE_PIXEL, nullptr);
+	SamplerDesc fontSampler;
+	fontSampler.desc.Filter = D3D11_FILTER_MIN_MAG_MIP_LINEAR;
+	fontSampler.desc.AddressU = fontSampler.desc.AddressV = fontSampler.desc.AddressW = D3D11_TEXTURE_ADDRESS_WRAP;
+	fontSampler.desc.MaxAnisotropy = 1;
+	fontSampler.desc.ComparisonFunc = D3D11_COMPARISON_ALWAYS;
+	fontSampler.desc.MaxLOD = D3D11_FLOAT32_MAX;
+	SetSampler(0, SHADER_TYPE_PIXEL, fontSampler);
 
 	//// Setup render state
-	CD3D11_DEFAULT def;
-	CD3D11_BLEND_DESC desc(def);
-	desc.RenderTarget[0].BlendEnable = TRUE;
-	desc.RenderTarget[0].SrcBlend = D3D11_BLEND_SRC_ALPHA;
-	desc.RenderTarget[0].DestBlend = D3D11_BLEND_INV_SRC_ALPHA;
-	SetBlendState(desc);
-	 
-	//const float blend_factor[4] = { 0.f, 0.f, 0.f, 0.f };
-	//ctx->OMSetBlendState(g_pBlendState, blend_factor, 0xffffffff);
-	DSSetDefault();
-	RSSetDefault();
+	BlendDesc blend;
+	blend.desc.RenderTarget[0].BlendEnable = TRUE;
+	blend.desc.RenderTarget[0].SrcBlend = D3D11_BLEND_SRC_ALPHA;
+	blend.desc.RenderTarget[0].DestBlend = D3D11_BLEND_INV_SRC_ALPHA;
+	SetBlendState(blend);
+	
+	DepthStencilDesc ds;
+	ds.desc.DepthEnable = FALSE;
+	SetDepthStencilState(ds);
+	
+	RasterizerDesc rs;
+	rs.desc.CullMode = D3D11_CULL_NONE;
+	SetRasterizerState(rs);
 
 	// Render command lists
 	int vtx_offset = 0;

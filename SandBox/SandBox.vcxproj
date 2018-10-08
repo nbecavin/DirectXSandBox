@@ -308,7 +308,6 @@
     <ClCompile Include="InputManager.cpp" />
     <ClCompile Include="DX11Renderer.cpp" />
     <ClCompile Include="DX11RendererInit.cpp" />
-    <ClCompile Include="DXBuffers.cpp" />
     <ClCompile Include="DXRendererResource.cpp" />
     <ClCompile Include="WinFile.cpp" />
     <ClCompile Include="WinInputManager.cpp" />
@@ -375,7 +374,6 @@
     <Text Include="..\Shaders\sh_math.h" />
     <Text Include="..\Shaders\ShaderRegs.h" />
     <ClInclude Include="Includes\DX11Renderer.h" />
-    <ClInclude Include="Includes\DXBuffers.h" />
     <ClInclude Include="Includes\DXRenderer.h" />
     <ClInclude Include="targetver.h" />
     <ClInclude Include="Includes\WinMain.h" />

@@ -47,11 +47,11 @@ namespace sys {
 		virtual void	RegisterShaderFromSourceFile(U32 _SUID,const char* src,const char* epoint) = 0;
 
 		// Graphics command list
-		virtual void SetBlendState(D3D11_BLEND_DESC& desc) = 0;
-		virtual void SetSampler(U32 Slot, EShaderType Type, void* Sampler) = 0;
+		virtual void SetBlendState(BlendDesc& desc) = 0;
+		virtual void SetSampler(U32 Slot, EShaderType Type, SamplerDesc& Sampler) = 0;
 		virtual void SetShaderResource(U32 Slot, EShaderType Type, Bitmap* Texture) = 0;
-		virtual void SetDepthStencilState(DepthStencilStateDesc& Desc) = 0;
-		virtual void SetRasterizerState(RasterizerStateDesc& Desc) = 0;
+		virtual void SetDepthStencilState(DepthStencilDesc& Desc) = 0;
+		virtual void SetRasterizerState(RasterizerDesc& Desc) = 0;
 		virtual void SetPrimitiveTopology(PrimitiveType Topology) = 0;
 		virtual void DrawIndexed(UINT IndexCount, UINT StartIndexLocation, INT BaseVertexLocation) = 0;
 

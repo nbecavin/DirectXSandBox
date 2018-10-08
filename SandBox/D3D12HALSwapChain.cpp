@@ -177,6 +177,20 @@ void D3D12HAL::Shut()
 	m_SwapChain.Get()->Release();
 }
 
+void D3D12HAL::SetAndClearRenderTarget()
+{
+	GetCommandList()->OMSetRenderTargets(1, &m_BackBuffer, m_DepthBuffer);
+
+#if defined(_PCDX12)
+	float ClearColor[4] = { 0.0f, 0.125f, 0.3f, 1.0f }; // red,green,blue,alpha
+	GetCommandList()->ClearRenderTargetView(GetHAL().GetCurrentBackBufferView(), ClearColor, 0, nullptr);
+#elif defined(_PCDX11)
+	float ClearColor[4] = { 0.0f, 0.125f, 0.3f, 1.0f }; // red,green,blue,alpha
+	//NICOB		GetCommandList()->ClearRenderTargetView(m_BackBuffer, ClearColor);
+	//NICOB		GetCommandList()->ClearDepthStencilView(m_DepthBuffer, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.f, 0);
+#endif
+}
+
 void D3D12HAL::PresentFrame()
 {
 	// Indicate that the back buffer will now be used to present.

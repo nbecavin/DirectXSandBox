@@ -27,131 +27,57 @@ namespace sys
 
 		GetHAL().Init(SizeX, SizeY, this);
 
+		//// Fill in a buffer description.
+		//D3D11_BUFFER_DESC cbDesc;
+		//cbDesc.ByteWidth = VS_CONSTANT_BUFFER_SIZE;
+		//cbDesc.Usage = D3D11_USAGE_DYNAMIC;
+		//cbDesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
+		//cbDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
+		//cbDesc.MiscFlags = 0;
+		//cbDesc.StructureByteStride = 0;
+		//hr = GetDevice()->CreateBuffer( &cbDesc, NULL, &m_VSConstant );
 
-#ifdef _PCDX11
-		// Create a render target view
-		ID3D11Texture2D* pBackBuffer = NULL;
-		HRESULT hr = GetHAL().GetSwapChain()->GetBuffer(0, __uuidof(ID3D11Texture2D), (LPVOID*)&pBackBuffer);
-		if (FAILED(hr))
-			return hr;
+		m_DefaultRS.desc.AntialiasedLineEnable = FALSE;
+		m_DefaultRS.desc.CullMode = D3D11_CULL_NONE;
+		m_DefaultRS.desc.DepthBias = 0.f;
+		m_DefaultRS.desc.DepthBiasClamp = 0.f;
+		m_DefaultRS.desc.DepthClipEnable = TRUE;
+		m_DefaultRS.desc.FillMode = D3D11_FILL_SOLID;
+		m_DefaultRS.desc.FrontCounterClockwise = FALSE;
+		m_DefaultRS.desc.MultisampleEnable = FALSE;
+		m_DefaultRS.desc.ScissorEnable = FALSE;
+		m_DefaultRS.desc.SlopeScaledDepthBias = 0.f;
 
-		hr = GetDevice()->CreateRenderTargetView( pBackBuffer, NULL, &m_BackBuffer );
-		pBackBuffer->Release();
-		if( FAILED( hr ) )
-			return hr;
+		m_DefaultDS.desc.DepthEnable = TRUE;
+		m_DefaultDS.desc.DepthFunc = D3D11_COMPARISON_LESS_EQUAL;
+		m_DefaultDS.desc.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ALL;
+		m_DefaultDS.desc.StencilEnable = FALSE;
+		m_DefaultDS.desc.StencilReadMask = D3D11_DEFAULT_STENCIL_READ_MASK;
+		m_DefaultDS.desc.StencilWriteMask = D3D11_DEFAULT_STENCIL_WRITE_MASK;
+		m_DefaultDS.desc.FrontFace.StencilDepthFailOp = D3D11_STENCIL_OP_KEEP;
+		m_DefaultDS.desc.FrontFace.StencilFailOp = D3D11_STENCIL_OP_KEEP;
+		m_DefaultDS.desc.FrontFace.StencilPassOp = D3D11_STENCIL_OP_KEEP;
+		m_DefaultDS.desc.FrontFace.StencilFunc = D3D11_COMPARISON_ALWAYS;
+		m_DefaultDS.desc.BackFace.StencilDepthFailOp = D3D11_STENCIL_OP_KEEP;
+		m_DefaultDS.desc.BackFace.StencilFailOp = D3D11_STENCIL_OP_KEEP;
+		m_DefaultDS.desc.BackFace.StencilPassOp = D3D11_STENCIL_OP_KEEP;
+		m_DefaultDS.desc.BackFace.StencilFunc = D3D11_COMPARISON_ALWAYS;
 
-		// Create depth buffer
-		//hr = Device->CreateDepthStencilView( pDepthBuffer, 
+		m_DSS_NoZWrite.desc.DepthEnable = FALSE;
+		m_DSS_NoZWrite.desc.DepthFunc = D3D11_COMPARISON_LESS_EQUAL;
+		m_DSS_NoZWrite.desc.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ZERO;
 
-		/*         texturefmt = DXGI_FORMAT_R24G8_TYPELESS ;
-                SRVfmt = DXGI_FORMAT_R24_UNORM_X8_TYPELESS;
-               DSVfmt = DXGI_FORMAT_D24_UNORM_S8_UINT;
-			*/
+		m_DefaultSS.desc.Filter = D3D11_FILTER_MIN_MAG_MIP_LINEAR;
+		m_DefaultSS.desc.AddressU = m_DefaultSS.desc.AddressV = m_DefaultSS.desc.AddressW = D3D11_TEXTURE_ADDRESS_WRAP;
+		m_DefaultSS.desc.MaxAnisotropy = 1;
+		m_DefaultSS.desc.ComparisonFunc = D3D11_COMPARISON_ALWAYS;
+		m_DefaultSS.desc.MaxLOD = D3D11_FLOAT32_MAX;
 
-        // Create depth stencil texture
-        ID3D11Texture2D* pDepthStencil = NULL;
-        D3D11_TEXTURE2D_DESC descDepth;
-        descDepth.Width = SizeX;
-        descDepth.Height = SizeY;
-        descDepth.MipLevels = 1;
-        descDepth.ArraySize = 1;
-        descDepth.Format = DXGI_FORMAT_R24G8_TYPELESS;//DXGI_FORMAT_D24_UNORM_S8_UINT;
-        descDepth.SampleDesc.Count = 1;
-        descDepth.SampleDesc.Quality = 0;
-        descDepth.Usage = D3D11_USAGE_DEFAULT;
-        descDepth.BindFlags = D3D11_BIND_DEPTH_STENCIL|D3D11_BIND_SHADER_RESOURCE;
-        descDepth.CPUAccessFlags = 0;
-        descDepth.MiscFlags = 0;
-        hr = GetDevice()->CreateTexture2D( &descDepth, NULL, &pDepthStencil );
-        if( FAILED( hr ) )
-            return hr;
-
-        // Create the depth stencil view
-        D3D11_DEPTH_STENCIL_VIEW_DESC descDSV;
-		descDSV.Flags = 0;
-        descDSV.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;//descDepth.Format;
-        if( descDepth.SampleDesc.Count > 1 )
-            descDSV.ViewDimension = D3D11_DSV_DIMENSION_TEXTURE2DMS;
-        else
-            descDSV.ViewDimension = D3D11_DSV_DIMENSION_TEXTURE2D;
-        descDSV.Texture2D.MipSlice = 0;
-        hr = GetDevice()->CreateDepthStencilView( pDepthStencil, &descDSV, &m_DepthBuffer );
-        if( FAILED( hr ) )
-            return hr;
-
-		D3D11_SHADER_RESOURCE_VIEW_DESC SRVDesc;
-		ZeroMemory( &SRVDesc, sizeof( SRVDesc ) );
-		SRVDesc.Format = DXGI_FORMAT_R24_UNORM_X8_TYPELESS;
-		SRVDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
-		SRVDesc.Texture2D.MipLevels = 1;
-		hr = GetDevice()->CreateShaderResourceView( pDepthStencil, &SRVDesc,&m_ZBuffer);
-        if( FAILED( hr ) )
-            return hr;
-
-		GetCommandList()->OMSetRenderTargets( 1, &m_BackBuffer, m_DepthBuffer );
-
-		// Fill in a buffer description.
-		D3D11_BUFFER_DESC cbDesc;
-		cbDesc.ByteWidth = VS_CONSTANT_BUFFER_SIZE;
-		cbDesc.Usage = D3D11_USAGE_DYNAMIC;
-		cbDesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
-		cbDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
-		cbDesc.MiscFlags = 0;
-		cbDesc.StructureByteStride = 0;
-		hr = GetDevice()->CreateBuffer( &cbDesc, NULL, &m_VSConstant );
-
-		D3D11_RASTERIZER_DESC rs;
-		rs.AntialiasedLineEnable = FALSE;
-		rs.CullMode = D3D11_CULL_NONE;
-		rs.DepthBias = 0.f;
-		rs.DepthBiasClamp = 0.f;
-		rs.DepthClipEnable = TRUE;
-		rs.FillMode = D3D11_FILL_SOLID;
-		rs.FrontCounterClockwise = FALSE;
-		rs.MultisampleEnable = FALSE;
-		rs.ScissorEnable = FALSE;
-		rs.SlopeScaledDepthBias = 0.f;
-		GetDevice()->CreateRasterizerState(&rs,&m_DefaultRS);
-
-		D3D11_DEPTH_STENCIL_DESC ds;
-		ds.DepthEnable = TRUE;
-		ds.DepthFunc = D3D11_COMPARISON_LESS_EQUAL;
-		ds.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ALL;
-		ds.StencilEnable = FALSE;
-		ds.StencilReadMask = D3D11_DEFAULT_STENCIL_READ_MASK;
-		ds.StencilWriteMask = D3D11_DEFAULT_STENCIL_WRITE_MASK;
-		ds.FrontFace.StencilDepthFailOp = D3D11_STENCIL_OP_KEEP;
-		ds.FrontFace.StencilFailOp = D3D11_STENCIL_OP_KEEP;
-		ds.FrontFace.StencilPassOp = D3D11_STENCIL_OP_KEEP;
-		ds.FrontFace.StencilFunc = D3D11_COMPARISON_ALWAYS;
-		ds.BackFace.StencilDepthFailOp = D3D11_STENCIL_OP_KEEP;
-		ds.BackFace.StencilFailOp = D3D11_STENCIL_OP_KEEP;
-		ds.BackFace.StencilPassOp = D3D11_STENCIL_OP_KEEP;
-		ds.BackFace.StencilFunc = D3D11_COMPARISON_ALWAYS;
-		GetDevice()->CreateDepthStencilState(&ds,&m_DefaultDS);
-
-		ds.DepthEnable = FALSE;
-		ds.DepthFunc = D3D11_COMPARISON_LESS_EQUAL;
-		ds.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ZERO;
-		GetDevice()->CreateDepthStencilState(&ds,&m_DSS_NoZWrite);
-
-		D3D11_SAMPLER_DESC ss;
-		ZeroMemory( &ss, sizeof(ss) );
-		ss.Filter = D3D11_FILTER_MIN_MAG_MIP_LINEAR;
-		ss.AddressU = ss.AddressV = ss.AddressW = D3D11_TEXTURE_ADDRESS_WRAP;
-		ss.MaxAnisotropy = 1;
-		ss.ComparisonFunc = D3D11_COMPARISON_ALWAYS;
-		ss.MaxLOD = D3D11_FLOAT32_MAX;
-		GetDevice()->CreateSamplerState(&ss,&m_DefaultSS);
-
-		ZeroMemory( &ss, sizeof(ss) );
-		ss.Filter = D3D11_FILTER_MIN_MAG_MIP_POINT;
-		ss.AddressU = ss.AddressV = ss.AddressW = D3D11_TEXTURE_ADDRESS_CLAMP;
-		ss.MaxAnisotropy = 1;
-		ss.ComparisonFunc = D3D11_COMPARISON_ALWAYS;
-		ss.MaxLOD = D3D11_FLOAT32_MAX;
-		GetDevice()->CreateSamplerState(&ss,&m_NoBilinearSS);
-#endif
+		m_NoBilinearSS.desc.Filter = D3D11_FILTER_MIN_MAG_MIP_POINT;
+		m_NoBilinearSS.desc.AddressU = m_NoBilinearSS.desc.AddressV = m_NoBilinearSS.desc.AddressW = D3D11_TEXTURE_ADDRESS_CLAMP;
+		m_NoBilinearSS.desc.MaxAnisotropy = 1;
+		m_NoBilinearSS.desc.ComparisonFunc = D3D11_COMPARISON_ALWAYS;
+		m_NoBilinearSS.desc.MaxLOD = D3D11_FLOAT32_MAX;
 
 		InitShaders();
 		InitSurface();
@@ -165,7 +91,6 @@ namespace sys
 		if(!Renderer::InitStaticDatas())
 			return FALSE;
 
-#ifdef _PCDX11
 		XMFLOAT3	lightDir;
 
 		#define SH_ORDER		2
@@ -203,7 +128,7 @@ namespace sys
 		initialData.pSysMem = coeffs;
 		initialData.SysMemPitch = 0;
 		initialData.SysMemSlicePitch = 0;
-		GetDevice()->CreateBuffer(&desc,&initialData,&m_SHHemisphere);
+//		GetDevice()->CreateBuffer(&desc,&initialData,&m_SHHemisphere);
 
 		/*
 		CameraConstant temp;
@@ -213,10 +138,9 @@ namespace sys
 		initialData.pSysMem = &temp;
 		Device->CreateBuffer(&desc,&initialData,&m_CameraConstant);
 		*/
-		m_CameraConstant = (ID3D11Buffer*)CameraConstant::CreateHwRes();
-		m_PostProcessConstant = (ID3D11Buffer*)PostProcessConstant::CreateHwRes();
+//		m_CameraConstant = (ID3D11Buffer*)CameraConstant::CreateHwRes();
+//		m_PostProcessConstant = (ID3D11Buffer*)PostProcessConstant::CreateHwRes();
 
-#endif
 		return TRUE;
 	}
 

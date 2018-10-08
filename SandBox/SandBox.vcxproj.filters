@@ -146,9 +146,6 @@
     <ClCompile Include="InputManager.cpp">
       <Filter>Common Platform\InputManager</Filter>
     </ClCompile>
-    <ClCompile Include="DXBuffers.cpp">
-      <Filter>PC</Filter>
-    </ClCompile>
     <ClCompile Include="DXRendererResource.cpp">
       <Filter>PC</Filter>
     </ClCompile>
@@ -306,9 +303,6 @@
     </ClInclude>
     <ClInclude Include="Includes\InputManager.h">
       <Filter>Common Platform\InputManager</Filter>
-    </ClInclude>
-    <ClInclude Include="Includes\DXBuffers.h">
-      <Filter>PC</Filter>
     </ClInclude>
     <ClInclude Include="Includes\DXRenderer.h">
       <Filter>PC</Filter>

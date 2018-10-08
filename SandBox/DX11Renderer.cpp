@@ -27,17 +27,22 @@ namespace sys {
 
 		HRESULT hr;
 
-#if defined(_PCDX12)
-		float ClearColor[4] = { 0.0f, 0.125f, 0.3f, 1.0f }; // red,green,blue,alpha
-		GetCommandList()->ClearRenderTargetView(GetHAL().GetCurrentBackBufferView(), ClearColor, 0, nullptr);
-#elif defined(_PCDX11)
-		float ClearColor[4] = { 0.0f, 0.125f, 0.3f, 1.0f }; // red,green,blue,alpha
-		GetCommandList()->ClearRenderTargetView(m_BackBuffer, ClearColor);
-		GetCommandList()->ClearDepthStencilView(m_DepthBuffer, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.f, 0);
-#endif
+		GetHAL().SetAndClearRenderTarget();
 
-		RSSetDefault();
-		DSSetDefault();
+		// Setup the viewport
+		D3D11_VIEWPORT vp;
+		vp.Width = (FLOAT)SizeX;
+		vp.Height = (FLOAT)SizeY;
+		vp.MinDepth = 0.0f;
+		vp.MaxDepth = 1.0f;
+		vp.TopLeftX = 0;
+		vp.TopLeftY = 0;
+		GetHAL().SetViewports(vp);
+
+		DepthStencilDesc ds;
+		SetDepthStencilState(ds);
+		RasterizerDesc rs;
+		SetRasterizerState(rs);
 
 		//une view et une proj de base
 		XMMATRIX m, proj, view;
@@ -299,23 +304,6 @@ namespace sys {
 	{
 		TextureLink * tex = reinterpret_cast<TextureLink*>(Texture->GetBinHwResId());
 		GetHAL().SetShaderResource(Slot, Type, tex->ShaderView);
-	}
-
-	void DXRenderer::SetSampler(U32 Slot, EShaderType Type, void* Sampler)
-	{
-		if (!Sampler)
-		{
-			GetHAL().SetSampler(Slot, Type, m_DefaultSS);
-		}
-		else
-		{
-
-		}
-	}
-
-	void DXRenderer::SetBlendState(D3D11_BLEND_DESC& desc)
-	{
-		GetHAL().SetBlendState(desc);
 	}
 
 	void DXRenderer::InitSurface()

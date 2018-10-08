@@ -9,7 +9,6 @@
 #elif defined(_PCDX11)
 #include <D3D11HAL.h>
 #endif
-#include <DXBuffers.h>
 
 #if defined(_PCDX11) || defined(_PCDX12)
 
@@ -18,6 +17,35 @@ struct Vertex2D
 	float		x,y,z;
 	float		u,v;
 };
+
+class DXVertexShader : public VertexShader
+{
+private:
+	IDirect3DVertexShader *	res;
+public:
+	DXVertexShader() : res(NULL) {}
+	IDirect3DVertexShader * GetRes() { return res; }
+	virtual bool IsInited() { return res != NULL; }
+};
+
+class DXPixelShader : public PixelShader
+{
+private:
+	IDirect3DPixelShader *		res;
+public:
+	DXPixelShader() : res(NULL) {}
+	IDirect3DPixelShader * GetRes() { return res; }
+	virtual bool IsInited() { return res != NULL; }
+};
+
+class DXGeometryShader : public GeometryShader
+{
+};
+
+typedef DynArray<DXVertexBuffer*, 2048>		DXVertexBufferDA;
+typedef DynArray<DXIndexBuffer*, 2048>		DXIndexBufferDA;
+typedef DynArray<DXVertexShader, 2048>		DXVertexShaderDA;
+typedef DynArray<DXPixelShader, 2048>		DXPixelShaderDA;
 
 namespace sys {
 
@@ -56,14 +84,12 @@ namespace sys {
 		virtual void	PushIndices(IndexBuffer* Buffer,U32 _Fmt);
 		virtual void	PushMaterial(Material* Mat);
 
-		virtual void SetBlendState(D3D11_BLEND_DESC& desc);
-		virtual void SetSampler(U32 Slot, EShaderType Type, void* Sampler);		
 		virtual void SetShaderResource(U32 Slot, EShaderType Type, Bitmap* Texture);
-		virtual void SetDepthStencilState(DepthStencilStateDesc& Desc)
+		virtual void SetDepthStencilState(DepthStencilDesc& Desc)
 		{
 			GetHAL().SetDepthStencilState(Desc);
 		}
-		virtual void SetRasterizerState(RasterizerStateDesc& Desc)
+		virtual void SetRasterizerState(RasterizerDesc& Desc)
 		{
 			GetHAL().SetRasterizerState(Desc);
 		}
@@ -71,6 +97,14 @@ namespace sys {
 		void DrawIndexed(UINT IndexCount, UINT StartIndexLocation, INT BaseVertexLocation)
 		{
 			GetHAL().DrawIndexed(IndexCount, StartIndexLocation, BaseVertexLocation);
+		}
+		void SetSampler(U32 Slot, EShaderType Type, SamplerDesc& Sampler)
+		{
+			GetHAL().SetSampler(Slot, Type, Sampler);
+		}
+		void SetBlendState(BlendDesc& desc)
+		{
+			GetHAL().SetBlendState(desc);
 		}
 
 		virtual void PushDrawIndexed(PrimitiveType Type,U32 BaseVertexIndex,U32 MinVertexIndex,U32 NumVertices,U32 StartIndex,U32 PrimCount);
@@ -84,15 +118,7 @@ namespace sys {
 
 				void PostProcess();
 
-#ifdef _PCDX12
-//		ID3D12Device *			GetDevice() { return GetHAL().GetDevice(); }
-//		ID3D12GraphicsCommandList *	GetCommandList() { return GetHAL().GetCommandList(); }
-#else
-//		ID3D11Device *			GetDevice() { return GetHAL().GetDevice(); }
-//		ID3D11DeviceContext *	GetCommandList() { return GetHAL().GetImmediateDeviceContext(); }
-#endif
 		ID3DBlob *				GetShaderBlob(U32 _ShaderUID);
-
 
 #ifdef _PCDX12
 		D3D12HAL							m_HAL;
@@ -103,21 +129,16 @@ namespace sys {
 #endif
 
 	private:
-		// Surfaces
-		ID3D11RenderTargetView *		m_BackBuffer;
-		ID3D11DepthStencilView *		m_DepthBuffer;
-
 		DXVertexBufferDA				m_VertexBufferDA;
 		DXIndexBufferDA					m_IndexBufferDA;
 		DXVertexShaderDA				m_VertexShaderDA;
 		DXPixelShaderDA					m_PixelShaderDA;
 
-		ID3D11RasterizerState *			m_DefaultRS;
-		ID3D11DepthStencilState *		m_DefaultDS;
-		ID3D11DepthStencilState *		m_DSS_NoZWrite;
-		ID3D11SamplerState *			m_DefaultSS;
-		ID3D11SamplerState *			m_NoBilinearSS;
-		ID3D11ShaderResourceView *		m_ZBuffer;
+		DepthStencilDesc				m_DefaultDS;
+		DepthStencilDesc				m_DSS_NoZWrite;
+		RasterizerDesc					m_DefaultRS;
+		SamplerDesc						m_DefaultSS;
+		SamplerDesc						m_NoBilinearSS;
 
 		struct StateCache
 		{
@@ -125,15 +146,6 @@ namespace sys {
 			DXIndexBuffer	*	IB;
 		};
 		StateCache					m_StateCache;
-
-		#define VS_CONSTANT_MAX_COUNT	256
-		#define VS_CONSTANT_BUFFER_SIZE	(VS_CONSTANT_MAX_COUNT*sizeof(Vec4f))
-		ID3D11Buffer *					m_VSConstant;
-	
-		ID3D11Buffer *					m_SHHemisphere;
-
-		ID3D11Buffer *					m_CameraConstant;
-		ID3D11Buffer *					m_PostProcessConstant;
 
 		void				UpdateConstantBuffer(ID3D11Buffer * _Buffer,void* _DataPtr,U32 _DataSize);
 		void				UpdateVSConstants();

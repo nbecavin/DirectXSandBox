@@ -2,7 +2,6 @@
 
 #include <DX11Renderer.h>
 #include <WinMain.h>
-#include <DXBuffers.h>
 #if defined(_PCDX12)
 #include <D3D12HAL.h>
 #include <D3D12HALBuffers.h>
@@ -131,7 +130,7 @@ namespace sys {
 
 	ID3D11Buffer * CreateConstantBuffer(void* _DataPtr,U32 _DataSize)
 	{
-#ifdef _PCDX11
+#if 0 //def _PCDX11
 		ID3D11Buffer * pCstBuffer;
 
 		D3D11_BUFFER_DESC desc;

@@ -39,10 +39,14 @@ public:
 	D3D12_GRAPHICS_PIPELINE_STATE_DESC& GetPipelineState() { return m_CurrentPSO; }
 
 	// Graphics command list
-	inline void SetBlendState(D3D11_BLEND_DESC& desc);
-	inline void SetSampler(U32 Slot, EShaderType Type, ID3D11SamplerState* Sampler);
+	void SetAndClearRenderTarget();
+	void SetDepthStencilState(DepthStencilDesc& Desc);
+	void SetRasterizerState(RasterizerDesc& Desc);
+	inline void SetBlendState(BlendDesc& desc);
+	inline void SetSampler(U32 Slot, EShaderType Type, SamplerDesc& Sampler);
 	inline void SetShaderResource(U32 Slot, EShaderType Type, ID3D11ShaderResourceView* View);
 	inline void DrawIndexed(UINT IndexCount, UINT StartIndexLocation, INT BaseVertexLocation);
+	inline void SetViewports(D3D11_VIEWPORT& Viewport);
 
 	D3D12_CPU_DESCRIPTOR_HANDLE& GetCurrentBackBufferView() {
 		return m_RenderTargetsView[m_FrameIndex];
@@ -85,3 +89,8 @@ private:
 	ID3D12ShaderReflection *		m_CSDAReflection[SHADER_CS_COUNT];
 
 };
+
+inline void D3D12HAL::SetViewports(D3D11_VIEWPORT& Vp)
+{
+	m_CommandList->RSSetViewports(1, reinterpret_cast<D3D12_VIEWPORT*>(&Vp));
+}
