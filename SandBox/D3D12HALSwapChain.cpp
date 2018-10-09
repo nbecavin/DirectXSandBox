@@ -189,8 +189,6 @@ void D3D12HAL::Init(int sizeX, int sizeY, sys::Renderer* owner)
 	rs.ConservativeRaster = D3D12_CONSERVATIVE_RASTERIZATION_MODE_OFF;
 	m_CurrentPSO.RasterizerState = rs;
 
-	m_CurrentPSO.pRootSignature = m_RootSignature.Get();
-
 	m_GlobalConstantBuffer.Init();
 
 	OutputDebugString("DX12 Renderer is up and running");
@@ -209,8 +207,10 @@ void D3D12HAL::SetAndClearRenderTarget()
 {
 	m_CurrentPSO.NumRenderTargets = 1;
 	m_CurrentPSO.RTVFormats[0] = DXGI_FORMAT_R8G8B8A8_UNORM;
+	m_CurrentPSO.SampleDesc.Count = 1;
 	//m_CommandList->SetGra
 	//GetCommandList()->OMSetRenderTargets(1, &m_BackBuffer, m_DepthBuffer);
+	m_CommandList->OMSetRenderTargets(1, m_RenderTargetsView, false, &m_DepthStencilView);
 
 	float ClearColor[4] = { 0.0f, 0.125f, 0.3f, 1.0f }; // red,green,blue,alpha
 	GetCommandList()->ClearRenderTargetView(GetCurrentBackBufferView(), ClearColor, 0, nullptr);

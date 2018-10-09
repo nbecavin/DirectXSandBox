@@ -19,7 +19,11 @@ struct ImGuiVsPs
 
 float4 PsMain(in ImGuiVsPs i) : SV_Target0
 {
+#ifdef _PCDX12
+	float4 color = i.color;
+#else
 	float4 color = t.Sample(s, i.uv) * i.color;
+#endif
 	return float4(color);
 }
 

@@ -44,7 +44,7 @@ void D3D12HAL::SetIndices(IndexBuffer* Buffer, U32 _Fmt)
 void D3D12HAL::SetPrimitiveTopology(PrimitiveType Topology)
 {
 	int index_count = 0;
-	D3D_PRIMITIVE_TOPOLOGY _primType = D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
+	D3D12_PRIMITIVE_TOPOLOGY _primType = D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
 	switch (Topology) {
 	case PRIM_TRIANGLESTRIP:
 		_primType = D3D_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP;
@@ -54,7 +54,8 @@ void D3D12HAL::SetPrimitiveTopology(PrimitiveType Topology)
 		_primType = D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
 		break;
 	}
-	//m_ImmediateDeviceContext->IASetPrimitiveTopology(_primType);
+	m_CurrentPSO.PrimitiveTopologyType = D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE;
+	m_CommandList->IASetPrimitiveTopology(_primType);
 }
 
 void D3D12HAL::SetStreamSource(U32 StreamNumber, VertexBuffer* Buffer, U32 Offset, U32 Stride)
@@ -82,6 +83,7 @@ VertexDeclaration* D3D12HAL::CreateVertexDecl(VertexElement *Decl, U32 _ShaderUI
 void D3D12HAL::SetVertexDeclaration(VertexDeclaration* Decl)
 {
 	D3D12VertexDeclaration* dxbuffer = reinterpret_cast<D3D12VertexDeclaration*>(Decl);
+	m_CurrentPSO.InputLayout = *dxbuffer->GetRes();
 	//m_ImmediateDeviceContext->IASetInputLayout(dxbuffer->GetRes());
 }
 

@@ -152,7 +152,6 @@ void D3D12VertexDeclaration::Create(VertexElement *Decl, U32 _ShaderUID)
 {
 	ID3D12Device * Device = GET_RDR_INSTANCE()->GetD3D12HAL().GetDevice();
 
-	D3D12_INPUT_ELEMENT_DESC pElts[32];
 	int nCurElt = 0;
 	while (Decl[nCurElt].Type != -1)
 	{
@@ -244,9 +243,6 @@ void D3D12VertexDeclaration::Create(VertexElement *Decl, U32 _ShaderUID)
 		nCurElt++;
 	}
 	ID3DBlob * pCode = GET_RDR_INSTANCE()->GetShaderBlob(_ShaderUID);
-	//HRESULT hr = Device->CreateInputLayout(pElts, nCurElt, pCode->GetBufferPointer(), pCode->GetBufferSize(), &res);
-	//if (hr != S_OK)
-	//{
-	//	OutputDebugString("ERROR");
-	//}
+	res.pInputElementDescs = pElts;
+	res.NumElements = nCurElt;
 }

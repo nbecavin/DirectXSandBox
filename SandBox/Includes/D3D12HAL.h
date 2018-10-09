@@ -107,7 +107,14 @@ inline void D3D12HAL::SetViewports(D3D11_VIEWPORT& Vp)
 
 inline void D3D12HAL::DrawIndexed(UINT IndexCount, UINT StartIndexLocation, INT BaseVertexLocation)
 {
+	ID3D12PipelineState* PSO;
+	m_CurrentPSO.pRootSignature = m_RootSignature.Get();
+	GetDevice()->CreateGraphicsPipelineState(&m_CurrentPSO, IID_PPV_ARGS(&PSO));
+	PSO->SetName(L"test");
+	m_CommandList->SetPipelineState(PSO);
+	m_CommandList->SetGraphicsRootSignature(m_RootSignature.Get());
 	m_CommandList->DrawIndexedInstanced(IndexCount, 0, StartIndexLocation, BaseVertexLocation, 0);
+	PSO->Release();
 }
 
 inline void D3D12HAL::SetShaderResource(U32 Slot, EShaderType Type, ID3D11ShaderResourceView* View)

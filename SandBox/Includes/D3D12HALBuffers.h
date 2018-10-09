@@ -44,6 +44,7 @@ public:
 class D3D12VertexDeclaration : public VertexDeclaration {
 private:
 	D3D12_INPUT_LAYOUT_DESC res;
+	D3D12_INPUT_ELEMENT_DESC pElts[32];
 public:
 	D3D12VertexDeclaration() {}
 	D3D12_INPUT_LAYOUT_DESC * GetRes() { return &res; }
