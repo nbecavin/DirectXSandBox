@@ -4,11 +4,14 @@
 #include <Renderer.h>
 #include <ShaderConstants.h>
 
-#if defined(_PCDX12)
-#include <D3D12HAL.h>
-#elif defined(_PCDX11)
+#if defined(_PCDX11)
 #include <D3D11HAL.h>
 #endif
+#if defined(_PCDX12)
+#include <D3D12HAL.h>
+#endif
+
+#define USE_D3D12
 
 #if defined(_PCDX11) || defined(_PCDX12)
 
@@ -18,34 +21,8 @@ struct Vertex2D
 	float		u,v;
 };
 
-class DXVertexShader : public VertexShader
-{
-private:
-	IDirect3DVertexShader *	res;
-public:
-	DXVertexShader() : res(NULL) {}
-	IDirect3DVertexShader * GetRes() { return res; }
-	virtual bool IsInited() { return res != NULL; }
-};
-
-class DXPixelShader : public PixelShader
-{
-private:
-	IDirect3DPixelShader *		res;
-public:
-	DXPixelShader() : res(NULL) {}
-	IDirect3DPixelShader * GetRes() { return res; }
-	virtual bool IsInited() { return res != NULL; }
-};
-
-class DXGeometryShader : public GeometryShader
-{
-};
-
-typedef DynArray<DXVertexBuffer*, 2048>		DXVertexBufferDA;
-typedef DynArray<DXIndexBuffer*, 2048>		DXIndexBufferDA;
-typedef DynArray<DXVertexShader, 2048>		DXVertexShaderDA;
-typedef DynArray<DXPixelShader, 2048>		DXPixelShaderDA;
+typedef DynArray<VertexBuffer*, 2048>		VertexBufferDA;
+typedef DynArray<IndexBuffer*, 2048>		IndexBufferDA;
 
 namespace sys {
 
@@ -120,19 +97,24 @@ namespace sys {
 
 		ID3DBlob *				GetShaderBlob(U32 _ShaderUID);
 
+#ifdef _PCDX11
+		D3D11HAL				m_D3D11HAL;
+		D3D11HAL&				GetD3D11HAL() { return m_D3D11HAL; }
+#endif
 #ifdef _PCDX12
-		D3D12HAL							m_HAL;
-		D3D12HAL&						GetHAL() { return m_HAL; }
+		D3D12HAL				m_D3D12HAL;
+		D3D12HAL&				GetD3D12HAL() { return m_D3D12HAL; }
+#endif
+
+#if defined(USE_D3D12) && defined(_PCDX12)
+		D3D12HAL&				GetHAL() { return m_D3D12HAL; }
 #else
-		D3D11HAL							m_HAL;
-		D3D11HAL&						GetHAL() { return m_HAL; }
+		D3D11HAL&				GetHAL() { return m_D3D11HAL; }
 #endif
 
 	private:
-		DXVertexBufferDA				m_VertexBufferDA;
-		DXIndexBufferDA					m_IndexBufferDA;
-		DXVertexShaderDA				m_VertexShaderDA;
-		DXPixelShaderDA					m_PixelShaderDA;
+		VertexBufferDA					m_VertexBufferDA;
+		IndexBufferDA					m_IndexBufferDA;
 
 		DepthStencilDesc				m_DefaultDS;
 		DepthStencilDesc				m_DSS_NoZWrite;
@@ -142,8 +124,8 @@ namespace sys {
 
 		struct StateCache
 		{
-			DXVertexBuffer	*	VB;
-			DXIndexBuffer	*	IB;
+			VertexBuffer *	VB;
+			IndexBuffer	*	IB;
 		};
 		StateCache					m_StateCache;
 
@@ -151,7 +133,7 @@ namespace sys {
 		void				UpdateVSConstants();
 	};
 
-	extern Vec4f				m_VSConstantCache[VS_CONSTANT_MAX_COUNT];
+	//extern Vec4f				m_VSConstantCache[VS_CONSTANT_MAX_COUNT];
 
 };
 

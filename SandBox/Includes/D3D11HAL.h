@@ -7,6 +7,7 @@ using namespace Microsoft::WRL;
 class D3D11HAL
 {
 public:
+	const char * GetName() { return "D3D11"; }
 	void Init(int sizeX, int sizeY, sys::Renderer* owner);
 	void Shut();
 
@@ -15,6 +16,8 @@ public:
 	VertexDeclaration *	CreateVertexDecl(VertexElement* Decl, U32 _ShaderUID);
 	void CreateShaderResource(ID3DBlob * pCode, UINT Type, UINT SID);
 	void CreateTexture(Bitmap * _Bm);
+	VertexBuffer* CreateVertexBuffer(U32 _Size, U32 _Usage, void* _Datas);
+	IndexBuffer* CreateIndexBuffer(U32 _Size, U32 _Usage, U32 _Fmt, void* _Datas);
 
 	void InitShaders();
 	void SetPrimitiveTopology(PrimitiveType Topology);

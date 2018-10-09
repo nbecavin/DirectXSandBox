@@ -7,7 +7,7 @@ static const int sConstantBufferSize = 16 * 1024 * 1024;
 
 void D3D12ConstantBuffer::Init()
 {
-	ID3D12Device * Device = GET_RDR_INSTANCE()->GetDevice();
+	ID3D12Device * Device = GET_RDR_INSTANCE()->GetD3D12HAL().GetDevice();
 
 	//
 	Device->CreateCommittedResource(

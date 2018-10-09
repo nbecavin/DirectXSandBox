@@ -18,24 +18,24 @@
 
 namespace sys {
 
-	VertexBuffer*	DXRenderer::CreateVertexBuffer(U32 _Size,U32 _Usage,void* _Datas)
+	VertexBuffer* DXRenderer::CreateVertexBuffer(U32 _Size,U32 _Usage,void* _Datas)
 	{
-		DXVertexBuffer ** buffer = m_VertexBufferDA.Add();
-		buffer[0] = new DXVertexBuffer();
-		MESSAGE("Begin create VB");
-		buffer[0]->Create(_Size,_Usage,0,_Datas);
-		MESSAGE("End create VB");
-		return (buffer[0]->IsInited()) ? buffer[0] : NULL;
+		VertexBuffer* ret = GetHAL().CreateVertexBuffer(_Size, _Usage, _Datas);
+		if (ret)
+		{
+			m_VertexBufferDA.Add(ret);
+		}
+		return ret;
 	}
 
-	IndexBuffer*	DXRenderer::CreateIndexBuffer(U32 _Size,U32 _Usage,U32 _Fmt,void* _Datas)
+	IndexBuffer* DXRenderer::CreateIndexBuffer(U32 _Size,U32 _Usage,U32 _Fmt,void* _Datas)
 	{
-		DXIndexBuffer ** buffer = m_IndexBufferDA.Add();
-		buffer[0] = new DXIndexBuffer();
-		MESSAGE("Begin create IB");
-		buffer[0]->Create(_Size,_Usage,_Fmt,_Datas);
-		MESSAGE("End create IB");
-		return (buffer[0]->IsInited()) ? buffer[0] : NULL;
+		IndexBuffer* ret = GetHAL().CreateIndexBuffer(_Size, _Usage, _Fmt, _Datas);
+		if (ret)
+		{
+			m_IndexBufferDA.Add(ret);
+		}
+		return ret;
 	}
 
 	void DXRenderer::RegisterShaderFromSourceFile(U32 _ShaderUID,const char* src,const char* epoint)

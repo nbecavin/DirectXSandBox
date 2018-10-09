@@ -283,8 +283,10 @@
     <ClCompile Include="D3D11HALTexture.cpp" />
     <ClCompile Include="D3D12HALBuffers.cpp" />
     <ClCompile Include="D3D12HALConstantBuffer.cpp" />
+    <ClCompile Include="D3D12HALPipelineState.cpp" />
     <ClCompile Include="D3D12HALShaders.cpp" />
     <ClCompile Include="D3D12HALSwapChain.cpp" />
+    <ClCompile Include="D3D12HALTexture.cpp" />
     <ClCompile Include="GraphObject.cpp" />
     <ClCompile Include="RendererImGui.cpp" />
     <ClCompile Include="SandBox.cpp" />

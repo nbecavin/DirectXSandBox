@@ -8,12 +8,17 @@ using namespace Microsoft::WRL;
 class D3D12HAL
 {
 public:
+	const char * GetName() { return "D3D12"; }
 	void Init(int sizeX,int sizeY, sys::Renderer* owner);
 	void Shut();
 
 	void PresentFrame();
 
+	VertexDeclaration *	CreateVertexDecl(VertexElement* Decl, U32 _ShaderUID);
 	void CreateShaderResource(ID3DBlob * pCode, UINT Type, UINT SID);
+	void CreateTexture(Bitmap * _Bm);
+	VertexBuffer* CreateVertexBuffer(U32 _Size, U32 _Usage, void* _Datas);
+	IndexBuffer* CreateIndexBuffer(U32 _Size, U32 _Usage, U32 _Fmt, void* _Datas);
 
 	void InitShaders();
 	void SetPrimitiveTopology(PrimitiveType Topology);
@@ -71,6 +76,8 @@ private:
 	UINT								m_RtvDescriptorSize;
 	ComPtr<ID3D12Resource>				m_RenderTargets[m_BufferCount];
 	D3D12_CPU_DESCRIPTOR_HANDLE			m_RenderTargetsView[m_BufferCount];
+	ComPtr<ID3D12Resource>				m_DepthStencil;
+	D3D12_CPU_DESCRIPTOR_HANDLE			m_DepthStencilView;
 
 	// Current PSO
 	D3D12_GRAPHICS_PIPELINE_STATE_DESC	m_CurrentPSO;
@@ -88,9 +95,55 @@ private:
 	ID3D12ShaderReflection *		m_PSDAReflection[SHADER_PS_COUNT];
 	ID3D12ShaderReflection *		m_CSDAReflection[SHADER_CS_COUNT];
 
+	D3D12VertexDeclarationDA		m_InputLayoutDA;
 };
 
 inline void D3D12HAL::SetViewports(D3D11_VIEWPORT& Vp)
 {
 	m_CommandList->RSSetViewports(1, reinterpret_cast<D3D12_VIEWPORT*>(&Vp));
+}
+
+inline void D3D12HAL::DrawIndexed(UINT IndexCount, UINT StartIndexLocation, INT BaseVertexLocation)
+{
+	m_CommandList->DrawIndexedInstanced(IndexCount, 0, StartIndexLocation, BaseVertexLocation, 0);
+}
+
+inline void D3D12HAL::SetShaderResource(U32 Slot, EShaderType Type, ID3D11ShaderResourceView* View)
+{
+	/*
+	ID3D11DeviceContext * ctx = GetImmediateDeviceContext();
+	switch (Type)
+	{
+	case SHADER_TYPE_VERTEX: ctx->VSSetShaderResources(Slot, 1, &View); break;
+	case SHADER_TYPE_PIXEL: ctx->PSSetShaderResources(Slot, 1, &View); break;
+	case SHADER_TYPE_COMPUTE: ctx->CSSetShaderResources(Slot, 1, &View); break;
+	};
+	*/
+}
+
+inline void D3D12HAL::SetSampler(U32 Slot, EShaderType Type, SamplerDesc& Sampler)
+{
+	/*
+	ID3D11SamplerState* res;
+	m_Device->CreateSamplerState(&Sampler.desc, &res);
+	ID3D11DeviceContext * ctx = GetImmediateDeviceContext();
+	switch (Type)
+	{
+	case SHADER_TYPE_VERTEX: ctx->VSSetSamplers(Slot, 1, &res); break;
+	case SHADER_TYPE_PIXEL: ctx->PSSetSamplers(Slot, 1, &res); break;
+	case SHADER_TYPE_COMPUTE: ctx->CSSetSamplers(Slot, 1, &res); break;
+	};
+	res->Release();
+	*/
+}
+
+inline void D3D12HAL::SetBlendState(BlendDesc& Blend)
+{
+	/*
+	ID3D11BlendState* pBlendState;
+	m_Device->CreateBlendState(&Blend.desc, &pBlendState);
+	const float blend_factor[4] = { 0.f, 0.f, 0.f, 0.f };
+	GetImmediateDeviceContext()->OMSetBlendState(pBlendState, blend_factor, 0xffffffff);
+	pBlendState->Release();
+	*/
 }

@@ -357,6 +357,11 @@ void sys::pc::LowLevelInit()
 	gData.Rdr->Init();
 	gData.Input = (InputManager*) new WinInputManager;
 	gData.Input->Init();
+
+	// Change windows title
+	char title[512];
+	sprintf(title, "SandBox - %s", GET_RDR_INSTANCE()->GetHAL().GetName());
+	SetWindowText(sys::pc::hWnd, title);
 }
 
 void sys::pc::LowLevelShut()

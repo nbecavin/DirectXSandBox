@@ -10,7 +10,7 @@
 
 namespace sys {
 
-	Vec4f sys::m_VSConstantCache[VS_CONSTANT_MAX_COUNT];
+	//Vec4f sys::m_VSConstantCache[VS_CONSTANT_MAX_COUNT];
 
 	void InitDevice();
 	void ResetDevice();
@@ -66,12 +66,13 @@ namespace sys {
 		UpdateConstantBuffer(m_CameraConstant, &camCst, sizeof(camCst));
 #endif
 
+		/*
 		XMMATRIX * _mat = (XMMATRIX*)(m_VSConstantCache);
 		_mat[0] = XMMatrixTranspose(proj);
 		_mat[1] = XMMatrixTranspose(view);
 		Vec4f * _vec = (Vec4f*)(m_VSConstantCache);
 		_vec[EYE_CST] = m_Camera->GetWorldPosition();
-
+		*/
 
 #if 0
 #if defined(_PCDX11_)
@@ -363,8 +364,8 @@ namespace sys {
 
 	void DXRenderer::PushWorldMatrix( Mat4x4* _m )
 	{
-		Mat4x4 * _mat = (Mat4x4*)(m_VSConstantCache+8);
-		_mat[0] = *_m;
+		//Mat4x4 * _mat = (Mat4x4*)(m_VSConstantCache+8);
+		//_mat[0] = *_m;
 	}
 
 	void DXRenderer::PushVertexDeclaration(VertexDeclaration* Decl)

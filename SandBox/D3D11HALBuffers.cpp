@@ -1,10 +1,28 @@
 #include <DXRenderer.h>
 #include <D3D11HALBuffers.h>
 
+VertexBuffer* D3D11HAL::CreateVertexBuffer(U32 _Size, U32 _Usage, void* _Datas)
+{
+	D3D11VertexBuffer* vb = new D3D11VertexBuffer();
+	MESSAGE("Begin create VB");
+	vb->Create(_Size, _Usage, 0, _Datas);
+	MESSAGE("End create VB");
+	return (vb->IsInited()) ? vb : nullptr;
+}
+
+IndexBuffer* D3D11HAL::CreateIndexBuffer(U32 _Size, U32 _Usage, U32 _Fmt, void* _Datas)
+{
+	D3D11IndexBuffer* ib = new D3D11IndexBuffer();
+	MESSAGE("Begin create IB");
+	ib->Create(_Size, _Usage, _Fmt, _Datas);
+	MESSAGE("End create IB");
+	return (ib->IsInited()) ? ib : nullptr;
+}
+
 void D3D11VertexBuffer::Create(U32 _Size, U32 _Usage, U32 _Fmt, void * _Datas)
 {
 	HRESULT hr;
-	ID3D11Device * Device = GET_RDR_INSTANCE()->GetHAL().GetDevice();
+	ID3D11Device * Device = GET_RDR_INSTANCE()->GetD3D11HAL().GetDevice();
 
 	// Fill in a buffer description.
 	D3D11_BUFFER_DESC bufferDesc;
@@ -39,7 +57,7 @@ void D3D11VertexBuffer::Create(U32 _Size, U32 _Usage, U32 _Fmt, void * _Datas)
 void D3D11IndexBuffer::Create(U32 _Size, U32 _Usage, U32 _Fmt, void * _Datas)
 {
 	HRESULT hr;
-	ID3D11Device * Device = GET_RDR_INSTANCE()->GetHAL().GetDevice();
+	ID3D11Device * Device = GET_RDR_INSTANCE()->GetD3D11HAL().GetDevice();
 	U32 _ItemSize = (_Fmt == FMT_IDX_16) ? 2 : 4;
 
 	// Fill in a buffer description.
@@ -89,7 +107,7 @@ static D3D11_MAP GetD3D11MapFromEMap(Buffer::EMap v)
 
 bool D3D11VertexBuffer::Lock(U32 OffsetToLock, U32 SizeToLock, void **pData, EMap Flags)
 {
-	ID3D11DeviceContext * DeviceContext = GET_RDR_INSTANCE()->GetHAL().GetImmediateDeviceContext();
+	ID3D11DeviceContext * DeviceContext = GET_RDR_INSTANCE()->GetD3D11HAL().GetImmediateDeviceContext();
 	D3D11_MAPPED_SUBRESOURCE pMappedResource;
 	DeviceContext->Map(res, 0, GetD3D11MapFromEMap(Flags), 0, &pMappedResource);
 	*pData = pMappedResource.pData;
@@ -98,7 +116,7 @@ bool D3D11VertexBuffer::Lock(U32 OffsetToLock, U32 SizeToLock, void **pData, EMa
 
 bool D3D11IndexBuffer::Lock(U32 OffsetToLock, U32 SizeToLock, void **pData, EMap Flags)
 {
-	ID3D11DeviceContext * DeviceContext = GET_RDR_INSTANCE()->GetHAL().GetImmediateDeviceContext();
+	ID3D11DeviceContext * DeviceContext = GET_RDR_INSTANCE()->GetD3D11HAL().GetImmediateDeviceContext();
 	D3D11_MAPPED_SUBRESOURCE pMappedResource;
 	DeviceContext->Map(res, 0, GetD3D11MapFromEMap(Flags), 0, &pMappedResource);
 	*pData = pMappedResource.pData;
@@ -107,13 +125,13 @@ bool D3D11IndexBuffer::Lock(U32 OffsetToLock, U32 SizeToLock, void **pData, EMap
 
 void D3D11VertexBuffer::Unlock()
 {
-	ID3D11DeviceContext * DeviceContext = GET_RDR_INSTANCE()->GetHAL().GetImmediateDeviceContext();
+	ID3D11DeviceContext * DeviceContext = GET_RDR_INSTANCE()->GetD3D11HAL().GetImmediateDeviceContext();
 	DeviceContext->Unmap(res, 0);
 }
 
 void D3D11IndexBuffer::Unlock()
 {
-	ID3D11DeviceContext * DeviceContext = GET_RDR_INSTANCE()->GetHAL().GetImmediateDeviceContext();
+	ID3D11DeviceContext * DeviceContext = GET_RDR_INSTANCE()->GetD3D11HAL().GetImmediateDeviceContext();
 	DeviceContext->Unmap(res, 0);
 }
 
@@ -127,7 +145,7 @@ void D3D11IndexBuffer::Unlock()
 
 void D3D11VertexDeclaration::Create(VertexElement *Decl, U32 _ShaderUID)
 {
-	ID3D11Device * Device = GET_RDR_INSTANCE()->GetHAL().GetDevice();
+	ID3D11Device * Device = GET_RDR_INSTANCE()->GetD3D11HAL().GetDevice();
 
 	D3D11_INPUT_ELEMENT_DESC pElts[32];
 	int nCurElt = 0;

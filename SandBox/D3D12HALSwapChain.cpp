@@ -179,16 +179,14 @@ void D3D12HAL::Shut()
 
 void D3D12HAL::SetAndClearRenderTarget()
 {
-	GetCommandList()->OMSetRenderTargets(1, &m_BackBuffer, m_DepthBuffer);
+	m_CurrentPSO.NumRenderTargets = 1;
+	m_CurrentPSO.RTVFormats[0] = DXGI_FORMAT_R8G8B8A8_UNORM;
+	//m_CommandList->SetGra
+	//GetCommandList()->OMSetRenderTargets(1, &m_BackBuffer, m_DepthBuffer);
 
-#if defined(_PCDX12)
 	float ClearColor[4] = { 0.0f, 0.125f, 0.3f, 1.0f }; // red,green,blue,alpha
-	GetCommandList()->ClearRenderTargetView(GetHAL().GetCurrentBackBufferView(), ClearColor, 0, nullptr);
-#elif defined(_PCDX11)
-	float ClearColor[4] = { 0.0f, 0.125f, 0.3f, 1.0f }; // red,green,blue,alpha
-	//NICOB		GetCommandList()->ClearRenderTargetView(m_BackBuffer, ClearColor);
-	//NICOB		GetCommandList()->ClearDepthStencilView(m_DepthBuffer, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.f, 0);
-#endif
+	GetCommandList()->ClearRenderTargetView(GetCurrentBackBufferView(), ClearColor, 0, nullptr);
+	GetCommandList()->ClearDepthStencilView(m_DepthStencilView, D3D12_CLEAR_FLAG_DEPTH | D3D12_CLEAR_FLAG_STENCIL, 1.f, 0, 0, nullptr);
 }
 
 void D3D12HAL::PresentFrame()

@@ -58,7 +58,7 @@ void D3D11HAL::CreateShaderResource(ID3DBlob * pCode, UINT Type, UINT SID)
 
 void D3D11HAL::SetIndices(IndexBuffer* Buffer, U32 _Fmt)
 {
-	DXIndexBuffer* dxbuffer = reinterpret_cast<DXIndexBuffer*>(Buffer);
+	D3D11IndexBuffer* dxbuffer = reinterpret_cast<D3D11IndexBuffer*>(Buffer);
 	m_ImmediateDeviceContext->IASetIndexBuffer(dxbuffer->GetRes(), (_Fmt == FMT_IDX_32) ? DXGI_FORMAT_R32_UINT : DXGI_FORMAT_R16_UINT, 0);
 }
 
@@ -80,7 +80,7 @@ void D3D11HAL::SetPrimitiveTopology(PrimitiveType Topology)
 
 void D3D11HAL::SetStreamSource(U32 StreamNumber, VertexBuffer* Buffer, U32 Offset, U32 Stride)
 {
-	DXVertexBuffer* dxbuffer = reinterpret_cast<DXVertexBuffer*>(Buffer);
+	D3D11VertexBuffer* dxbuffer = reinterpret_cast<D3D11VertexBuffer*>(Buffer);
 	ID3D11Buffer * pBuffer = dxbuffer->GetRes();
 	UINT _Stride = Stride;
 	UINT _Offset = Offset;

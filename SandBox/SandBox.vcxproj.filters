@@ -230,6 +230,12 @@
     <ClCompile Include="D3D11HALPipelineState.cpp">
       <Filter>PC\D3D11</Filter>
     </ClCompile>
+    <ClCompile Include="D3D12HALTexture.cpp">
+      <Filter>PC\D3D12</Filter>
+    </ClCompile>
+    <ClCompile Include="D3D12HALPipelineState.cpp">
+      <Filter>PC\D3D12</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="SandBox.h">
