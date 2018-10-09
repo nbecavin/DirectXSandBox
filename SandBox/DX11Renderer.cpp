@@ -62,9 +62,7 @@ namespace sys {
 		camCst.InvProjMatrix = XMMatrixTranspose(XMMatrixInverse(&det, proj));
 		//camCst.InvViewProjMatrix = ;
 
-#if defined(_PCDX11_)
-		UpdateConstantBuffer(m_CameraConstant, &camCst, sizeof(camCst));
-#endif
+		//UpdateConstantBuffer(m_CameraConstant, &camCst, sizeof(camCst));
 
 		/*
 		XMMATRIX * _mat = (XMMATRIX*)(m_VSConstantCache);
@@ -75,7 +73,6 @@ namespace sys {
 		*/
 
 #if 0
-#if defined(_PCDX11_)
 		// No geometry shader
 		GetCommandList()->GSSetShader(NULL, NULL, 0);
 
@@ -90,7 +87,6 @@ namespace sys {
 
 		GetCommandList()->VSSetConstantBuffers(9, 1, &m_CameraConstant);
 		GetCommandList()->PSSetConstantBuffers(9, 1, &m_CameraConstant);
-#endif
 
 		/*
 				//
@@ -179,8 +175,6 @@ namespace sys {
 
 		*/
 
-#if defined(_PCDX11_)
-
 		//		D3DPERF_BeginEvent(0,L"Forward");
 		{
 			ID3D11RasterizerState *	m_TempRS;
@@ -226,7 +220,6 @@ namespace sys {
 			//m_TempRS->Release();
 		}
 		//		D3DPERF_EndEvent();
-#endif
 
 //		D3DPERF_BeginEvent(0,L"PostProcess");
 
@@ -234,13 +227,11 @@ namespace sys {
 		TextureLink * hdrtex = reinterpret_cast<TextureLink*>(m_HdrRenderTarget->GetBinHwResId());
 		TextureLink * rtex = reinterpret_cast<TextureLink*>(m_RenderTarget->GetBinHwResId());
 
-#if defined(_PCDX11_)
 		GetCommandList()->OMSetRenderTargets(1, &rtex->Surface, m_DepthBuffer);
 		GetCommandList()->PSSetShaderResources(0, 1, &hdrtex->ShaderView);
 		PushShader(SHADER_VS_BASE_SCREENVERTEX);
 		PushShader(SHADER_PS_POSTPROC_COLORGRADING);
 		FullScreenQuad(Vec2f(1.f, 1.f), Vec2f(0.f, 0.f));
-#endif
 
 		// Setup the viewport
 		D3D11_VIEWPORT vp;
@@ -251,14 +242,10 @@ namespace sys {
 		vp.TopLeftX = 0;
 		vp.TopLeftY = 0;
 
-
-#if defined(_PCDX11)
 		GetCommandList()->RSSetViewports(1, &vp);
 		GetCommandList()->OMSetRenderTargets(1, &m_BackBuffer, m_DepthBuffer);
 		GetCommandList()->PSSetShaderResources(0, 1, &rtex->ShaderView);
-#else
-		GetCommandList()->RSSetViewports(1, reinterpret_cast<D3D12_VIEWPORT*>(&vp));
-#endif
+
 		PushShader(SHADER_VS_BASE_SCREENVERTEX);
 		PushShader(SHADER_PS_POSTPROC_FXAA);
 
@@ -289,11 +276,8 @@ namespace sys {
 			*/
 		}
 
-#if defined(_PCDX11)
 		ID3D11ShaderResourceView* ppSRVNULL[1] = { NULL };
 		GetCommandList()->PSSetShaderResources(0, 1, ppSRVNULL);
-#endif
-
 #endif
 
 		DrawImGUI();
@@ -304,7 +288,10 @@ namespace sys {
 	void DXRenderer::SetShaderResource(U32 Slot, EShaderType Type, Bitmap* Texture)
 	{
 		TextureLink * tex = reinterpret_cast<TextureLink*>(Texture->GetBinHwResId());
-		GetHAL().SetShaderResource(Slot, Type, tex->ShaderView);
+		if ((U64)tex != BM_INVALIDHWRESID)
+		{
+			GetHAL().SetShaderResource(Slot, Type, tex->ShaderView);
+		}
 	}
 
 	void DXRenderer::InitSurface()

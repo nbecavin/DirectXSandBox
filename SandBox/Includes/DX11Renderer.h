@@ -3,17 +3,10 @@
 
 #include <Renderer.h>
 #include <ShaderConstants.h>
-
-#if defined(_PCDX11)
 #include <D3D11HAL.h>
-#endif
-#if defined(_PCDX12)
 #include <D3D12HAL.h>
-#endif
 
 #define USE_D3D12
-
-#if defined(_PCDX11) || defined(_PCDX12)
 
 struct Vertex2D
 {
@@ -97,16 +90,12 @@ namespace sys {
 
 		ID3DBlob *				GetShaderBlob(U32 _ShaderUID);
 
-#ifdef _PCDX11
 		D3D11HAL				m_D3D11HAL;
 		D3D11HAL&				GetD3D11HAL() { return m_D3D11HAL; }
-#endif
-#ifdef _PCDX12
 		D3D12HAL				m_D3D12HAL;
 		D3D12HAL&				GetD3D12HAL() { return m_D3D12HAL; }
-#endif
 
-#if defined(USE_D3D12) && defined(_PCDX12)
+#if defined(_PCDX12)
 		D3D12HAL&				GetHAL() { return m_D3D12HAL; }
 #else
 		D3D11HAL&				GetHAL() { return m_D3D11HAL; }
@@ -136,7 +125,5 @@ namespace sys {
 	//extern Vec4f				m_VSConstantCache[VS_CONSTANT_MAX_COUNT];
 
 };
-
-#endif
 
 #endif //__DX11RENDERER_HH__

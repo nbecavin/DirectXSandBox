@@ -1,5 +1,4 @@
 #include "stdafx.h"
-#if defined(_PCDX11)
 #include <Renderer.h>
 #include <D3D11HAL.h>
 #include <WinMain.h>
@@ -125,5 +124,3 @@ void D3D11HAL::PresentFrame()
 {
 	m_SwapChain->Present(1, 0);
 }
-
-#endif

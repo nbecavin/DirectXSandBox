@@ -25,13 +25,9 @@
 #	include <ppltasks.h>
 #	include <dxgitype.h>
 #	include <d3d11_3.h>
-#   if defined(_PCDX12)
-#		include <dxgi1_4.h>
-#		include <d3d12.h>
-#		include <DirectXMath.h>
-#		include <d3dcompiler.h>
-#		include <d3dx12.h>
-#	endif
+#	include <dxgi1_4.h>
+#	include <d3d12.h>
+#	include <d3dx12.h>
 #	include <DirectXMath.h>
 #	include <d3dcompiler.h>
 	using namespace DirectX;

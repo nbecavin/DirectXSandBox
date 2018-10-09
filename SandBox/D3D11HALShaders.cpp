@@ -1,5 +1,4 @@
 #include "stdafx.h"
-#if defined(_PCDX11)
 #include <Renderer.h>
 #include <D3D11HAL.h>
 #include <D3D11HALBuffers.h>
@@ -114,5 +113,3 @@ void D3D11HAL::SetShaders(UINT Type, UINT SID)
 		m_ImmediateDeviceContext->PSSetShader(m_PSDA[SID], NULL, 0);
 	}
 }
-
-#endif

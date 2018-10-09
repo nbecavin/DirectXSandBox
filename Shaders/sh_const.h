@@ -3,11 +3,6 @@
 
 	#include "ShaderRegs.h"
 
-	#if !defined(_PCDX11)
-		#define SV_POSITION		POSITION
-		#define SV_TARGET		COLOR0
-	#endif
-
 	const float4 c[256] : register(c0);
 
 	// old fashion constants (default to b0)

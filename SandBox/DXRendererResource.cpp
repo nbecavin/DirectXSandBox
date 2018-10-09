@@ -2,13 +2,10 @@
 
 #include <DX11Renderer.h>
 #include <WinMain.h>
-#if defined(_PCDX12)
-#include <D3D12HAL.h>
-#include <D3D12HALBuffers.h>
-#elif defined(_PCDX11)
 #include <D3D11HAL.h>
 #include <D3D11HALBuffers.h>
-#endif
+#include <D3D12HAL.h>
+#include <D3D12HALBuffers.h>
 #include <Material.h>
 #include <Bitmap.h>
 

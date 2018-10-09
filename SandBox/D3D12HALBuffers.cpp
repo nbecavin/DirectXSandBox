@@ -1,4 +1,3 @@
-#if defined(_PCDX12)
 #include <DXRenderer.h>
 #include <D3D12HALBuffers.h>
 
@@ -251,5 +250,3 @@ void D3D12VertexDeclaration::Create(VertexElement *Decl, U32 _ShaderUID)
 	//	OutputDebugString("ERROR");
 	//}
 }
-
-#endif

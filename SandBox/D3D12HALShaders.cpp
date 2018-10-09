@@ -1,5 +1,3 @@
-#include "stdafx.h"
-#if defined(_PCDX12)
 #include <Renderer.h>
 #include <D3D12HAL.h>
 #include <WinMain.h>
@@ -98,5 +96,3 @@ void D3D12HAL::SetShaders(UINT Type, UINT SID)
 		m_CurrentPSO.PS = m_PSDA[SID];
 	}
 }
-
-#endif

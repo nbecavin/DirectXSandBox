@@ -1,4 +1,3 @@
-#if defined(_PCDX12)
 #include <DXRenderer.h>
 #include <D3D12HAL.h>
 
@@ -17,5 +16,3 @@ void D3D12HAL::SetRasterizerState(RasterizerDesc& Desc)
 	//m_ImmediateDeviceContext->RSSetState(state);
 	//state->Release();
 }
-
-#endif

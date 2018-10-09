@@ -1,4 +1,3 @@
-#if defined(_PCDX12)
 #include <DXRenderer.h>
 #include <D3D12HAL.h>
 #include <Bitmap.h>
@@ -313,5 +312,3 @@ void D3D12HAL::CreateTexture(Bitmap * _Bm)
 	MESSAGE("DX resource created");
 #endif
 }
-
-#endif

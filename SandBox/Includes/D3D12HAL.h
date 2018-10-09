@@ -76,6 +76,8 @@ private:
 	UINT								m_RtvDescriptorSize;
 	ComPtr<ID3D12Resource>				m_RenderTargets[m_BufferCount];
 	D3D12_CPU_DESCRIPTOR_HANDLE			m_RenderTargetsView[m_BufferCount];
+	ComPtr<ID3D12DescriptorHeap>		m_DsvHeap;
+	UINT								m_DsvDescriptorSize;
 	ComPtr<ID3D12Resource>				m_DepthStencil;
 	D3D12_CPU_DESCRIPTOR_HANDLE			m_DepthStencilView;
 

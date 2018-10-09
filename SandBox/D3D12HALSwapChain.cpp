@@ -1,5 +1,3 @@
-#include "stdafx.h"
-#if defined(_PCDX12)
 #include <Renderer.h>
 #include <D3D12HAL.h>
 #include <WinMain.h>
@@ -100,6 +98,36 @@ void D3D12HAL::Init(int sizeX, int sizeY, sys::Renderer* owner)
 			//rtvHandle.Offset(1, m_RtvDescriptorSize);
 			rtvHandle.ptr += m_RtvDescriptorSize;
 		}
+	}
+
+	{
+		D3D12_DESCRIPTOR_HEAP_DESC dsvHeapDesc = {};
+		dsvHeapDesc.NumDescriptors = 1;
+		dsvHeapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_DSV;
+		dsvHeapDesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_NONE;
+		m_Device->CreateDescriptorHeap(&dsvHeapDesc, IID_PPV_ARGS(&m_DsvHeap));
+
+		CD3DX12_RESOURCE_DESC resdesc;
+		resdesc = CD3DX12_RESOURCE_DESC::Tex2D(DXGI_FORMAT_D32_FLOAT, sizeX, sizeY);
+		resdesc.Flags = D3D12_RESOURCE_FLAG_ALLOW_DEPTH_STENCIL;
+
+		D3D12_CLEAR_VALUE clearZ;
+		clearZ.DepthStencil.Depth = 1;
+		clearZ.DepthStencil.Stencil = 0;
+		clearZ.Format = DXGI_FORMAT_D32_FLOAT;
+		m_Device->CreateCommittedResource(
+			&CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_DEFAULT),
+			D3D12_HEAP_FLAG_NONE,
+			&resdesc,
+			D3D12_RESOURCE_STATE_DEPTH_WRITE,
+			&clearZ,
+			IID_PPV_ARGS(&m_DepthStencil));
+
+		D3D12_CPU_DESCRIPTOR_HANDLE dsvHandle(m_DsvHeap->GetCPUDescriptorHandleForHeapStart());
+
+		D3D12_DEPTH_STENCIL_VIEW_DESC desc;
+		m_Device->CreateDepthStencilView(m_DepthStencil.Get(), nullptr, dsvHandle);
+		m_DepthStencilView = dsvHandle;
 	}
 
 	// Command Allocator
@@ -238,5 +266,3 @@ void D3D12HAL::PresentFrame()
 	m_CommandList->ResourceBarrier(1, &barrier);
 	//m_CommandList->ResourceBarrier(1, &CD3DX12_RESOURCE_BARRIER::Transition(m_RenderTargets[m_FrameIndex].Get(), D3D12_RESOURCE_STATE_RENDER_TARGET, D3D12_RESOURCE_STATE_PRESENT));
 }
-
-#endif

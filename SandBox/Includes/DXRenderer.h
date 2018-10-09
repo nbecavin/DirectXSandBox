@@ -3,8 +3,6 @@
 
 #define GET_RDR_INSTANCE()	((sys::DXRenderer*)gData.Rdr)
 
-#if defined(_PCDX11) || defined(_PCDX12)
-	#include <DX11Renderer.h>
-#endif
+#include <DX11Renderer.h>
 
 #endif //__DXRENDERER_HH__

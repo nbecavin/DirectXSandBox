@@ -1,5 +1,3 @@
-
-#if defined(_PCDX12)
 #include <DXRenderer.h>
 #include <D3D12HAL.h>
 
@@ -22,5 +20,3 @@ void D3D12ConstantBuffer::Init()
 	m_RingConfig.m_WritePtr = m_RingConfig.m_BeginPtr;
 	m_RingConfig.m_EndPtr = m_RingConfig.m_BeginPtr + sConstantBufferSize;
 }
-
-#endif
