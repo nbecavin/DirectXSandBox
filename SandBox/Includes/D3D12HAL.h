@@ -1,5 +1,6 @@
 #pragma once
 
+#include <D3D12Interop.h>
 #include <D3D12HALBuffers.h>
 #include <D3D12HALConstantBuffer.h>
 
@@ -103,6 +104,12 @@ private:
 inline void D3D12HAL::SetViewports(D3D11_VIEWPORT& Vp)
 {
 	m_CommandList->RSSetViewports(1, reinterpret_cast<D3D12_VIEWPORT*>(&Vp));
+	D3D12_RECT rect;
+	rect.left = Vp.TopLeftX;
+	rect.top = Vp.TopLeftY;
+	rect.right = Vp.TopLeftX + Vp.Width;
+	rect.bottom = Vp.TopLeftY + Vp.Height;
+	m_CommandList->RSSetScissorRects(1, &rect);
 }
 
 inline void D3D12HAL::DrawIndexed(UINT IndexCount, UINT StartIndexLocation, INT BaseVertexLocation)
@@ -113,8 +120,7 @@ inline void D3D12HAL::DrawIndexed(UINT IndexCount, UINT StartIndexLocation, INT 
 	PSO->SetName(L"test");
 	m_CommandList->SetPipelineState(PSO);
 	m_CommandList->SetGraphicsRootSignature(m_RootSignature.Get());
-	m_CommandList->DrawIndexedInstanced(IndexCount, 0, StartIndexLocation, BaseVertexLocation, 0);
-	//PSO->Release();
+	m_CommandList->DrawIndexedInstanced(IndexCount, 1, StartIndexLocation, BaseVertexLocation, 0);
 }
 
 inline void D3D12HAL::SetShaderResource(U32 Slot, EShaderType Type, ID3D11ShaderResourceView* View)
@@ -148,6 +154,8 @@ inline void D3D12HAL::SetSampler(U32 Slot, EShaderType Type, SamplerDesc& Sample
 
 inline void D3D12HAL::SetBlendState(BlendDesc& Blend)
 {
+	D3D12Interop::BlendState(m_CurrentPSO.BlendState, Blend.desc);
+	m_CurrentPSO.SampleMask = 0xffffffff;
 	/*
 	ID3D11BlendState* pBlendState;
 	m_Device->CreateBlendState(&Blend.desc, &pBlendState);

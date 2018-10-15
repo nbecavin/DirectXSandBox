@@ -288,6 +288,7 @@
     <ClCompile Include="D3D12HALSwapChain.cpp" />
     <ClCompile Include="D3D12HALTexture.cpp" />
     <ClCompile Include="GraphObject.cpp" />
+    <ClCompile Include="Includes\D3D12Interop.h" />
     <ClCompile Include="RendererImGui.cpp" />
     <ClCompile Include="SandBox.cpp" />
     <ClCompile Include="SandBoxFile.cpp" />

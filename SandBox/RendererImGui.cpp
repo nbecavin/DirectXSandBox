@@ -77,7 +77,7 @@ void Renderer::DrawImGUI()
 	bool showDemo = true;
 	ImGui::ShowDemoWindow(&showDemo);
 	ImGui::Render();
-return;
+
 	ImDrawData* drawData = ImGui::GetDrawData();
 
 	//// Create and grow vertex/index buffers if needed

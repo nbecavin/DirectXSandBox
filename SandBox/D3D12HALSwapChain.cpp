@@ -55,6 +55,13 @@ void D3D12HAL::Init(int sizeX, int sizeY, sys::Renderer* owner)
 		infoQueue->SetBreakOnSeverity(D3D12_MESSAGE_SEVERITY_CORRUPTION, true);
 	}
 
+	ComPtr<ID3D12DebugDevice1> debugDevice;
+	if (SUCCEEDED(m_Device->QueryInterface(IID_PPV_ARGS(&debugDevice))))
+	{
+		DWORD option = D3D12_DEBUG_FEATURE_CONSERVATIVE_RESOURCE_STATE_TRACKING;
+		debugDevice->SetDebugParameter(D3D12_DEBUG_DEVICE_PARAMETER_FEATURE_FLAGS, &option, sizeof(option));
+	}
+
 	// Describe and create the command queue.
 	D3D12_COMMAND_QUEUE_DESC queueDesc = {};
 	queueDesc.Flags = D3D12_COMMAND_QUEUE_FLAG_NONE;
@@ -224,7 +231,9 @@ void D3D12HAL::SetAndClearRenderTarget()
 	m_CurrentPSO.SampleDesc.Count = 1;
 	//m_CommandList->SetGra
 	//GetCommandList()->OMSetRenderTargets(1, &m_BackBuffer, m_DepthBuffer);
-	m_CommandList->OMSetRenderTargets(1, m_RenderTargetsView, false, &m_DepthStencilView);
+
+	D3D12_CPU_DESCRIPTOR_HANDLE rtv = GetCurrentBackBufferView();
+	m_CommandList->OMSetRenderTargets(1, &rtv, false, &m_DepthStencilView);
 
 	float ClearColor[4] = { 0.0f, 0.125f, 0.3f, 1.0f }; // red,green,blue,alpha
 	GetCommandList()->ClearRenderTargetView(GetCurrentBackBufferView(), ClearColor, 0, nullptr);
