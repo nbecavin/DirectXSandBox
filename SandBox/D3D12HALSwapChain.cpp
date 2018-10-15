@@ -27,6 +27,12 @@ void D3D12HAL::Init(int sizeX, int sizeY, sys::Renderer* owner)
 		{
 			debugController->EnableDebugLayer();
 		}
+		ComPtr<ID3D12Debug1> debugController1;
+		if (SUCCEEDED(debugController->QueryInterface(IID_PPV_ARGS(&debugController1))))
+		{
+			debugController1->EnableDebugLayer();
+			debugController1->SetEnableGPUBasedValidation(true);
+		}
 	}
 #endif
 
@@ -40,6 +46,14 @@ void D3D12HAL::Init(int sizeX, int sizeY, sys::Renderer* owner)
 		D3D_FEATURE_LEVEL_12_0,
 		IID_PPV_ARGS(&m_Device)
 	);
+
+	ComPtr<ID3D12InfoQueue> infoQueue;
+	if (SUCCEEDED(m_Device->QueryInterface(IID_PPV_ARGS(&infoQueue))))
+	{
+		infoQueue->SetBreakOnSeverity(D3D12_MESSAGE_SEVERITY_ERROR, true);
+		infoQueue->SetBreakOnSeverity(D3D12_MESSAGE_SEVERITY_WARNING, false);
+		infoQueue->SetBreakOnSeverity(D3D12_MESSAGE_SEVERITY_CORRUPTION, true);
+	}
 
 	// Describe and create the command queue.
 	D3D12_COMMAND_QUEUE_DESC queueDesc = {};

@@ -114,7 +114,7 @@ inline void D3D12HAL::DrawIndexed(UINT IndexCount, UINT StartIndexLocation, INT 
 	m_CommandList->SetPipelineState(PSO);
 	m_CommandList->SetGraphicsRootSignature(m_RootSignature.Get());
 	m_CommandList->DrawIndexedInstanced(IndexCount, 0, StartIndexLocation, BaseVertexLocation, 0);
-	PSO->Release();
+	//PSO->Release();
 }
 
 inline void D3D12HAL::SetShaderResource(U32 Slot, EShaderType Type, ID3D11ShaderResourceView* View)
