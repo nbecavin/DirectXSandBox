@@ -13,8 +13,8 @@ Global
 		Debug DX11|x86 = Debug DX11|x86
 		Debug DX12|x64 = Debug DX12|x64
 		Debug DX12|x86 = Debug DX12|x86
-		Release DX11|x64 = Release DX11|x64
-		Release DX11|x86 = Release DX11|x86
+		Release|x64 = Release|x64
+		Release|x86 = Release|x86
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{32BBB653-D545-4C2A-A2C3-7BD9CE724553}.Debug DX11|x64.ActiveCfg = Debug DX11|x64
@@ -25,10 +25,10 @@ Global
 		{32BBB653-D545-4C2A-A2C3-7BD9CE724553}.Debug DX12|x64.Build.0 = Debug DX12|x64
 		{32BBB653-D545-4C2A-A2C3-7BD9CE724553}.Debug DX12|x86.ActiveCfg = Debug DX12|Win32
 		{32BBB653-D545-4C2A-A2C3-7BD9CE724553}.Debug DX12|x86.Build.0 = Debug DX12|Win32
-		{32BBB653-D545-4C2A-A2C3-7BD9CE724553}.Release DX11|x64.ActiveCfg = Release DX11|x64
-		{32BBB653-D545-4C2A-A2C3-7BD9CE724553}.Release DX11|x64.Build.0 = Release DX11|x64
-		{32BBB653-D545-4C2A-A2C3-7BD9CE724553}.Release DX11|x86.ActiveCfg = Release DX11|Win32
-		{32BBB653-D545-4C2A-A2C3-7BD9CE724553}.Release DX11|x86.Build.0 = Release DX11|Win32
+		{32BBB653-D545-4C2A-A2C3-7BD9CE724553}.Release|x64.ActiveCfg = Release|x64
+		{32BBB653-D545-4C2A-A2C3-7BD9CE724553}.Release|x64.Build.0 = Release|x64
+		{32BBB653-D545-4C2A-A2C3-7BD9CE724553}.Release|x86.ActiveCfg = Release|Win32
+		{32BBB653-D545-4C2A-A2C3-7BD9CE724553}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -76,7 +76,7 @@ namespace sys {
 		mac[macnb].Name = "_PCDX11";
 		mac[macnb].Definition = "1";
 		macnb++;
-#ifdef _PCDX12
+#if defined(USE_D3D12)
 		mac[macnb].Name = "_PCDX12";
 		mac[macnb].Definition = "1";
 		macnb++;

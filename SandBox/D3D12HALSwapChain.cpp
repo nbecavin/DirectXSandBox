@@ -151,6 +151,15 @@ void D3D12HAL::Init(int sizeX, int sizeY, sys::Renderer* owner)
 		m_DepthStencilView = dsvHandle;
 	}
 
+	// Create SRV descriptor heap
+	{
+		D3D12_DESCRIPTOR_HEAP_DESC heapDesc = {};
+		heapDesc.NumDescriptors = 4096;
+		heapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV;
+		heapDesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_NONE;
+		m_Device->CreateDescriptorHeap(&heapDesc, IID_PPV_ARGS(&m_SrvHeap));
+	}
+
 	// Command Allocator
 	m_Device->CreateCommandAllocator(D3D12_COMMAND_LIST_TYPE_DIRECT, IID_PPV_ARGS(&m_CommandAllocator));
 

@@ -210,96 +210,190 @@ static void GetSurfaceInfo(UINT width, UINT height, DXGI_FORMAT fmt, UINT* pNumB
 		*pNumRows = numRows;
 }
 
+U64 Align(U64 uLocation, UINT uAlign)
+{
+	//if ((0 == uAlign) || (uAlign & (uAlign - 1)))
+	{
+		//ThrowException("non-pow2 alignment");
+	}
+
+	return ((uLocation + (U64)(uAlign - 1)) & ~((U64)(uAlign - 1)));
+}
+
 void D3D12HAL::CreateTexture(Bitmap * _Bm)
 {
+	ID3D12Device * Device = GET_RDR_INSTANCE()->GetD3D12HAL().GetDevice();
+
 	MESSAGE("Create texture");
 
-#if 0
 	bool sRGB = (_Bm->GetFlags()&BM_SRGB) ? true : false;
 
-	D3D12_TEXTURE2D_DESC desc;
-	memset(&desc, 0, sizeof(desc));
-	desc.Width = _Bm->GetSx();
-	desc.Height = _Bm->GetSy();
-	desc.ArraySize = _Bm->GetSz();
-	desc.Format = GetDXFormat(_Bm->GetFormat(), sRGB);
-	desc.BindFlags = D3D11_BIND_SHADER_RESOURCE;
-	desc.CPUAccessFlags = 0;
-	desc.MiscFlags = 0;
-	desc.MipLevels = 1;
-	desc.SampleDesc.Count = 1;
-	desc.SampleDesc.Quality = 0;
-	desc.MipLevels = _Bm->GetMips();
+	CD3DX12_RESOURCE_DESC desc;
+	desc = CD3DX12_RESOURCE_DESC::Tex2D(
+		GetDXFormat(_Bm->GetFormat(), sRGB),
+		_Bm->GetSx(),
+		_Bm->GetSy(),
+		_Bm->GetSz(),
+		1,
+		1,
+		0,
+		D3D12_RESOURCE_FLAG_NONE,
+		D3D12_TEXTURE_LAYOUT_UNKNOWN,
+		0
+	);
 
 	if (_Bm->GetType()&BM_TYPE_RT)
-		desc.BindFlags |= D3D11_BIND_RENDER_TARGET;
+	{
+		desc.Flags |= D3D12_RESOURCE_FLAG_ALLOW_RENDER_TARGET;
+	}
 
-	D3D12_SUBRESOURCE_DATA * pData = NULL;
-	D3D12_SUBRESOURCE_DATA Data[32];
-	ZeroMemory(Data, sizeof(Data));
 	sys::TextureLink * tex = new sys::TextureLink;
-	tex->Resource = NULL;
+	tex->Resource12 = NULL;
 	tex->ShaderView = NULL;
 	tex->Surface = NULL;
 
 	//if(desc.Width != desc.Height)
 	//	return;
 
-	// Creature DX resource from Bitmap
-	if (_Bm->GetDatas())
-	{
-		BYTE* pSrcBits = _Bm->GetDatas();
-		UINT NumBytes = 0;
-		UINT RowBytes = 0;
-		UINT NumRows = 0;
-		U32 index = 0;
-		for (U32 j = 0; j < desc.ArraySize; j++)
-		{
-			UINT w = desc.Width;
-			UINT h = desc.Height;
-			for (U32 i = 0; i < _Bm->GetMips(); i++)
-			{
-				GetSurfaceInfo(w, h, desc.Format, &NumBytes, &RowBytes, &NumRows);
-				Data[index].pSysMem = (void*)pSrcBits;
-				Data[index].SysMemPitch = RowBytes;
-				Data[index].SysMemSlicePitch = 0;
-				++index;
-
-				pSrcBits += NumBytes;
-				w = w >> 1;
-				h = h >> 1;
-				if (w == 0)
-					w = 1;
-				if (h == 0)
-					h = 1;
-			}
-		}
-
-		desc.Usage = D3D11_USAGE_IMMUTABLE;
-		pData = Data;
-	}
-
 	_Bm->BinHwResId((U64)tex);
 
 	if (_Bm->GetType()&BM_TYPE_2D)
 	{
-		HRESULT hr = GetDevice()->CreateTexture2D(&desc, pData, &tex->Tex2D);
+		//Device->CreatePlacedResource();
+
+		HRESULT hr = Device->CreateCommittedResource(
+			&CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_DEFAULT),
+			D3D12_HEAP_FLAG_NONE,
+			&desc,
+			/*D3D12_RESOURCE_STATE_GENERIC_READ|*/ D3D12_RESOURCE_STATE_COPY_DEST,
+			nullptr,
+			IID_PPV_ARGS(&tex->Resource12));
 		if (hr != S_OK)
 		{
 			MESSAGE("Failed create texture");
 			return;
 		}
+
+		// Fill in resource with initial data
+		if (_Bm->GetDatas())
+		{
+			//D3D12_SUBRESOURCE_DATA * pData = NULL;
+			//D3D12_SUBRESOURCE_DATA Data[32];
+			//ZeroMemory(Data, sizeof(Data));
+
+			ID3D12Resource * m_spUploadBuffer;
+			UINT8* m_pDataBegin = nullptr;    // starting position of upload buffer
+			UINT8* m_pDataCur = nullptr;      // current position of upload buffer
+			UINT8* m_pDataEnd = nullptr;      // ending position of upload buffer
+
+			DWORD uSize = 16 * 1024 * 1024;
+
+			HRESULT hr = Device->CreateCommittedResource(
+				&CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_UPLOAD),
+				D3D12_HEAP_FLAG_NONE,
+				&CD3DX12_RESOURCE_DESC::Buffer(uSize),
+				D3D12_RESOURCE_STATE_GENERIC_READ, nullptr,
+				IID_PPV_ARGS(&m_spUploadBuffer));
+			if (SUCCEEDED(hr))
+			{
+				void* pData;
+				//
+				// No CPU reads will be done from the resource.
+				//
+				CD3DX12_RANGE readRange(0, 0);
+				m_spUploadBuffer->Map(0, &readRange, &pData);
+				m_pDataCur = m_pDataBegin = reinterpret_cast<UINT8*>(pData);
+				m_pDataEnd = m_pDataBegin + uSize;
+			}
+			else{
+				__debugbreak();
+			}
+
+			//
+			// Sub-allocate from the buffer, with offset aligned.
+			//
+
+			auto SuballocateFromBuffer = [&](SIZE_T _uSize, UINT _uAlign)
+			{
+				m_pDataCur = reinterpret_cast<UINT8*>(
+					Align(reinterpret_cast<SIZE_T>(m_pDataCur), _uAlign)
+					);
+
+				return ((m_pDataCur + _uSize) > m_pDataEnd) ? E_INVALIDARG : S_OK;
+			};
+
+			BYTE* pSrcBits = _Bm->GetDatas();
+			UINT NumBytes = 0;
+			UINT RowBytes = 0;
+			UINT NumRows = 0;
+			U32 index = 0;
+			for (U32 j = 0; j < 1/*desc.DepthOrArraySize*/; j++)
+			{
+				UINT w = desc.Width;
+				UINT h = desc.Height;
+				for (U32 i = 0; i < 1/*_Bm->GetMips()*/; i++)
+				{
+					GetSurfaceInfo(w, h, desc.Format, &NumBytes, &RowBytes, &NumRows);
+
+					D3D12_SUBRESOURCE_FOOTPRINT pitchedDesc = { 0 };
+					pitchedDesc.Format = desc.Format;
+					pitchedDesc.Width = w;
+					pitchedDesc.Height = h;
+					pitchedDesc.Depth = 1;
+					pitchedDesc.RowPitch = Align(RowBytes, D3D12_TEXTURE_DATA_PITCH_ALIGNMENT);
+
+					SuballocateFromBuffer(
+						pitchedDesc.Height * pitchedDesc.RowPitch,
+						D3D12_TEXTURE_DATA_PLACEMENT_ALIGNMENT
+					);
+
+					D3D12_PLACED_SUBRESOURCE_FOOTPRINT placedTexture2D = { 0 };
+					placedTexture2D.Offset = m_pDataCur - m_pDataBegin;
+					placedTexture2D.Footprint = pitchedDesc;
+
+					for (UINT y = 0; y < NumRows; y++)
+					{
+						UINT8 *pScan = m_pDataBegin + placedTexture2D.Offset + y * pitchedDesc.RowPitch;
+						UINT8 *pSrc = pSrcBits + y * RowBytes;
+						memcpy(pScan, pSrc, RowBytes);
+					}
+					//Data[index].pData = (void*)pSrcBits;
+					//Data[index].RowPitch = RowBytes;
+					//Data[index].SlicePitch = 0;
+					++index;
+
+					ID3D12GraphicsCommandList * pCommandList = GET_RDR_INSTANCE()->GetD3D12HAL().GetCommandList();
+					pCommandList->CopyTextureRegion(
+						&CD3DX12_TEXTURE_COPY_LOCATION(tex->Resource12, 0),
+						0, 0, 0,
+						&CD3DX12_TEXTURE_COPY_LOCATION(m_spUploadBuffer, placedTexture2D),
+						nullptr);
+
+					pSrcBits += NumBytes;
+					w = w >> 1;
+					h = h >> 1;
+					if (w == 0)
+						w = 1;
+					if (h == 0)
+						h = 1;
+				}
+			}
+		}
 	}
 
 	{ // Create shader view
-		D3D11_SHADER_RESOURCE_VIEW_DESC SRVDesc;
+		D3D12_SHADER_RESOURCE_VIEW_DESC SRVDesc;
 		ZeroMemory(&SRVDesc, sizeof(SRVDesc));
 		SRVDesc.Format = desc.Format;
-		SRVDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
+		SRVDesc.Shader4ComponentMapping = D3D12_DEFAULT_SHADER_4_COMPONENT_MAPPING;
+		SRVDesc.ViewDimension = D3D12_SRV_DIMENSION_TEXTURE2D;
 		SRVDesc.Texture2D.MipLevels = desc.MipLevels;
-		GetDevice()->CreateShaderResourceView(tex->Resource, &SRVDesc, &tex->ShaderView);
+
+		tex->m_D3D12SRV = m_SrvHeap->GetCPUDescriptorHandleForHeapStart();
+		Device->CreateShaderResourceView(tex->Resource12, &SRVDesc, tex->m_D3D12SRV);
 	}
 
+	/*
 	if (_Bm->GetType()&BM_TYPE_RT)
 	{ // Create the render target view
 		D3D11_RENDER_TARGET_VIEW_DESC DescRT;
@@ -308,7 +402,7 @@ void D3D12HAL::CreateTexture(Bitmap * _Bm)
 		DescRT.Texture2D.MipSlice = 0;
 		GetDevice()->CreateRenderTargetView(tex->Resource, &DescRT, &tex->Surface);
 	}
+	*/
 
 	MESSAGE("DX resource created");
-#endif
 }

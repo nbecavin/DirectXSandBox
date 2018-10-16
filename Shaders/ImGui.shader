@@ -20,7 +20,15 @@ struct ImGuiVsPs
 float4 PsMain(in ImGuiVsPs i) : SV_Target0
 {
 #ifdef _PCDX12
-	float4 color = i.color;
+	uint w, h, m;
+	t.GetDimensions(0, w, h, m);
+
+	int3 uv;
+	uv.x = (int)((float)w*i.uv.x);
+	uv.y = (int)((float)h*i.uv.y);
+	uv.z = 0;
+
+	float4 color = t.Load(uv) * i.color;
 #else
 	float4 color = t.Sample(s, i.uv) * i.color;
 #endif

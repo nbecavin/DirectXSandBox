@@ -72,12 +72,15 @@ private:
 	static const UINT					m_BufferCount = 2;
 	UINT								m_FrameCount = 1;
 
-	// je ne sais pas ce que c'est pour l'instant
+	// Descriptor heaps by types
 	ComPtr<ID3D12DescriptorHeap>		m_RtvHeap;
+	ComPtr<ID3D12DescriptorHeap>		m_DsvHeap;
+	ComPtr<ID3D12DescriptorHeap>		m_SrvHeap;
+
+	// je ne sais pas ce que c'est pour l'instant
 	UINT								m_RtvDescriptorSize;
 	ComPtr<ID3D12Resource>				m_RenderTargets[m_BufferCount];
 	D3D12_CPU_DESCRIPTOR_HANDLE			m_RenderTargetsView[m_BufferCount];
-	ComPtr<ID3D12DescriptorHeap>		m_DsvHeap;
 	UINT								m_DsvDescriptorSize;
 	ComPtr<ID3D12Resource>				m_DepthStencil;
 	D3D12_CPU_DESCRIPTOR_HANDLE			m_DepthStencilView;
@@ -125,6 +128,7 @@ inline void D3D12HAL::DrawIndexed(UINT IndexCount, UINT StartIndexLocation, INT 
 
 inline void D3D12HAL::SetShaderResource(U32 Slot, EShaderType Type, ID3D11ShaderResourceView* View)
 {
+	//m_CommandList->SetComputeRootDescriptorTable();
 	/*
 	ID3D11DeviceContext * ctx = GetImmediateDeviceContext();
 	switch (Type)

@@ -248,12 +248,18 @@ loadmesh:
 
 				asset::Cache& asset = asset::Cache::GetInstance();
 				Bool bNew = asset.LoadAsset(asset::Type::BITMAP,tex,(GraphObject**)&bm);
-				if(bNew)
+				if (bNew)
 				{
 					bm->LoadDDS(tex);
-					gData.Rdr->CreateTexture(bm);
+					if (bm->GetSx() && bm->GetSy())
+					{
+						gData.Rdr->CreateTexture(bm);
+					}
 				}
-				pMat->SetBitmap(bm,MTL_STAGE_DIFFUSE);
+				if (bm)
+				{
+					pMat->SetBitmap(bm, MTL_STAGE_DIFFUSE);
+				}
 
 				// sponza super machin truc
 				// Try to find normal maps ... and spec maps ...

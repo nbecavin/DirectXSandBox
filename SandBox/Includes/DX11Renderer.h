@@ -6,8 +6,6 @@
 #include <D3D11HAL.h>
 #include <D3D12HAL.h>
 
-#define USE_D3D12
-
 struct Vertex2D
 {
 	float		x,y,z;
@@ -24,9 +22,12 @@ namespace sys {
 		union {
 			ID3D11Texture2D			* Tex2D;
 			ID3D11Resource			* Resource;
+			ID3D12Resource			* Resource12;
 		};
 		ID3D11ShaderResourceView	* ShaderView;
 		ID3D11RenderTargetView		* Surface;
+		D3D12_RENDER_TARGET_VIEW_DESC * m_D3D12RTV;
+		D3D12_CPU_DESCRIPTOR_HANDLE m_D3D12SRV;
 	};
 
 	class DXRenderer : public Renderer
@@ -95,7 +96,7 @@ namespace sys {
 		D3D12HAL				m_D3D12HAL;
 		D3D12HAL&				GetD3D12HAL() { return m_D3D12HAL; }
 
-#if defined(_PCDX12)
+#if defined(USE_D3D12)
 		D3D12HAL&				GetHAL() { return m_D3D12HAL; }
 #else
 		D3D11HAL&				GetHAL() { return m_D3D11HAL; }
