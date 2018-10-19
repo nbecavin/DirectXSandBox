@@ -290,7 +290,7 @@ namespace sys {
 		TextureLink * tex = reinterpret_cast<TextureLink*>(Texture->GetBinHwResId());
 		if ((U64)tex != BM_INVALIDHWRESID)
 		{
-			GetHAL().SetShaderResource(Slot, Type, tex->ShaderView);
+			GetHAL().SetShaderResource(Slot, Type, tex);
 		}
 	}
 

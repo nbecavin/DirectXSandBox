@@ -1,5 +1,6 @@
 #include "stdafx.h"
 #include <Renderer.h>
+#include <DXRenderer.h>
 #include <D3D11HAL.h>
 #include <D3D11HALBuffers.h>
 #include <WinMain.h>

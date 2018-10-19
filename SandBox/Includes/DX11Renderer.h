@@ -3,6 +3,24 @@
 
 #include <Renderer.h>
 #include <ShaderConstants.h>
+
+namespace sys
+{
+	struct TextureLink
+	{
+		union {
+			ID3D11Texture2D			* Tex2D;
+			ID3D11Resource			* Resource;
+			ID3D12Resource			* Resource12;
+		};
+		ID3D11ShaderResourceView	* ShaderView;
+		ID3D11RenderTargetView		* Surface;
+		D3D12_RENDER_TARGET_VIEW_DESC * m_D3D12RTV;
+		D3D12_CPU_DESCRIPTOR_HANDLE m_D3D12SRVcpu;
+		D3D12_GPU_DESCRIPTOR_HANDLE m_D3D12SRVgpu;
+	};
+};
+
 #include <D3D11HAL.h>
 #include <D3D12HAL.h>
 
@@ -16,19 +34,6 @@ typedef DynArray<VertexBuffer*, 2048>		VertexBufferDA;
 typedef DynArray<IndexBuffer*, 2048>		IndexBufferDA;
 
 namespace sys {
-
-	struct TextureLink
-	{
-		union {
-			ID3D11Texture2D			* Tex2D;
-			ID3D11Resource			* Resource;
-			ID3D12Resource			* Resource12;
-		};
-		ID3D11ShaderResourceView	* ShaderView;
-		ID3D11RenderTargetView		* Surface;
-		D3D12_RENDER_TARGET_VIEW_DESC * m_D3D12RTV;
-		D3D12_CPU_DESCRIPTOR_HANDLE m_D3D12SRV;
-	};
 
 	class DXRenderer : public Renderer
 	{

@@ -1,4 +1,5 @@
 #include <Renderer.h>
+#include <DXRenderer.h>
 #include <D3D12HAL.h>
 #include <WinMain.h>
 
@@ -156,8 +157,20 @@ void D3D12HAL::Init(int sizeX, int sizeY, sys::Renderer* owner)
 		D3D12_DESCRIPTOR_HEAP_DESC heapDesc = {};
 		heapDesc.NumDescriptors = 4096;
 		heapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV;
-		heapDesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_NONE;
+		heapDesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_SHADER_VISIBLE;
 		m_Device->CreateDescriptorHeap(&heapDesc, IID_PPV_ARGS(&m_SrvHeap));
+		m_SrvDescriptorSize = m_Device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
+		m_CurrentSrvDescriptorOffset = 0;
+	}
+
+	{
+		D3D12_DESCRIPTOR_HEAP_DESC heapDesc = {};
+		heapDesc.NumDescriptors = 2048;
+		heapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_SAMPLER;
+		heapDesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_SHADER_VISIBLE;
+		m_Device->CreateDescriptorHeap(&heapDesc, IID_PPV_ARGS(&m_SamplerHeap));
+		m_SamplerDescriptorSize = m_Device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_SAMPLER);
+		m_CurrentSamplerDescriptorOffset = 0;
 	}
 
 	// Command Allocator
@@ -165,20 +178,39 @@ void D3D12HAL::Init(int sizeX, int sizeY, sys::Renderer* owner)
 
 	// Create an empty root signature.
 	{
+		D3D12_FEATURE_DATA_ROOT_SIGNATURE featureData = {};
+
+		// This is the highest version the sample supports. If CheckFeatureSupport succeeds, the HighestVersion returned will not be greater than this.
+		featureData.HighestVersion = D3D_ROOT_SIGNATURE_VERSION_1_1;
+
+		//if (FAILED(m_device->CheckFeatureSupport(D3D12_FEATURE_ROOT_SIGNATURE, &featureData, sizeof(featureData))))
+		//{
+		//	featureData.HighestVersion = D3D_ROOT_SIGNATURE_VERSION_1_0;
+		//}
+
 		//xone code
 		//CD3DX12_ROOT_SIGNATURE_DESC rootSignatureDesc;
 		//rootSignatureDesc.Init(0, nullptr, 0, nullptr, D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT);
-		
-		D3D12_ROOT_SIGNATURE_DESC rootSignatureDesc;
-		rootSignatureDesc.Flags = D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT;
-		rootSignatureDesc.NumParameters = 0;
-		rootSignatureDesc.NumStaticSamplers = 0;
-		rootSignatureDesc.pParameters = nullptr;
-		rootSignatureDesc.pStaticSamplers = nullptr;
+		CD3DX12_DESCRIPTOR_RANGE1 ranges[1];
+		ranges[0].Init(D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 1, 0, 0, D3D12_DESCRIPTOR_RANGE_FLAG_DATA_STATIC);
+
+		CD3DX12_ROOT_PARAMETER1 rootParameters[1];
+		rootParameters[0].InitAsDescriptorTable(1, &ranges[0], D3D12_SHADER_VISIBILITY_PIXEL);
+
+		//D3D12_ROOT_SIGNATURE_DESC rootSignatureDesc;
+		//rootSignatureDesc.Flags = D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT;
+		//rootSignatureDesc.NumParameters = 1;
+		//rootSignatureDesc.NumStaticSamplers = 0;
+		//rootSignatureDesc.pParameters = rootParameters;
+		//rootSignatureDesc.pStaticSamplers = nullptr;
+
+		CD3DX12_VERSIONED_ROOT_SIGNATURE_DESC rootSignatureDesc;
+		rootSignatureDesc.Init_1_1(_countof(rootParameters), rootParameters, 0, nullptr, D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT);
 
 		ComPtr<ID3DBlob> signature;
 		ComPtr<ID3DBlob> error;
-		D3D12SerializeRootSignature(&rootSignatureDesc, D3D_ROOT_SIGNATURE_VERSION_1, &signature, &error);
+		D3DX12SerializeVersionedRootSignature(&rootSignatureDesc, featureData.HighestVersion, &signature, &error);
+		//D3D12SerializeRootSignature(&rootSignatureDesc.Desc_1_1, D3D_ROOT_SIGNATURE_VERSION_1, &signature, &error);
 		m_Device->CreateRootSignature(0, signature->GetBufferPointer(), signature->GetBufferSize(), IID_PPV_ARGS(&m_RootSignature));
 	}
 
@@ -247,6 +279,11 @@ void D3D12HAL::SetAndClearRenderTarget()
 	float ClearColor[4] = { 0.0f, 0.125f, 0.3f, 1.0f }; // red,green,blue,alpha
 	GetCommandList()->ClearRenderTargetView(GetCurrentBackBufferView(), ClearColor, 0, nullptr);
 	GetCommandList()->ClearDepthStencilView(m_DepthStencilView, D3D12_CLEAR_FLAG_DEPTH | D3D12_CLEAR_FLAG_STENCIL, 1.f, 0, 0, nullptr);
+
+	ID3D12DescriptorHeap* ppHeaps[] = { m_SrvHeap.Get(), m_SamplerHeap.Get() };
+	m_CommandList->SetDescriptorHeaps(_countof(ppHeaps), ppHeaps);
+
+	m_CommandList->SetGraphicsRootSignature(m_RootSignature.Get());
 }
 
 void D3D12HAL::PresentFrame()

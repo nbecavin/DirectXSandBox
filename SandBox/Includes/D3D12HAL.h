@@ -50,7 +50,7 @@ public:
 	void SetRasterizerState(RasterizerDesc& Desc);
 	inline void SetBlendState(BlendDesc& desc);
 	inline void SetSampler(U32 Slot, EShaderType Type, SamplerDesc& Sampler);
-	inline void SetShaderResource(U32 Slot, EShaderType Type, ID3D11ShaderResourceView* View);
+	inline void SetShaderResource(U32 Slot, EShaderType Type, sys::TextureLink* View);
 	inline void DrawIndexed(UINT IndexCount, UINT StartIndexLocation, INT BaseVertexLocation);
 	inline void SetViewports(D3D11_VIEWPORT& Viewport);
 
@@ -76,6 +76,11 @@ private:
 	ComPtr<ID3D12DescriptorHeap>		m_RtvHeap;
 	ComPtr<ID3D12DescriptorHeap>		m_DsvHeap;
 	ComPtr<ID3D12DescriptorHeap>		m_SrvHeap;
+	UINT								m_SrvDescriptorSize;
+	UINT								m_CurrentSrvDescriptorOffset;
+	ComPtr<ID3D12DescriptorHeap>		m_SamplerHeap;
+	UINT								m_SamplerDescriptorSize;
+	UINT								m_CurrentSamplerDescriptorOffset;
 
 	// je ne sais pas ce que c'est pour l'instant
 	UINT								m_RtvDescriptorSize;
@@ -122,13 +127,12 @@ inline void D3D12HAL::DrawIndexed(UINT IndexCount, UINT StartIndexLocation, INT 
 	GetDevice()->CreateGraphicsPipelineState(&m_CurrentPSO, IID_PPV_ARGS(&PSO));
 	PSO->SetName(L"test");
 	m_CommandList->SetPipelineState(PSO);
-	m_CommandList->SetGraphicsRootSignature(m_RootSignature.Get());
 	m_CommandList->DrawIndexedInstanced(IndexCount, 1, StartIndexLocation, BaseVertexLocation, 0);
 }
 
-inline void D3D12HAL::SetShaderResource(U32 Slot, EShaderType Type, ID3D11ShaderResourceView* View)
+inline void D3D12HAL::SetShaderResource(U32 Slot, EShaderType Type, sys::TextureLink* View)
 {
-	//m_CommandList->SetComputeRootDescriptorTable();
+	m_CommandList->SetGraphicsRootDescriptorTable(0, View->m_D3D12SRVgpu);
 	/*
 	ID3D11DeviceContext * ctx = GetImmediateDeviceContext();
 	switch (Type)

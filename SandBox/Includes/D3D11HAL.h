@@ -47,7 +47,7 @@ public:
 	void SetRasterizerState(RasterizerDesc& Desc);
 	inline void SetBlendState(BlendDesc& desc);
 	inline void SetSampler(U32 Slot, EShaderType Type, SamplerDesc& Sampler);
-	inline void SetShaderResource(U32 Slot, EShaderType Type, ID3D11ShaderResourceView* View);
+	inline void SetShaderResource(U32 Slot, EShaderType Type, sys::TextureLink* View);
 	inline void DrawIndexed(UINT IndexCount,UINT StartIndexLocation,INT BaseVertexLocation);
 	inline void SetViewports(D3D11_VIEWPORT& Viewport);
 
@@ -98,14 +98,14 @@ inline void D3D11HAL::DrawIndexed(UINT IndexCount, UINT StartIndexLocation, INT 
 	GetImmediateDeviceContext()->DrawIndexed(IndexCount, StartIndexLocation, BaseVertexLocation);
 }
 
-inline void D3D11HAL::SetShaderResource(U32 Slot, EShaderType Type, ID3D11ShaderResourceView* View)
+inline void D3D11HAL::SetShaderResource(U32 Slot, EShaderType Type, sys::TextureLink* View)
 {
 	ID3D11DeviceContext * ctx = GetImmediateDeviceContext();
 	switch (Type)
 	{
-	case SHADER_TYPE_VERTEX: ctx->VSSetShaderResources(Slot, 1, &View); break;
-	case SHADER_TYPE_PIXEL: ctx->PSSetShaderResources(Slot, 1, &View); break;
-	case SHADER_TYPE_COMPUTE: ctx->CSSetShaderResources(Slot, 1, &View); break;
+	case SHADER_TYPE_VERTEX: ctx->VSSetShaderResources(Slot, 1, &View->ShaderView); break;
+	case SHADER_TYPE_PIXEL: ctx->PSSetShaderResources(Slot, 1, &View->ShaderView); break;
+	case SHADER_TYPE_COMPUTE: ctx->CSSetShaderResources(Slot, 1, &View->ShaderView); break;
 	};
 }
 

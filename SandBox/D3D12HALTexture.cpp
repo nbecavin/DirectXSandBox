@@ -381,6 +381,8 @@ void D3D12HAL::CreateTexture(Bitmap * _Bm)
 		}
 	}
 
+	m_CommandList->ResourceBarrier(1, &CD3DX12_RESOURCE_BARRIER::Transition(tex->Resource12, D3D12_RESOURCE_STATE_COPY_DEST, D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE));
+
 	{ // Create shader view
 		D3D12_SHADER_RESOURCE_VIEW_DESC SRVDesc;
 		ZeroMemory(&SRVDesc, sizeof(SRVDesc));
@@ -389,8 +391,10 @@ void D3D12HAL::CreateTexture(Bitmap * _Bm)
 		SRVDesc.ViewDimension = D3D12_SRV_DIMENSION_TEXTURE2D;
 		SRVDesc.Texture2D.MipLevels = desc.MipLevels;
 
-		tex->m_D3D12SRV = m_SrvHeap->GetCPUDescriptorHandleForHeapStart();
-		Device->CreateShaderResourceView(tex->Resource12, &SRVDesc, tex->m_D3D12SRV);
+		tex->m_D3D12SRVcpu.ptr = m_SrvHeap->GetCPUDescriptorHandleForHeapStart().ptr + m_CurrentSrvDescriptorOffset * m_SrvDescriptorSize;
+		tex->m_D3D12SRVgpu.ptr = m_SrvHeap->GetGPUDescriptorHandleForHeapStart().ptr + m_CurrentSrvDescriptorOffset * m_SrvDescriptorSize;
+		Device->CreateShaderResourceView(tex->Resource12, &SRVDesc, tex->m_D3D12SRVcpu);
+		m_CurrentSrvDescriptorOffset++;
 	}
 
 	/*
