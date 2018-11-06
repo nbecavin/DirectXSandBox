@@ -191,11 +191,13 @@ void D3D12HAL::Init(int sizeX, int sizeY, sys::Renderer* owner)
 		//xone code
 		//CD3DX12_ROOT_SIGNATURE_DESC rootSignatureDesc;
 		//rootSignatureDesc.Init(0, nullptr, 0, nullptr, D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT);
-		CD3DX12_DESCRIPTOR_RANGE1 ranges[1];
-		ranges[0].Init(D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 1, 0, 0, D3D12_DESCRIPTOR_RANGE_FLAG_DATA_STATIC);
+		CD3DX12_DESCRIPTOR_RANGE1 ranges[2];
+		ranges[0].Init(D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 8, 0);
+		ranges[1].Init(D3D12_DESCRIPTOR_RANGE_TYPE_SAMPLER, 8, 0);
 
-		CD3DX12_ROOT_PARAMETER1 rootParameters[1];
-		rootParameters[0].InitAsDescriptorTable(1, &ranges[0], D3D12_SHADER_VISIBILITY_PIXEL);
+		CD3DX12_ROOT_PARAMETER1 rootParameters[2];
+		rootParameters[0].InitAsDescriptorTable(1, &ranges[0]);// , D3D12_SHADER_VISIBILITY_PIXEL);
+		rootParameters[1].InitAsDescriptorTable(1, &ranges[1]);//, D3D12_SHADER_VISIBILITY_PIXEL);
 
 		//D3D12_ROOT_SIGNATURE_DESC rootSignatureDesc;
 		//rootSignatureDesc.Flags = D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT;
@@ -209,9 +211,18 @@ void D3D12HAL::Init(int sizeX, int sizeY, sys::Renderer* owner)
 
 		ComPtr<ID3DBlob> signature;
 		ComPtr<ID3DBlob> error;
-		D3DX12SerializeVersionedRootSignature(&rootSignatureDesc, featureData.HighestVersion, &signature, &error);
+		HRESULT hr = D3DX12SerializeVersionedRootSignature(&rootSignatureDesc, featureData.HighestVersion, &signature, &error);
+		if (hr != S_OK)
+		{
+			char * errormessage = (char*)error->GetBufferPointer();
+			MESSAGE(errormessage);
+		}
 		//D3D12SerializeRootSignature(&rootSignatureDesc.Desc_1_1, D3D_ROOT_SIGNATURE_VERSION_1, &signature, &error);
-		m_Device->CreateRootSignature(0, signature->GetBufferPointer(), signature->GetBufferSize(), IID_PPV_ARGS(&m_RootSignature));
+		hr = m_Device->CreateRootSignature(0, signature->GetBufferPointer(), signature->GetBufferSize(), IID_PPV_ARGS(&m_RootSignature));
+		if (hr != S_OK)
+		{
+			MESSAGE("ERROR : Failed to create Root Signature");
+		}
 	}
 
 	// Create the command list.
