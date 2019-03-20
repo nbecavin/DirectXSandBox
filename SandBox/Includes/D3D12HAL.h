@@ -132,7 +132,7 @@ inline void D3D12HAL::DrawIndexed(UINT IndexCount, UINT StartIndexLocation, INT 
 
 inline void D3D12HAL::SetShaderResource(U32 Slot, EShaderType Type, sys::TextureLink* View)
 {
-	m_CommandList->SetGraphicsRootDescriptorTable(0, View->m_D3D12SRVgpu);
+	m_CommandList->SetGraphicsRootDescriptorTable(Slot, View->m_D3D12SRVgpu);
 	/*
 	ID3D11DeviceContext * ctx = GetImmediateDeviceContext();
 	switch (Type)
