@@ -3,6 +3,78 @@
 #include <D3D12HAL.h>
 #include <WinMain.h>
 
+#define MAX_SRVS 48
+#define MAX_CBS 16
+#define MAX_SAMPLERS 16
+#define MAX_UAVS 8
+
+namespace D3D12ShaderUtils
+{
+	namespace StaticRootSignatureConstants
+	{
+		// Assume descriptors are volatile because we don't initialize all the descriptors in a table, just the ones used by the current shaders.
+		const D3D12_DESCRIPTOR_RANGE_FLAGS SRVDescriptorRangeFlags = D3D12_DESCRIPTOR_RANGE_FLAG_DATA_STATIC_WHILE_SET_AT_EXECUTE | D3D12_DESCRIPTOR_RANGE_FLAG_DESCRIPTORS_VOLATILE;
+		const D3D12_DESCRIPTOR_RANGE_FLAGS CBVDescriptorRangeFlags = D3D12_DESCRIPTOR_RANGE_FLAG_DATA_STATIC_WHILE_SET_AT_EXECUTE | D3D12_DESCRIPTOR_RANGE_FLAG_DESCRIPTORS_VOLATILE;
+		const D3D12_DESCRIPTOR_RANGE_FLAGS UAVDescriptorRangeFlags = D3D12_DESCRIPTOR_RANGE_FLAG_DATA_VOLATILE | D3D12_DESCRIPTOR_RANGE_FLAG_DESCRIPTORS_VOLATILE;
+		const D3D12_DESCRIPTOR_RANGE_FLAGS SamplerDescriptorRangeFlags = D3D12_DESCRIPTOR_RANGE_FLAG_DESCRIPTORS_VOLATILE;
+	}
+}
+
+D3D12_VERSIONED_ROOT_SIGNATURE_DESC& GetStaticGraphicsRootSignatureDesc()
+{
+	static const U32 DescriptorTableCount = 16;
+	static struct
+	{
+		D3D12_SHADER_VISIBILITY Vis;
+		D3D12_DESCRIPTOR_RANGE_TYPE Type;
+		U32 Count;
+		U32 BaseShaderReg;
+		D3D12_DESCRIPTOR_RANGE_FLAGS Flags;
+	} RangeDesc[DescriptorTableCount] =
+	{
+		{ D3D12_SHADER_VISIBILITY_PIXEL, D3D12_DESCRIPTOR_RANGE_TYPE_SRV, MAX_SRVS, 0, D3D12ShaderUtils::StaticRootSignatureConstants::SRVDescriptorRangeFlags },
+		{ D3D12_SHADER_VISIBILITY_PIXEL, D3D12_DESCRIPTOR_RANGE_TYPE_CBV, MAX_CBS, 0, D3D12ShaderUtils::StaticRootSignatureConstants::CBVDescriptorRangeFlags },
+		{ D3D12_SHADER_VISIBILITY_PIXEL, D3D12_DESCRIPTOR_RANGE_TYPE_SAMPLER, MAX_SAMPLERS, 0, D3D12ShaderUtils::StaticRootSignatureConstants::SamplerDescriptorRangeFlags },
+
+		{ D3D12_SHADER_VISIBILITY_VERTEX, D3D12_DESCRIPTOR_RANGE_TYPE_SRV, MAX_SRVS, 0, D3D12ShaderUtils::StaticRootSignatureConstants::SRVDescriptorRangeFlags },
+		{ D3D12_SHADER_VISIBILITY_VERTEX, D3D12_DESCRIPTOR_RANGE_TYPE_CBV, MAX_CBS, 0, D3D12ShaderUtils::StaticRootSignatureConstants::CBVDescriptorRangeFlags },
+		{ D3D12_SHADER_VISIBILITY_VERTEX, D3D12_DESCRIPTOR_RANGE_TYPE_SAMPLER, MAX_SAMPLERS, 0, D3D12ShaderUtils::StaticRootSignatureConstants::SamplerDescriptorRangeFlags },
+
+		{ D3D12_SHADER_VISIBILITY_GEOMETRY, D3D12_DESCRIPTOR_RANGE_TYPE_SRV, MAX_SRVS, 0, D3D12ShaderUtils::StaticRootSignatureConstants::SRVDescriptorRangeFlags },
+		{ D3D12_SHADER_VISIBILITY_GEOMETRY, D3D12_DESCRIPTOR_RANGE_TYPE_CBV, MAX_CBS, 0, D3D12ShaderUtils::StaticRootSignatureConstants::CBVDescriptorRangeFlags },
+		{ D3D12_SHADER_VISIBILITY_GEOMETRY, D3D12_DESCRIPTOR_RANGE_TYPE_SAMPLER, MAX_SAMPLERS, 0, D3D12ShaderUtils::StaticRootSignatureConstants::SamplerDescriptorRangeFlags },
+
+		{ D3D12_SHADER_VISIBILITY_HULL, D3D12_DESCRIPTOR_RANGE_TYPE_SRV, MAX_SRVS, 0, D3D12ShaderUtils::StaticRootSignatureConstants::SRVDescriptorRangeFlags },
+		{ D3D12_SHADER_VISIBILITY_HULL, D3D12_DESCRIPTOR_RANGE_TYPE_CBV, MAX_CBS, 0, D3D12ShaderUtils::StaticRootSignatureConstants::CBVDescriptorRangeFlags },
+		{ D3D12_SHADER_VISIBILITY_HULL, D3D12_DESCRIPTOR_RANGE_TYPE_SAMPLER, MAX_SAMPLERS, 0, D3D12ShaderUtils::StaticRootSignatureConstants::SamplerDescriptorRangeFlags },
+
+		{ D3D12_SHADER_VISIBILITY_DOMAIN, D3D12_DESCRIPTOR_RANGE_TYPE_SRV, MAX_SRVS, 0, D3D12ShaderUtils::StaticRootSignatureConstants::SRVDescriptorRangeFlags },
+		{ D3D12_SHADER_VISIBILITY_DOMAIN, D3D12_DESCRIPTOR_RANGE_TYPE_CBV, MAX_CBS, 0, D3D12ShaderUtils::StaticRootSignatureConstants::CBVDescriptorRangeFlags },
+		{ D3D12_SHADER_VISIBILITY_DOMAIN, D3D12_DESCRIPTOR_RANGE_TYPE_SAMPLER, MAX_SAMPLERS, 0, D3D12ShaderUtils::StaticRootSignatureConstants::SamplerDescriptorRangeFlags },
+
+		{ D3D12_SHADER_VISIBILITY_ALL, D3D12_DESCRIPTOR_RANGE_TYPE_UAV, MAX_UAVS, 0, D3D12ShaderUtils::StaticRootSignatureConstants::UAVDescriptorRangeFlags },
+	};
+
+	static CD3DX12_ROOT_PARAMETER1 TableSlots[DescriptorTableCount];
+	static CD3DX12_DESCRIPTOR_RANGE1 DescriptorRanges[DescriptorTableCount];
+
+	for (U32 i = 0; i < DescriptorTableCount; i++)
+	{
+		DescriptorRanges[i].Init(
+			RangeDesc[i].Type,
+			RangeDesc[i].Count,
+			RangeDesc[i].BaseShaderReg,
+			0u,
+			RangeDesc[i].Flags
+		);
+
+		TableSlots[i].InitAsDescriptorTable(1, &DescriptorRanges[i], RangeDesc[i].Vis);
+	}
+
+	static CD3DX12_VERSIONED_ROOT_SIGNATURE_DESC RootDesc(DescriptorTableCount, TableSlots, 0, nullptr, D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT);
+	return RootDesc;
+}
+
 void D3D12HAL::Init(int sizeX, int sizeY, sys::Renderer* owner)
 {
 	HRESULT hr;
@@ -176,55 +248,6 @@ void D3D12HAL::Init(int sizeX, int sizeY, sys::Renderer* owner)
 	// Command Allocator
 	m_Device->CreateCommandAllocator(D3D12_COMMAND_LIST_TYPE_DIRECT, IID_PPV_ARGS(&m_CommandAllocator));
 
-	// Create an empty root signature.
-	{
-		D3D12_FEATURE_DATA_ROOT_SIGNATURE featureData = {};
-
-		// This is the highest version the sample supports. If CheckFeatureSupport succeeds, the HighestVersion returned will not be greater than this.
-		featureData.HighestVersion = D3D_ROOT_SIGNATURE_VERSION_1_1;
-
-		//if (FAILED(m_device->CheckFeatureSupport(D3D12_FEATURE_ROOT_SIGNATURE, &featureData, sizeof(featureData))))
-		//{
-		//	featureData.HighestVersion = D3D_ROOT_SIGNATURE_VERSION_1_0;
-		//}
-
-		//xone code
-		//CD3DX12_ROOT_SIGNATURE_DESC rootSignatureDesc;
-		//rootSignatureDesc.Init(0, nullptr, 0, nullptr, D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT);
-		CD3DX12_DESCRIPTOR_RANGE1 ranges[2];
-		ranges[0].Init(D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 8, 0);
-		ranges[1].Init(D3D12_DESCRIPTOR_RANGE_TYPE_SAMPLER, 8, 0);
-
-		CD3DX12_ROOT_PARAMETER1 rootParameters[2];
-		rootParameters[0].InitAsDescriptorTable(1, &ranges[0]);// , D3D12_SHADER_VISIBILITY_PIXEL);
-		rootParameters[1].InitAsDescriptorTable(1, &ranges[1]);//, D3D12_SHADER_VISIBILITY_PIXEL);
-
-		//D3D12_ROOT_SIGNATURE_DESC rootSignatureDesc;
-		//rootSignatureDesc.Flags = D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT;
-		//rootSignatureDesc.NumParameters = 1;
-		//rootSignatureDesc.NumStaticSamplers = 0;
-		//rootSignatureDesc.pParameters = rootParameters;
-		//rootSignatureDesc.pStaticSamplers = nullptr;
-
-		CD3DX12_VERSIONED_ROOT_SIGNATURE_DESC rootSignatureDesc;
-		rootSignatureDesc.Init_1_1(_countof(rootParameters), rootParameters, 0, nullptr, D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT);
-
-		ComPtr<ID3DBlob> signature;
-		ComPtr<ID3DBlob> error;
-		HRESULT hr = D3DX12SerializeVersionedRootSignature(&rootSignatureDesc, featureData.HighestVersion, &signature, &error);
-		if (hr != S_OK)
-		{
-			char * errormessage = (char*)error->GetBufferPointer();
-			MESSAGE(errormessage);
-		}
-		//D3D12SerializeRootSignature(&rootSignatureDesc.Desc_1_1, D3D_ROOT_SIGNATURE_VERSION_1, &signature, &error);
-		hr = m_Device->CreateRootSignature(0, signature->GetBufferPointer(), signature->GetBufferSize(), IID_PPV_ARGS(&m_RootSignature));
-		if (hr != S_OK)
-		{
-			MESSAGE("ERROR : Failed to create Root Signature");
-		}
-	}
-
 	// Create the command list.
 	m_Device->CreateCommandList(0, D3D12_COMMAND_LIST_TYPE_DIRECT, m_CommandAllocator.Get(), nullptr, IID_PPV_ARGS(&m_CommandList));
 
@@ -263,6 +286,47 @@ void D3D12HAL::Init(int sizeX, int sizeY, sys::Renderer* owner)
 	m_CurrentPSO.RasterizerState = rs;
 
 	m_GlobalConstantBuffer.Init();
+
+	// Create an empty root signature.
+	{
+		D3D12_FEATURE_DATA_ROOT_SIGNATURE featureData = {};
+
+		// This is the highest version the sample supports. If CheckFeatureSupport succeeds, the HighestVersion returned will not be greater than this.
+		featureData.HighestVersion = D3D_ROOT_SIGNATURE_VERSION_1_1;
+
+		//if (FAILED(m_Device->CheckFeatureSupport(D3D12_FEATURE_ROOT_SIGNATURE, &featureData, sizeof(featureData))))
+		{
+			featureData.HighestVersion = D3D_ROOT_SIGNATURE_VERSION_1;
+		}
+
+		CD3DX12_DESCRIPTOR_RANGE1 ranges[2];
+		ranges[0].Init(D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 48, 0, D3D12_DESCRIPTOR_RANGE_FLAG_DATA_STATIC_WHILE_SET_AT_EXECUTE | D3D12_DESCRIPTOR_RANGE_FLAG_DESCRIPTORS_VOLATILE);
+		ranges[1].Init(D3D12_DESCRIPTOR_RANGE_TYPE_SAMPLER, 16, 0, D3D12_DESCRIPTOR_RANGE_FLAG_DESCRIPTORS_VOLATILE);
+
+		CD3DX12_ROOT_PARAMETER1 rootParameters[2];
+		rootParameters[0].InitAsDescriptorTable(1, &ranges[0]);// , D3D12_SHADER_VISIBILITY_PIXEL);
+		rootParameters[1].InitAsDescriptorTable(1, &ranges[1]);//, D3D12_SHADER_VISIBILITY_PIXEL);
+
+		CD3DX12_VERSIONED_ROOT_SIGNATURE_DESC rootSignatureDesc;
+		rootSignatureDesc.Init_1_1(_countof(rootParameters), rootParameters, 0, nullptr, D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT);
+
+		ComPtr<ID3DBlob> signature;
+		ComPtr<ID3DBlob> error;
+		HRESULT hr = D3DX12SerializeVersionedRootSignature(&rootSignatureDesc, featureData.HighestVersion, &signature, &error);
+		
+		// use the one from UE4 instead
+		hr = D3DX12SerializeVersionedRootSignature(&GetStaticGraphicsRootSignatureDesc(), featureData.HighestVersion, &signature, &error);
+		if (hr != S_OK)
+		{
+			char * errormessage = (char*)error->GetBufferPointer();
+			MESSAGE(errormessage);
+		}
+		hr = m_Device->CreateRootSignature(0, signature->GetBufferPointer(), signature->GetBufferSize(), IID_PPV_ARGS(&m_RootSignature));
+		if (hr != S_OK)
+		{
+			MESSAGE("ERROR : Failed to create Root Signature");
+		}
+	}
 
 	OutputDebugString("DX12 Renderer is up and running");
 }

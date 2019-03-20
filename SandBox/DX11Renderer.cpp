@@ -76,8 +76,6 @@ namespace sys {
 		// No geometry shader
 		GetCommandList()->GSSetShader(NULL, NULL, 0);
 
-		GetCommandList()->RSSetState(m_DefaultRS);
-		GetCommandList()->OMSetDepthStencilState(m_DefaultDS, 0);
 		GetCommandList()->PSSetSamplers(0, 1, &m_DefaultSS);
 		GetCommandList()->PSSetSamplers(1, 1, &m_DefaultSS);
 		GetCommandList()->PSSetSamplers(2, 1, &m_DefaultSS);
@@ -174,41 +172,43 @@ namespace sys {
 		//		D3DPERF_EndEvent();
 
 		*/
+#endif
 
+#if 1
 		//		D3DPERF_BeginEvent(0,L"Forward");
 		{
-			ID3D11RasterizerState *	m_TempRS;
-			D3D11_RASTERIZER_DESC rs;
-			rs.AntialiasedLineEnable = FALSE;
-			rs.CullMode = D3D11_CULL_NONE;
-			rs.DepthBias = 0.f;
-			rs.DepthBiasClamp = 0.f;
-			rs.DepthClipEnable = TRUE;
-			rs.FillMode = D3D11_FILL_WIREFRAME;
-			rs.FrontCounterClockwise = FALSE;
-			rs.MultisampleEnable = FALSE;
-			rs.ScissorEnable = FALSE;
-			rs.SlopeScaledDepthBias = 0.f;
+			//ID3D11RasterizerState *	m_TempRS;
+			//D3D11_RASTERIZER_DESC rs;
+			//rs.AntialiasedLineEnable = FALSE;
+			//rs.CullMode = D3D11_CULL_NONE;
+			//rs.DepthBias = 0.f;
+			//rs.DepthBiasClamp = 0.f;
+			//rs.DepthClipEnable = TRUE;
+			//rs.FillMode = D3D11_FILL_WIREFRAME;
+			//rs.FrontCounterClockwise = FALSE;
+			//rs.MultisampleEnable = FALSE;
+			//rs.ScissorEnable = FALSE;
+			//rs.SlopeScaledDepthBias = 0.f;
 			//Device->CreateRasterizerState(&rs,&m_TempRS);
 			//DeviceContext->RSSetState(m_TempRS);
 
-			TextureLink * rtex = reinterpret_cast<TextureLink*>(m_HdrRenderTarget->GetBinHwResId());
-			GetCommandList()->OMSetRenderTargets(1, &rtex->Surface, m_DepthBuffer);
-			float ClearColor2[4] = { 1.0f, 1.f, 1.f, 1.0f }; // red,green,blue,alpha
-			GetCommandList()->ClearRenderTargetView(rtex->Surface, ClearColor2);
+			//TextureLink * rtex = reinterpret_cast<TextureLink*>(m_HdrRenderTarget->GetBinHwResId());
+			//GetCommandList()->OMSetRenderTargets(1, &rtex->Surface, m_DepthBuffer);
+			//float ClearColor2[4] = { 1.0f, 1.f, 1.f, 1.0f }; // red,green,blue,alpha
+			//GetCommandList()->ClearRenderTargetView(rtex->Surface, ClearColor2);
 
-			rtex = reinterpret_cast<TextureLink*>(m_ssaoBuffer->GetBinHwResId());
-			GetCommandList()->PSSetShaderResources(7, 1, &rtex->ShaderView);
+			//rtex = reinterpret_cast<TextureLink*>(m_ssaoBuffer->GetBinHwResId());
+			//GetCommandList()->PSSetShaderResources(7, 1, &rtex->ShaderView);
 
-			// Setup the viewport
-			D3D11_VIEWPORT vp;
-			vp.Width = (FLOAT)SizeX;
-			vp.Height = (FLOAT)SizeY;
-			vp.MinDepth = 0.0f;
-			vp.MaxDepth = 1.0f;
-			vp.TopLeftX = 0;
-			vp.TopLeftY = 0;
-			GetCommandList()->RSSetViewports(1, &vp);
+			//// Setup the viewport
+			//D3D11_VIEWPORT vp;
+			//vp.Width = (FLOAT)SizeX;
+			//vp.Height = (FLOAT)SizeY;
+			//vp.MinDepth = 0.0f;
+			//vp.MaxDepth = 1.0f;
+			//vp.TopLeftX = 0;
+			//vp.TopLeftY = 0;
+			//GetCommandList()->RSSetViewports(1, &vp);
 
 			for (int i = 0; i < gData.m_GraphObjectDA.GetSize(); i++)
 			{
@@ -216,11 +216,13 @@ namespace sys {
 				it->Draw();
 			}
 
-			GetCommandList()->RSSetState(m_DefaultRS);
+			//GetCommandList()->RSSetState(m_DefaultRS);
 			//m_TempRS->Release();
 		}
 		//		D3DPERF_EndEvent();
+#endif
 
+#if 0
 //		D3DPERF_BeginEvent(0,L"PostProcess");
 
 		//TextureLink * tex = reinterpret_cast<TextureLink*>(m_lightBuffer->GetBinHwResId());
