@@ -21,9 +21,11 @@ void Mesh::Update(F32 dTime)
 void Mesh::Draw()
 {
 	gData.Rdr->PushWorldMatrix(&m_Node);
+	gData.Rdr->UpdateGlobalConstant();
 
 	gData.Rdr->PushShader( SHADER_VS_BASE_MESH );
 	gData.Rdr->PushShader( SHADER_PS_PIXEL_LIT );
+	gData.Rdr->SetGlobalConstant(SHADER_TYPE_VERTEX);
 
 	U32 SubSetCount = SubSetsDA.GetSize();
 	for(int i=0;i<SubSetCount;i++)
@@ -39,7 +41,7 @@ void Mesh::Draw()
 
 		//gData.Rdr->PushDrawIndexed(pMesh->PrimType,0,0,pMesh->VertexCount,pMesh->IndexStart,pMesh->IndexCount/3);
 
-		gData.Rdr->SetPrimitiveTopology(PRIM_TRIANGLELIST);
+		gData.Rdr->SetPrimitiveTopology(pMesh->PrimType);
 		gData.Rdr->DrawIndexed(pMesh->IndexCount, pMesh->IndexStart, pMesh->VertexStart);
 	}
 }

@@ -32,6 +32,7 @@ protected:
 
 typedef Buffer VertexBuffer;
 typedef Buffer IndexBuffer;
+typedef Buffer ConstantBuffer;
 
 struct VertexElement
 {

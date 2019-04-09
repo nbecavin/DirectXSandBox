@@ -277,6 +277,7 @@
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="CameraFree.cpp" />
     <ClCompile Include="D3D11HALBuffers.cpp" />
+    <ClCompile Include="D3D11HALConstantBuffer.cpp" />
     <ClCompile Include="D3D11HALPipelineState.cpp" />
     <ClCompile Include="D3D11HALShaders.cpp" />
     <ClCompile Include="D3D11HALSwapChain.cpp" />
@@ -339,6 +340,7 @@
     <ClInclude Include="Includes\Camera.h" />
     <ClInclude Include="Includes\CameraFree.h" />
     <ClInclude Include="Includes\D3D11HAL.h" />
+    <ClInclude Include="Includes\D3D11HALConstantBuffer.h" />
     <ClInclude Include="Includes\D3D12HAL.h" />
     <ClInclude Include="Includes\D3D11HALBuffers.h" />
     <ClInclude Include="Includes\D3D12HALBuffers.h" />

@@ -130,16 +130,8 @@ namespace sys
 		initialData.SysMemSlicePitch = 0;
 //		GetDevice()->CreateBuffer(&desc,&initialData,&m_SHHemisphere);
 
-		/*
-		CameraConstant temp;
-		desc.ByteWidth = sizeof(CameraConstant);
-		desc.Usage = D3D11_USAGE_DYNAMIC;
-		desc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
-		initialData.pSysMem = &temp;
-		Device->CreateBuffer(&desc,&initialData,&m_CameraConstant);
-		*/
-//		m_CameraConstant = (ID3D11Buffer*)CameraConstant::CreateHwRes();
-//		m_PostProcessConstant = (ID3D11Buffer*)PostProcessConstant::CreateHwRes();
+		m_CameraConstant = CreateConstantBuffer(sizeof(CameraConstant));
+		m_GlobalConstant = CreateConstantBuffer(sizeof(GlobalConstant));
 
 		return TRUE;
 	}

@@ -7,6 +7,7 @@
 #include <Material.h>
 #include <Camera.h>
 #include <imgui.h>
+#include <ShaderConstants.h>
 
 namespace sys {
 
@@ -30,13 +31,19 @@ namespace sys {
 		inline	Camera* GetCamera() const { return m_Camera; }
 		
 		//
+		virtual void UpdateGlobalConstant();
+		virtual void SetGlobalConstant(EShaderType Type);
+
+		//
 		// Vertex/Index buffers
 		virtual VertexBuffer *		CreateVertexBuffer(U32 _Size,U32 _Usage,void * _Datas);
 		virtual IndexBuffer *		CreateIndexBuffer(U32 _Size,U32 _Usage,U32 _Fmt,void * _Datas);
 		virtual VertexDeclaration *	CreateVertexDecl(VertexElement* Decl,U32 _ShaderUID);
 		virtual void				CreateTexture(Bitmap * _Bmap) = 0;
+		virtual ConstantBuffer *	CreateConstantBuffer(U32 _Size) = 0;
 
-		virtual void	PushWorldMatrix( Mat4x4* _m ) {}
+		virtual GlobalConstant* GetGlobalConstantData() { return &m_GlobalConstantData; }
+		virtual void	PushWorldMatrix(Mat4x4* _m);
 
 		virtual void	PushShader( U32 _ShaderUID );
 		virtual void	PushVertexDeclaration(VertexDeclaration* Decl) {}
@@ -49,6 +56,7 @@ namespace sys {
 		// Graphics command list
 		virtual void SetBlendState(BlendDesc& desc) = 0;
 		virtual void SetSampler(U32 Slot, EShaderType Type, SamplerDesc& Sampler) = 0;
+		virtual void SetConstantBuffer(U32 Slot, EShaderType Type, ConstantBuffer* CBV) = 0;
 		virtual void SetShaderResource(U32 Slot, EShaderType Type, Bitmap* Texture) = 0;
 		virtual void SetDepthStencilState(DepthStencilDesc& Desc) = 0;
 		virtual void SetRasterizerState(RasterizerDesc& Desc) = 0;
@@ -78,6 +86,11 @@ namespace sys {
 		VertexDeclaration* m_ImGuiVertexDeclaration = nullptr;
 		VertexBuffer* m_ImGuiVB = nullptr;
 		IndexBuffer* m_ImGuiIB = nullptr;
+
+		// Some global buffers... yeah it's bad
+		GlobalConstant			m_GlobalConstantData;
+		ConstantBuffer*			m_GlobalConstant;
+		ConstantBuffer*			m_CameraConstant;
 	};
 
 };

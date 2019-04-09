@@ -1,6 +1,7 @@
 #pragma once
 
 #include <D3D11HALBuffers.h>
+#include <D3D11HALConstantBuffer.h>
 
 using namespace Microsoft::WRL;
 
@@ -18,6 +19,7 @@ public:
 	void CreateTexture(Bitmap * _Bm);
 	VertexBuffer* CreateVertexBuffer(U32 _Size, U32 _Usage, void* _Datas);
 	IndexBuffer* CreateIndexBuffer(U32 _Size, U32 _Usage, U32 _Fmt, void* _Datas);
+	ConstantBuffer* CreateConstantBuffer(U32 _Size);
 
 	void InitShaders();
 	void SetPrimitiveTopology(PrimitiveType Topology);
@@ -47,6 +49,7 @@ public:
 	void SetRasterizerState(RasterizerDesc& Desc);
 	inline void SetBlendState(BlendDesc& desc);
 	inline void SetSampler(U32 Slot, EShaderType Type, SamplerDesc& Sampler);
+	inline void SetConstantBuffer(U32 Slot, EShaderType Type, ConstantBuffer* CBV);
 	inline void SetShaderResource(U32 Slot, EShaderType Type, sys::TextureLink* View);
 	inline void DrawIndexed(UINT IndexCount,UINT StartIndexLocation,INT BaseVertexLocation);
 	inline void SetViewports(D3D11_VIEWPORT& Viewport);
@@ -78,14 +81,9 @@ private:
 	ID3D11DepthStencilView *		m_DepthBuffer;
 	ID3D11ShaderResourceView *		m_ZBuffer;
 
-#define VS_CONSTANT_MAX_COUNT	256
-#define VS_CONSTANT_BUFFER_SIZE	(VS_CONSTANT_MAX_COUNT*sizeof(Vec4f))
-	ID3D11Buffer *					m_VSConstant;
-
-	ID3D11Buffer *					m_SHHemisphere;
-
-	ID3D11Buffer *					m_CameraConstant;
-	ID3D11Buffer *					m_PostProcessConstant;
+//	ID3D11Buffer *					m_SHHemisphere;
+//
+//	ID3D11Buffer *					m_PostProcessConstant;
 };
 
 inline void D3D11HAL::SetViewports(D3D11_VIEWPORT& Vp)
@@ -106,6 +104,19 @@ inline void D3D11HAL::SetShaderResource(U32 Slot, EShaderType Type, sys::Texture
 	case SHADER_TYPE_VERTEX: ctx->VSSetShaderResources(Slot, 1, &View->ShaderView); break;
 	case SHADER_TYPE_PIXEL: ctx->PSSetShaderResources(Slot, 1, &View->ShaderView); break;
 	case SHADER_TYPE_COMPUTE: ctx->CSSetShaderResources(Slot, 1, &View->ShaderView); break;
+	};
+}
+
+inline void D3D11HAL::SetConstantBuffer(U32 Slot, EShaderType Type, ConstantBuffer* CBV)
+{
+	D3D11ConstantBuffer * cb = (D3D11ConstantBuffer*)CBV;
+	ID3D11Buffer * res = cb->GetRes();
+	ID3D11DeviceContext * ctx = GetImmediateDeviceContext();
+	switch (Type)
+	{
+	case SHADER_TYPE_VERTEX: ctx->VSSetConstantBuffers(Slot, 1, &res); break;
+	case SHADER_TYPE_PIXEL: ctx->VSSetConstantBuffers(Slot, 1, &res); break;
+	case SHADER_TYPE_COMPUTE: ctx->VSSetConstantBuffers(Slot, 1, &res); break;
 	};
 }
 

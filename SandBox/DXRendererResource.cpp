@@ -125,44 +125,6 @@ namespace sys {
 		GetHAL().CreateTexture(_Bm);
 	}
 
-	ID3D11Buffer * CreateConstantBuffer(void* _DataPtr,U32 _DataSize)
-	{
-#if 0 //def _PCDX11
-		ID3D11Buffer * pCstBuffer;
-
-		D3D11_BUFFER_DESC desc;
-		desc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
-		desc.ByteWidth = _DataSize;
-		desc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
-		desc.MiscFlags = 0;
-		desc.StructureByteStride = 0;
-		desc.Usage = D3D11_USAGE_DYNAMIC;
-		D3D11_SUBRESOURCE_DATA initialData;
-		initialData.pSysMem = _DataPtr;
-		initialData.SysMemPitch = 0;
-		initialData.SysMemSlicePitch = 0;
-		((DXRenderer*)gData.Rdr)->GetDevice()->CreateBuffer(&desc,&initialData,&pCstBuffer);
-		return pCstBuffer;
-#else
-		return NULL;
-#endif
-	}
-
 };
-
-//
-// Constant buffers
-
-void* CameraConstant::CreateHwRes()
-{
-	CameraConstant t;
-	return (void*)sys::CreateConstantBuffer(&t,sizeof(t));
-}
-
-void* PostProcessConstant::CreateHwRes()
-{
-	PostProcessConstant t;
-	return (void*)sys::CreateConstantBuffer(&t,sizeof(t));
-}
 
 #endif //_PC

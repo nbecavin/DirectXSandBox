@@ -44,15 +44,17 @@ namespace sys {
 		virtual void ReleaseAllResources();
 		virtual void MainLoop();
 
-		virtual VertexBuffer *		CreateVertexBuffer(U32 _Size,U32 _Usage,void * _Datas);
-		virtual IndexBuffer *		CreateIndexBuffer(U32 _Size,U32 _Usage,U32 _Fmt,void * _Datas);
+		virtual VertexBuffer *		CreateVertexBuffer(U32 _Size, U32 _Usage, void * _Datas);
+		virtual IndexBuffer *		CreateIndexBuffer(U32 _Size, U32 _Usage, U32 _Fmt, void * _Datas);
 		virtual VertexDeclaration *	CreateVertexDecl(VertexElement* Decl, U32 _ShaderUID)
 		{
 			return GetHAL().CreateVertexDecl(Decl, _ShaderUID);
 		}
 		virtual void				CreateTexture(Bitmap * _Bmap);
-
-		virtual void	PushWorldMatrix( Mat4x4* _m );
+		virtual ConstantBuffer *	CreateConstantBuffer(U32 _Size)
+		{
+			return GetHAL().CreateConstantBuffer(_Size);
+		}
 
 		virtual void	PushShader(U32 _ShaderUID);
 		virtual void	PushVertexDeclaration(VertexDeclaration* Decl);
@@ -60,6 +62,10 @@ namespace sys {
 		virtual void	PushIndices(IndexBuffer* Buffer,U32 _Fmt);
 		virtual void	PushMaterial(Material* Mat);
 
+		virtual void SetConstantBuffer(U32 Slot, EShaderType Type, ConstantBuffer* CBV)
+		{
+			GetHAL().SetConstantBuffer(Slot, Type, CBV);
+		}
 		virtual void SetShaderResource(U32 Slot, EShaderType Type, Bitmap* Texture);
 		virtual void SetDepthStencilState(DepthStencilDesc& Desc)
 		{
@@ -124,11 +130,7 @@ namespace sys {
 		};
 		StateCache					m_StateCache;
 
-		void				UpdateConstantBuffer(ID3D11Buffer * _Buffer,void* _DataPtr,U32 _DataSize);
-		void				UpdateVSConstants();
 	};
-
-	//extern Vec4f				m_VSConstantCache[VS_CONSTANT_MAX_COUNT];
 
 };
 

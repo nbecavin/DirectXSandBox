@@ -285,8 +285,6 @@ void D3D12HAL::Init(int sizeX, int sizeY, sys::Renderer* owner)
 	rs.ConservativeRaster = D3D12_CONSERVATIVE_RASTERIZATION_MODE_OFF;
 	m_CurrentPSO.RasterizerState = rs;
 
-	m_GlobalConstantBuffer.Init();
-
 	// Create an empty root signature.
 	{
 		D3D12_FEATURE_DATA_ROOT_SIGNATURE featureData = {};

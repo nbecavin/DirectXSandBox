@@ -20,6 +20,7 @@ public:
 	void CreateTexture(Bitmap * _Bm);
 	VertexBuffer* CreateVertexBuffer(U32 _Size, U32 _Usage, void* _Datas);
 	IndexBuffer* CreateIndexBuffer(U32 _Size, U32 _Usage, U32 _Fmt, void* _Datas);
+	ConstantBuffer* CreateConstantBuffer(U32 _Size);
 
 	void InitShaders();
 	void SetPrimitiveTopology(PrimitiveType Topology);
@@ -40,6 +41,7 @@ public:
 		return NULL;
 	}
 
+	ComPtr< ID3D12DescriptorHeap> GetSrvHeap() { return m_SrvHeap; }
 	ID3D12Device* GetDevice() { return m_Device.Get(); }
 	ID3D12GraphicsCommandList* GetCommandList() { return m_CommandList.Get(); }
 	D3D12_GRAPHICS_PIPELINE_STATE_DESC& GetPipelineState() { return m_CurrentPSO; }
@@ -50,6 +52,7 @@ public:
 	void SetRasterizerState(RasterizerDesc& Desc);
 	inline void SetBlendState(BlendDesc& desc);
 	inline void SetSampler(U32 Slot, EShaderType Type, SamplerDesc& Sampler);
+	inline void SetConstantBuffer(U32 Slot, EShaderType Type, ConstantBuffer* CBV);
 	inline void SetShaderResource(U32 Slot, EShaderType Type, sys::TextureLink* View);
 	inline void DrawIndexed(UINT IndexCount, UINT StartIndexLocation, INT BaseVertexLocation);
 	inline void SetViewports(D3D11_VIEWPORT& Viewport);
@@ -92,8 +95,6 @@ private:
 
 	// Current PSO
 	D3D12_GRAPHICS_PIPELINE_STATE_DESC	m_CurrentPSO;
-
-	D3D12ConstantBuffer					m_GlobalConstantBuffer;
 
 	//
 	D3D12_SHADER_BYTECODE			m_VSDA[SHADER_VS_COUNT];
@@ -144,6 +145,11 @@ inline void D3D12HAL::SetShaderResource(U32 Slot, EShaderType Type, sys::Texture
 	*/
 }
 
+inline void D3D12HAL::SetConstantBuffer(U32 Slot, EShaderType Type, ConstantBuffer* CBV)
+{
+
+}
+
 inline void D3D12HAL::SetSampler(U32 Slot, EShaderType Type, SamplerDesc& Sampler)
 {
 	/*
@@ -164,11 +170,4 @@ inline void D3D12HAL::SetBlendState(BlendDesc& Blend)
 {
 	D3D12Interop::BlendState(m_CurrentPSO.BlendState, Blend.desc);
 	m_CurrentPSO.SampleMask = 0xffffffff;
-	/*
-	ID3D11BlendState* pBlendState;
-	m_Device->CreateBlendState(&Blend.desc, &pBlendState);
-	const float blend_factor[4] = { 0.f, 0.f, 0.f, 0.f };
-	GetImmediateDeviceContext()->OMSetBlendState(pBlendState, blend_factor, 0xffffffff);
-	pBlendState->Release();
-	*/
 }

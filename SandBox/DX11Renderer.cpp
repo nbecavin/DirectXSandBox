@@ -10,8 +10,6 @@
 
 namespace sys {
 
-	//Vec4f sys::m_VSConstantCache[VS_CONSTANT_MAX_COUNT];
-
 	void InitDevice();
 	void ResetDevice();
 
@@ -55,36 +53,28 @@ namespace sys {
 
 		proj = XMMatrixPerspectiveRH(.25, .25f / ((float)SizeX / (float)SizeY), 0.1, 1000);
 
-		CameraConstant camCst;
-		camCst.ProjMatrix = XMMatrixTranspose(proj);
-		camCst.ViewMatrix = XMMatrixTranspose(view);
+		CameraConstant * camCst;
+		m_CameraConstant->Lock(0, 0, (void**)&camCst);
+		camCst->ProjMatrix = XMMatrixTranspose(proj);
+		camCst->ViewMatrix = XMMatrixTranspose(view);
 		XMVECTOR det;
-		camCst.InvProjMatrix = XMMatrixTranspose(XMMatrixInverse(&det, proj));
-		//camCst.InvViewProjMatrix = ;
+		camCst->InvProjMatrix = XMMatrixTranspose(XMMatrixInverse(&det, proj));
+		m_CameraConstant->Unlock();
 
-		//UpdateConstantBuffer(m_CameraConstant, &camCst, sizeof(camCst));
+		// No geometry shader
+		//GetCommandList()->GSSetShader(NULL, NULL, 0);
 
-		/*
-		XMMATRIX * _mat = (XMMATRIX*)(m_VSConstantCache);
-		_mat[0] = XMMatrixTranspose(proj);
-		_mat[1] = XMMatrixTranspose(view);
-		Vec4f * _vec = (Vec4f*)(m_VSConstantCache);
-		_vec[EYE_CST] = m_Camera->GetWorldPosition();
-		*/
+		//GetCommandList()->PSSetSamplers(0, 1, &m_DefaultSS);
+		//GetCommandList()->PSSetSamplers(1, 1, &m_DefaultSS);
+		//GetCommandList()->PSSetSamplers(2, 1, &m_DefaultSS);
+
+		//GetCommandList()->VSSetConstantBuffers(8, 1, &m_SHHemisphere);
+		//GetCommandList()->PSSetConstantBuffers(8, 1, &m_SHHemisphere);
+
+		SetConstantBuffer(9, SHADER_TYPE_VERTEX, m_CameraConstant);
+		SetConstantBuffer(9, SHADER_TYPE_PIXEL, m_CameraConstant);
 
 #if 0
-		// No geometry shader
-		GetCommandList()->GSSetShader(NULL, NULL, 0);
-
-		GetCommandList()->PSSetSamplers(0, 1, &m_DefaultSS);
-		GetCommandList()->PSSetSamplers(1, 1, &m_DefaultSS);
-		GetCommandList()->PSSetSamplers(2, 1, &m_DefaultSS);
-
-		GetCommandList()->VSSetConstantBuffers(8, 1, &m_SHHemisphere);
-		GetCommandList()->PSSetConstantBuffers(8, 1, &m_SHHemisphere);
-
-		GetCommandList()->VSSetConstantBuffers(9, 1, &m_CameraConstant);
-		GetCommandList()->PSSetConstantBuffers(9, 1, &m_CameraConstant);
 
 		/*
 				//
@@ -174,53 +164,28 @@ namespace sys {
 		*/
 #endif
 
-#if 1
 		//		D3DPERF_BeginEvent(0,L"Forward");
 		{
-			//ID3D11RasterizerState *	m_TempRS;
-			//D3D11_RASTERIZER_DESC rs;
-			//rs.AntialiasedLineEnable = FALSE;
-			//rs.CullMode = D3D11_CULL_NONE;
-			//rs.DepthBias = 0.f;
-			//rs.DepthBiasClamp = 0.f;
-			//rs.DepthClipEnable = TRUE;
-			//rs.FillMode = D3D11_FILL_WIREFRAME;
-			//rs.FrontCounterClockwise = FALSE;
-			//rs.MultisampleEnable = FALSE;
-			//rs.ScissorEnable = FALSE;
-			//rs.SlopeScaledDepthBias = 0.f;
-			//Device->CreateRasterizerState(&rs,&m_TempRS);
-			//DeviceContext->RSSetState(m_TempRS);
-
-			//TextureLink * rtex = reinterpret_cast<TextureLink*>(m_HdrRenderTarget->GetBinHwResId());
-			//GetCommandList()->OMSetRenderTargets(1, &rtex->Surface, m_DepthBuffer);
-			//float ClearColor2[4] = { 1.0f, 1.f, 1.f, 1.0f }; // red,green,blue,alpha
-			//GetCommandList()->ClearRenderTargetView(rtex->Surface, ClearColor2);
-
-			//rtex = reinterpret_cast<TextureLink*>(m_ssaoBuffer->GetBinHwResId());
-			//GetCommandList()->PSSetShaderResources(7, 1, &rtex->ShaderView);
-
-			//// Setup the viewport
-			//D3D11_VIEWPORT vp;
-			//vp.Width = (FLOAT)SizeX;
-			//vp.Height = (FLOAT)SizeY;
-			//vp.MinDepth = 0.0f;
-			//vp.MaxDepth = 1.0f;
-			//vp.TopLeftX = 0;
-			//vp.TopLeftY = 0;
-			//GetCommandList()->RSSetViewports(1, &vp);
+			RasterizerDesc rs;
+			rs.desc.AntialiasedLineEnable = FALSE;
+			rs.desc.CullMode = D3D11_CULL_NONE;
+			rs.desc.DepthBias = 0.f;
+			rs.desc.DepthBiasClamp = 0.f;
+			rs.desc.DepthClipEnable = TRUE;
+			rs.desc.FillMode = D3D11_FILL_SOLID;
+			rs.desc.FrontCounterClockwise = FALSE;
+			rs.desc.MultisampleEnable = FALSE;
+			rs.desc.ScissorEnable = FALSE;
+			rs.desc.SlopeScaledDepthBias = 0.f;
+			SetRasterizerState(rs);
 
 			for (int i = 0; i < gData.m_GraphObjectDA.GetSize(); i++)
 			{
 				GraphObject * it = gData.m_GraphObjectDA[i];
 				it->Draw();
 			}
-
-			//GetCommandList()->RSSetState(m_DefaultRS);
-			//m_TempRS->Release();
 		}
 		//		D3DPERF_EndEvent();
-#endif
 
 #if 0
 //		D3DPERF_BeginEvent(0,L"PostProcess");
@@ -320,6 +285,7 @@ namespace sys {
 
 	void DXRenderer::FullScreenQuad(Vec2f scale,Vec2f offset)
 	{
+		MESSAGE("DXRenderer::FullScreenQuad Fait pas grand chose");
 #if 0
 		PushVertexDeclaration(m_ScreenVertexDecl);
 		PushStreamSource(0,m_FullscreenQuadVB,0,32);
@@ -351,12 +317,6 @@ namespace sys {
 	{
 	}
 
-	void DXRenderer::PushWorldMatrix( Mat4x4* _m )
-	{
-		//Mat4x4 * _mat = (Mat4x4*)(m_VSConstantCache+8);
-		//_mat[0] = *_m;
-	}
-
 	void DXRenderer::PushVertexDeclaration(VertexDeclaration* Decl)
 	{
 		GetHAL().SetVertexDeclaration(Decl);
@@ -384,28 +344,7 @@ namespace sys {
 
 	void DXRenderer::PushDrawIndexed(PrimitiveType Type,U32 BaseVertexIndex,U32 MinVertexIndex,U32 NumVertices,U32 StartIndex,U32 PrimCount)
 	{
-#if 0	
-		int index_count = 0;
-		D3D11_PRIMITIVE_TOPOLOGY _primType;
-		switch(Type){
-		case PRIM_TRIANGLESTRIP:
-			_primType=D3D11_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP;
-			index_count=PrimCount+2;
-			break;
-		case PRIM_TRIANGLELIST:
-			_primType=D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
-			index_count=PrimCount*3;
-			break;
-		default:
-			return;
-		}
-		UpdateVSConstants();
-		SetPrimitiveTopology(Type);
-	#if defined(_PCDX11)
-		GetCommandList()->DrawIndexed(index_count,StartIndex,BaseVertexIndex);
-	#elif defined(_PCDX12)
-	#endif
-#endif
+		MESSAGE("DXRenderer::PushDrawIndexed Fait pas grand chose");
 	}
 
 	void DXRenderer::PushShader(U32 _ShaderUID)
@@ -417,59 +356,24 @@ namespace sys {
 
 	void DXRenderer::PushMaterial(Material* Mat)
 	{
-#if 0
-#if defined(_PCDX11)
 		Bitmap* bm = NULL;
 		bm = Mat->GetBitmap(MTL_STAGE_DIFFUSE);
 		if(bm)
 		{
-			TextureLink * tex = reinterpret_cast<TextureLink*>(bm->GetBinHwResId());
-			GetCommandList()->PSSetShaderResources(0,1,&tex->ShaderView);
+			SetShaderResource(0, SHADER_TYPE_PIXEL, bm);
 		}
 		bm = Mat->GetBitmap(MTL_STAGE_NORMAL);
 		if(bm)
 		{
-			TextureLink * tex = reinterpret_cast<TextureLink*>(bm->GetBinHwResId());
-			GetCommandList()->PSSetShaderResources(1,1,&tex->ShaderView);
+			SetShaderResource(1, SHADER_TYPE_PIXEL, bm);
 		}
 		bm = Mat->GetBitmap(MTL_STAGE_SPEC);
 		if(bm)
 		{
-			TextureLink * tex = reinterpret_cast<TextureLink*>(bm->GetBinHwResId());
-			GetCommandList()->PSSetShaderResources(2,1,&tex->ShaderView);
+			SetShaderResource(2, SHADER_TYPE_PIXEL, bm);
 		}
-#endif
-#endif
 	}
 
-	void DXRenderer::UpdateVSConstants()
-	{
-#if 0
-#if defined(_PCDX11)
-		D3D11_MAPPED_SUBRESOURCE pMappedResource;
-		GetCommandList()->Map(m_VSConstant,0,D3D11_MAP_WRITE_DISCARD,0,&pMappedResource);
-		memcpy(pMappedResource.pData,m_VSConstantCache,VS_CONSTANT_BUFFER_SIZE);
-		GetCommandList()->Unmap(m_VSConstant,0);
-		GetCommandList()->VSSetConstantBuffers( 0, 1, &m_VSConstant );
-#else
-
-		//GetCommandList()->SetGraphicsRootConstantBufferView(0, );
-#endif
-#endif
-	}
-
-	void DXRenderer::UpdateConstantBuffer(ID3D11Buffer * _Buffer,void* _DataPtr,U32 _DataSize)
-	{
-#if 0
-#if defined(_PCDX11)
-		D3D11_MAPPED_SUBRESOURCE pMappedResource;
-		GetCommandList()->Map(_Buffer,0,D3D11_MAP_WRITE_DISCARD,0,&pMappedResource);
-		memcpy(pMappedResource.pData,_DataPtr,_DataSize);
-		GetCommandList()->Unmap(_Buffer,0);
-#endif
-#endif
-	}
-	
 };
 
 #endif //_PC
