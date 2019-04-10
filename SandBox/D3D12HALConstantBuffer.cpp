@@ -33,14 +33,12 @@ void D3D12ConstantBuffer::Create(U32 _Size)
 	m_BufferView.BufferLocation = res->GetGPUVirtualAddress();
 	m_BufferView.SizeInBytes = _Size;
 
-	tex->m_D3D12SRVcpu.ptr = GET_RDR_INSTANCE()->GetD3D12HAL().m_SrvHeap->GetCPUDescriptorHandleForHeapStart().ptr + m_CurrentSrvDescriptorOffset * m_SrvDescriptorSize;
-	tex->m_D3D12SRVgpu.ptr = GET_RDR_INSTANCE()->GetD3D12HAL().GetSrvHeap()->GetGPUDescriptorHandleForHeapStart().ptr + m_CurrentSrvDescriptorOffset * m_SrvDescriptorSize;
-	Device->CreateConstantBufferView(&m_BufferView, tex->m_D3D12SRVcpu);
-	m_CurrentSrvDescriptorOffset++;
+	auto& heap = GET_RDR_INSTANCE()->GetD3D12HAL().GetSrvHeap();
+	U32 slot = heap.AllocateSlot(1);
+	Device->CreateConstantBufferView(&m_BufferView, heap.GetCPUSlotHandle(slot));
 
-	//tex->m_D3D12SRVgpu.ptr = m_SrvHeap->GetGPUDescriptorHandleForHeapStart().ptr + m_CurrentSrvDescriptorOffset * m_SrvDescriptorSize;
-	//Device->CreateShaderResourceView(tex->Resource12, &SRVDesc, tex->m_D3D12SRVcpu);
-	//m_CurrentSrvDescriptorOffset++;
+	m_CpuBase = heap.GetCPUSlotHandle(slot);
+	m_GpuBase = heap.GetGPUSlotHandle(slot);
 }
 
 bool D3D12ConstantBuffer::Lock(U32 OffsetToLock, U32 SizeToLock, void **pData, EMap Flags)

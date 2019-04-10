@@ -27,12 +27,10 @@ void D3D12VertexBuffer::Create(U32 _Size, U32 _Usage, U32 _Fmt, void * _Datas)
 	// Fill in a buffer description.
 	D3D12_HEAP_PROPERTIES heapProperties;
 	D3D12_RESOURCE_DESC bufferDesc;
-	//D3D11_BUFFER_DESC bufferDesc;
-	//D3D11_SUBRESOURCE_DATA initData;
-	//D3D11_SUBRESOURCE_DATA * pInitData = NULL;
 	if (_Datas)
 	{
-		heapProperties = CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_DEFAULT);
+		//heapProperties = CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_DEFAULT);
+		heapProperties = CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_UPLOAD);
 		//bufferDesc.Usage = D3D11_USAGE_DEFAULT;
 		//bufferDesc.ByteWidth = _Size;
 		//bufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
@@ -66,6 +64,14 @@ void D3D12VertexBuffer::Create(U32 _Size, U32 _Usage, U32 _Fmt, void * _Datas)
 		IID_PPV_ARGS(&res));
 
 	m_BufferView.BufferLocation = res->GetGPUVirtualAddress();
+
+	if (_Datas)
+	{
+		void * dst;
+		Lock(0, 0, &dst);
+		memcpy(dst, _Datas, m_BufferView.SizeInBytes);
+		Unlock();
+	}
 }
 
 void D3D12IndexBuffer::Create(U32 _Size, U32 _Usage, U32 _Fmt, void * _Datas)
@@ -111,6 +117,14 @@ void D3D12IndexBuffer::Create(U32 _Size, U32 _Usage, U32 _Fmt, void * _Datas)
 	m_BufferView.BufferLocation = res->GetGPUVirtualAddress();
 	m_BufferView.Format = (_Fmt == FMT_IDX_16) ? DXGI_FORMAT_R16_UINT : DXGI_FORMAT_R32_UINT;
 	m_BufferView.SizeInBytes = _Size;
+
+	if (_Datas)
+	{
+		void * dst;
+		Lock(0, 0, &dst);
+		memcpy(dst, _Datas, m_BufferView.SizeInBytes);
+		Unlock();
+	}
 }
 
 bool D3D12VertexBuffer::Lock(U32 OffsetToLock, U32 SizeToLock, void **pData, EMap Flags)

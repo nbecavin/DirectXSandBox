@@ -3,8 +3,16 @@
 #include <D3D12Interop.h>
 #include <D3D12HALBuffers.h>
 #include <D3D12HALConstantBuffer.h>
+#include <D3D12HALDescriptorHeaps.h>
 
 using namespace Microsoft::WRL;
+
+#define MAX_SRVS 48
+#define MAX_CBS 16
+#define MAX_SAMPLERS 16
+#define MAX_UAVS 8
+
+#define SRV_CBV_DESCRIPTOR_TABLE_OFFSET	(MAX_SRVS+MAX_CBS)
 
 class D3D12HAL
 {
@@ -41,7 +49,7 @@ public:
 		return NULL;
 	}
 
-	ComPtr< ID3D12DescriptorHeap> GetSrvHeap() { return m_SrvHeap; }
+	D3D12DescriptorHeap& GetSrvHeap() { return m_SrvHeap; }
 	ID3D12Device* GetDevice() { return m_Device.Get(); }
 	ID3D12GraphicsCommandList* GetCommandList() { return m_CommandList.Get(); }
 	D3D12_GRAPHICS_PIPELINE_STATE_DESC& GetPipelineState() { return m_CurrentPSO; }
@@ -50,12 +58,12 @@ public:
 	void SetAndClearRenderTarget();
 	void SetDepthStencilState(DepthStencilDesc& Desc);
 	void SetRasterizerState(RasterizerDesc& Desc);
-	inline void SetBlendState(BlendDesc& desc);
-	inline void SetSampler(U32 Slot, EShaderType Type, SamplerDesc& Sampler);
-	inline void SetConstantBuffer(U32 Slot, EShaderType Type, ConstantBuffer* CBV);
-	inline void SetShaderResource(U32 Slot, EShaderType Type, sys::TextureLink* View);
-	inline void DrawIndexed(UINT IndexCount, UINT StartIndexLocation, INT BaseVertexLocation);
-	inline void SetViewports(D3D11_VIEWPORT& Viewport);
+	void SetBlendState(BlendDesc& desc);
+	void SetSampler(U32 Slot, EShaderType Type, SamplerDesc& Sampler);
+	void SetConstantBuffer(U32 Slot, EShaderType Type, ConstantBuffer* CBV);
+	void SetShaderResource(U32 Slot, EShaderType Type, sys::TextureLink* View);
+	void DrawIndexed(UINT IndexCount, UINT StartIndexLocation, INT BaseVertexLocation);
+	void SetViewports(D3D11_VIEWPORT& Viewport);
 
 	D3D12_CPU_DESCRIPTOR_HANDLE& GetCurrentBackBufferView() {
 		return m_RenderTargetsView[m_FrameIndex];
@@ -75,15 +83,13 @@ private:
 	static const UINT					m_BufferCount = 2;
 	UINT								m_FrameCount = 1;
 
+	D3D12DescriptorHeap					m_SRVDynamicHeap;
+
 	// Descriptor heaps by types
+	D3D12DescriptorHeap					m_SrvHeap;
+	D3D12DescriptorHeap					m_SamplerHeap;
 	ComPtr<ID3D12DescriptorHeap>		m_RtvHeap;
 	ComPtr<ID3D12DescriptorHeap>		m_DsvHeap;
-	ComPtr<ID3D12DescriptorHeap>		m_SrvHeap;
-	UINT								m_SrvDescriptorSize;
-	UINT								m_CurrentSrvDescriptorOffset;
-	ComPtr<ID3D12DescriptorHeap>		m_SamplerHeap;
-	UINT								m_SamplerDescriptorSize;
-	UINT								m_CurrentSamplerDescriptorOffset;
 
 	// je ne sais pas ce que c'est pour l'instant
 	UINT								m_RtvDescriptorSize;
@@ -95,6 +101,8 @@ private:
 
 	// Current PSO
 	D3D12_GRAPHICS_PIPELINE_STATE_DESC	m_CurrentPSO;
+	D3D12_CPU_DESCRIPTOR_HANDLE			m_CurrentSRV[8][MAX_SRVS];
+	D3D12_CPU_DESCRIPTOR_HANDLE			m_CurrentCBV[8][MAX_CBS];
 
 	//
 	D3D12_SHADER_BYTECODE			m_VSDA[SHADER_VS_COUNT];
@@ -109,65 +117,3 @@ private:
 
 	D3D12VertexDeclarationDA		m_InputLayoutDA;
 };
-
-inline void D3D12HAL::SetViewports(D3D11_VIEWPORT& Vp)
-{
-	m_CommandList->RSSetViewports(1, reinterpret_cast<D3D12_VIEWPORT*>(&Vp));
-	D3D12_RECT rect;
-	rect.left = Vp.TopLeftX;
-	rect.top = Vp.TopLeftY;
-	rect.right = Vp.TopLeftX + Vp.Width;
-	rect.bottom = Vp.TopLeftY + Vp.Height;
-	m_CommandList->RSSetScissorRects(1, &rect);
-}
-
-inline void D3D12HAL::DrawIndexed(UINT IndexCount, UINT StartIndexLocation, INT BaseVertexLocation)
-{
-	ID3D12PipelineState* PSO;
-	m_CurrentPSO.pRootSignature = m_RootSignature.Get();
-	GetDevice()->CreateGraphicsPipelineState(&m_CurrentPSO, IID_PPV_ARGS(&PSO));
-	PSO->SetName(L"test");
-	m_CommandList->SetPipelineState(PSO);
-	m_CommandList->DrawIndexedInstanced(IndexCount, 1, StartIndexLocation, BaseVertexLocation, 0);
-}
-
-inline void D3D12HAL::SetShaderResource(U32 Slot, EShaderType Type, sys::TextureLink* View)
-{
-	m_CommandList->SetGraphicsRootDescriptorTable(Slot, View->m_D3D12SRVgpu);
-	/*
-	ID3D11DeviceContext * ctx = GetImmediateDeviceContext();
-	switch (Type)
-	{
-	case SHADER_TYPE_VERTEX: ctx->VSSetShaderResources(Slot, 1, &View); break;
-	case SHADER_TYPE_PIXEL: ctx->PSSetShaderResources(Slot, 1, &View); break;
-	case SHADER_TYPE_COMPUTE: ctx->CSSetShaderResources(Slot, 1, &View); break;
-	};
-	*/
-}
-
-inline void D3D12HAL::SetConstantBuffer(U32 Slot, EShaderType Type, ConstantBuffer* CBV)
-{
-
-}
-
-inline void D3D12HAL::SetSampler(U32 Slot, EShaderType Type, SamplerDesc& Sampler)
-{
-	/*
-	ID3D11SamplerState* res;
-	m_Device->CreateSamplerState(&Sampler.desc, &res);
-	ID3D11DeviceContext * ctx = GetImmediateDeviceContext();
-	switch (Type)
-	{
-	case SHADER_TYPE_VERTEX: ctx->VSSetSamplers(Slot, 1, &res); break;
-	case SHADER_TYPE_PIXEL: ctx->PSSetSamplers(Slot, 1, &res); break;
-	case SHADER_TYPE_COMPUTE: ctx->CSSetSamplers(Slot, 1, &res); break;
-	};
-	res->Release();
-	*/
-}
-
-inline void D3D12HAL::SetBlendState(BlendDesc& Blend)
-{
-	D3D12Interop::BlendState(m_CurrentPSO.BlendState, Blend.desc);
-	m_CurrentPSO.SampleMask = 0xffffffff;
-}

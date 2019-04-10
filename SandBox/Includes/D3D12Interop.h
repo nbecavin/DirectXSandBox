@@ -25,6 +25,38 @@ namespace D3D12Interop
 		}
 	}
 
+	inline void RasterizerState(D3D12_RASTERIZER_DESC& dest, const D3D11_RASTERIZER_DESC& source)
+	{
+		dest.AntialiasedLineEnable = FALSE;
+		dest.CullMode = (D3D12_CULL_MODE)source.CullMode;
+		dest.DepthBias = source.DepthBias;
+		dest.DepthBiasClamp = source.DepthBiasClamp;
+		dest.DepthClipEnable = source.DepthClipEnable;
+		dest.FillMode = (D3D12_FILL_MODE)source.FillMode;
+		dest.FrontCounterClockwise = source.FrontCounterClockwise;
+		dest.MultisampleEnable = source.MultisampleEnable;
+		dest.SlopeScaledDepthBias = source.SlopeScaledDepthBias;
+		dest.ForcedSampleCount = 0;
+		dest.ConservativeRaster = D3D12_CONSERVATIVE_RASTERIZATION_MODE_OFF;
+	}
+
+	inline void DepthStencilState(D3D12_DEPTH_STENCIL_DESC& dest, const D3D11_DEPTH_STENCIL_DESC& source)
+	{
+		dest.DepthEnable = source.DepthEnable;
+		dest.DepthWriteMask = (D3D12_DEPTH_WRITE_MASK)source.DepthWriteMask;
+		dest.DepthFunc = (D3D12_COMPARISON_FUNC)source.DepthFunc;
+		dest.StencilEnable = source.StencilEnable;
+		dest.StencilReadMask = source.StencilReadMask;
+		dest.StencilWriteMask = source.StencilWriteMask;
+		dest.FrontFace.StencilFailOp = (D3D12_STENCIL_OP)source.FrontFace.StencilFailOp;
+		dest.FrontFace.StencilDepthFailOp = (D3D12_STENCIL_OP)source.FrontFace.StencilDepthFailOp;
+		dest.FrontFace.StencilPassOp = (D3D12_STENCIL_OP)source.FrontFace.StencilPassOp;
+		dest.FrontFace.StencilFunc = (D3D12_COMPARISON_FUNC)source.FrontFace.StencilFunc;
+		dest.BackFace.StencilFailOp = (D3D12_STENCIL_OP)source.BackFace.StencilFailOp;
+		dest.BackFace.StencilDepthFailOp = (D3D12_STENCIL_OP)source.BackFace.StencilDepthFailOp;
+		dest.BackFace.StencilPassOp = (D3D12_STENCIL_OP)source.BackFace.StencilPassOp;
+		dest.BackFace.StencilFunc = (D3D12_COMPARISON_FUNC)source.BackFace.StencilFunc;
+	}
 	
 };
 

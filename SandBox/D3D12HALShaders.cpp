@@ -74,10 +74,8 @@ void D3D12HAL::SetStreamSource(U32 StreamNumber, VertexBuffer* Buffer, U32 Offse
 VertexDeclaration* D3D12HAL::CreateVertexDecl(VertexElement *Decl, U32 _ShaderUID)
 {
 	D3D12VertexDeclaration * buffer = m_InputLayoutDA.Add();
-	MESSAGE("Begin create Decl");
 	buffer->Create(Decl, _ShaderUID);
 	//return (buffer->IsInited()) ? buffer : NULL;
-	MESSAGE("End create Decl");
 	return buffer;
 }
 

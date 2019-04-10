@@ -391,10 +391,10 @@ void D3D12HAL::CreateTexture(Bitmap * _Bm)
 		SRVDesc.ViewDimension = D3D12_SRV_DIMENSION_TEXTURE2D;
 		SRVDesc.Texture2D.MipLevels = desc.MipLevels;
 
-		tex->m_D3D12SRVcpu.ptr = m_SrvHeap->GetCPUDescriptorHandleForHeapStart().ptr + m_CurrentSrvDescriptorOffset * m_SrvDescriptorSize;
-		tex->m_D3D12SRVgpu.ptr = m_SrvHeap->GetGPUDescriptorHandleForHeapStart().ptr + m_CurrentSrvDescriptorOffset * m_SrvDescriptorSize;
+		U32 slot = m_SrvHeap.AllocateSlot(1);
+		tex->m_D3D12SRVcpu.ptr = m_SrvHeap.GetCPUSlotHandle(slot).ptr;
+		tex->m_D3D12SRVgpu.ptr = m_SrvHeap.GetGPUSlotHandle(slot).ptr;
 		Device->CreateShaderResourceView(tex->Resource12, &SRVDesc, tex->m_D3D12SRVcpu);
-		m_CurrentSrvDescriptorOffset++;
 	}
 
 	/*

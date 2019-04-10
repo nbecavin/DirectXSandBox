@@ -242,6 +242,9 @@
     <ClCompile Include="D3D11HALConstantBuffer.cpp">
       <Filter>PC\D3D11</Filter>
     </ClCompile>
+    <ClCompile Include="D3D12HALDescriptorHeaps.cpp">
+      <Filter>PC\D3D12</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="SandBox.h">
@@ -394,6 +397,9 @@
     </ClInclude>
     <ClInclude Include="Includes\D3D11HALConstantBuffer.h">
       <Filter>PC\D3D11</Filter>
+    </ClInclude>
+    <ClInclude Include="Includes\D3D12HALDescriptorHeaps.h">
+      <Filter>PC\D3D12</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
