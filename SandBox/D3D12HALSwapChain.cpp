@@ -87,7 +87,7 @@ void D3D12HAL::Init(int sizeX, int sizeY, sys::Renderer* owner)
 	int cy = (int)(rcWindow.bottom - rcWindow.top);
 	SetWindowPos(sys::pc::hWnd, 0, 0, 0, cx, cy, SWP_NOZORDER | SWP_NOMOVE);
 
-#if 1 //defined(_DEBUG)
+#if 0 //defined(_DEBUG)
 	// Enable the D3D12 debug layer.
 	{
 		ComPtr<ID3D12Debug> debugController;
@@ -232,11 +232,9 @@ void D3D12HAL::Init(int sizeX, int sizeY, sys::Renderer* owner)
 		D3D12_DESCRIPTOR_HEAP_DESC heapDesc = {};
 		heapDesc.NumDescriptors = 2048;
 		heapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_SAMPLER;
-		heapDesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_SHADER_VISIBLE;
+		heapDesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_NONE;
 		m_SamplerHeap.Init(heapDesc, "Sampler Heap");
 	}
-
-
 
 	// Command Allocator
 	m_Device->CreateCommandAllocator(D3D12_COMMAND_LIST_TYPE_DIRECT, IID_PPV_ARGS(&m_CommandAllocator));
@@ -320,11 +318,17 @@ void D3D12HAL::Init(int sizeX, int sizeY, sys::Renderer* owner)
 
 		// Create dynamic descriptorHeaps
 		D3D12_DESCRIPTOR_HEAP_DESC heapDesc = {};
+
 		heapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV;
 		heapDesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_SHADER_VISIBLE;
-
 		heapDesc.NumDescriptors = 4000*(MAX_SRVS * 3 + MAX_CBS * 3);
 		m_SRVDynamicHeap.Init(heapDesc, "Dynamic SRV Heap");
+
+		D3D12_DESCRIPTOR_HEAP_DESC heapDesc2 = {};
+		heapDesc2.Type = D3D12_DESCRIPTOR_HEAP_TYPE_SAMPLER;
+		heapDesc2.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_SHADER_VISIBLE;
+		heapDesc2.NumDescriptors = 2048;
+		m_SamplerDynamicHeap.Init(heapDesc2, "Dynamic Sampler Heap");
 		
 		for (int i = 0; i<_countof(m_CurrentSRV); i++)
 		{
@@ -338,6 +342,13 @@ void D3D12HAL::Init(int sizeX, int sizeY, sys::Renderer* owner)
 			for (int j = 0; j<_countof(m_CurrentCBV[i]); j++)
 			{
 				m_CurrentCBV[i][j] = {};
+			}
+		}
+		for (int i = 0; i < _countof(m_CurrentSampler); i++)
+		{
+			for (int j = 0; j < _countof(m_CurrentSampler[i]); j++)
+			{
+				m_CurrentSampler[i][j] = {};
 			}
 		}
 	}
@@ -359,6 +370,7 @@ void D3D12HAL::SetAndClearRenderTarget()
 	m_CurrentPSO.NumRenderTargets = 1;
 	m_CurrentPSO.RTVFormats[0] = DXGI_FORMAT_R8G8B8A8_UNORM;
 	m_CurrentPSO.SampleDesc.Count = 1;
+	m_CurrentPSO.DSVFormat = DXGI_FORMAT_D32_FLOAT;
 	//m_CommandList->SetGra
 	//GetCommandList()->OMSetRenderTargets(1, &m_BackBuffer, m_DepthBuffer);
 
@@ -369,7 +381,7 @@ void D3D12HAL::SetAndClearRenderTarget()
 	GetCommandList()->ClearRenderTargetView(GetCurrentBackBufferView(), ClearColor, 0, nullptr);
 	GetCommandList()->ClearDepthStencilView(m_DepthStencilView, D3D12_CLEAR_FLAG_DEPTH | D3D12_CLEAR_FLAG_STENCIL, 1.f, 0, 0, nullptr);
 
-	ID3D12DescriptorHeap* ppHeaps[] = { m_SRVDynamicHeap.Get(), m_SamplerHeap.Get() };
+	ID3D12DescriptorHeap* ppHeaps[] = { m_SRVDynamicHeap.Get(), m_SamplerDynamicHeap.Get() };
 	m_CommandList->SetDescriptorHeaps(_countof(ppHeaps), ppHeaps);
 
 	m_CommandList->SetGraphicsRootSignature(m_RootSignature.Get());
@@ -425,4 +437,5 @@ void D3D12HAL::PresentFrame()
 	//m_CommandList->ResourceBarrier(1, &CD3DX12_RESOURCE_BARRIER::Transition(m_RenderTargets[m_FrameIndex].Get(), D3D12_RESOURCE_STATE_RENDER_TARGET, D3D12_RESOURCE_STATE_PRESENT));
 
 	m_SRVDynamicHeap.SetSlot(0);
+	m_SamplerDynamicHeap.SetSlot(0);
 }

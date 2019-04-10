@@ -43,6 +43,15 @@ void D3D12HAL::SetConstantBuffer(U32 Slot, EShaderType Type, ConstantBuffer* CBV
 
 void D3D12HAL::SetSampler(U32 Slot, EShaderType Type, SamplerDesc& Sampler)
 {
+	D3D12SamplerState& state = m_SamplerStateCache.Get(Sampler);
+	if (Type == SHADER_TYPE_PIXEL)
+	{
+		m_CurrentSampler[0][Slot] = state.GetCPUDescriptorHandle();
+	}
+	else if (Type == SHADER_TYPE_VERTEX)
+	{
+		m_CurrentSampler[1][Slot] = state.GetCPUDescriptorHandle();
+	}
 }
 
 void D3D12HAL::SetBlendState(BlendDesc& Blend)
@@ -122,12 +131,41 @@ void D3D12HAL::DrawIndexed(UINT IndexCount, UINT StartIndexLocation, INT BaseVer
 		m_CommandList->SetGraphicsRootDescriptorTable(0, m_SRVDynamicHeap.GetGPUSlotHandle(offset)); //Pixel SRV
 		offset = start + MAX_SRVS;
 		m_CommandList->SetGraphicsRootDescriptorTable(1, m_SRVDynamicHeap.GetGPUSlotHandle(offset)); //Pixel CBV
-		//m_CommandList->SetGraphicsRootDescriptorTable(2, cbv->GetGPUDescriptorHandle()); //Pixel Samplers
 		offset = start + SRV_CBV_DESCRIPTOR_TABLE_OFFSET;
 		m_CommandList->SetGraphicsRootDescriptorTable(3, m_SRVDynamicHeap.GetGPUSlotHandle(offset)); //Vertex SRV
 		offset = start + SRV_CBV_DESCRIPTOR_TABLE_OFFSET + MAX_SRVS;
 		m_CommandList->SetGraphicsRootDescriptorTable(4, m_SRVDynamicHeap.GetGPUSlotHandle(offset)); //Vertex CBV
-		//m_CommandList->SetGraphicsRootDescriptorTable(5, cbv->GetGPUDescriptorHandle()); //Vertex Samplers
+	}
+
+	{
+		U32 start = m_SamplerDynamicHeap.AllocateSlot(MAX_SAMPLERS * 2);
+		U32 offset = start;
+
+		//Sampler
+		for (int i = 0; i < MAX_SAMPLERS; i++, offset++)
+		{
+			if (m_CurrentSampler[0][i].ptr != 0)
+			{
+				m_Device->CopyDescriptorsSimple(1,
+					m_SamplerDynamicHeap.GetCPUSlotHandle(offset),
+					m_CurrentSampler[0][i],
+					D3D12_DESCRIPTOR_HEAP_TYPE_SAMPLER);
+
+			}
+			if (m_CurrentSampler[1][i].ptr != 0)
+			{
+				m_Device->CopyDescriptorsSimple(1,
+					m_SamplerDynamicHeap.GetCPUSlotHandle(offset+MAX_SAMPLERS),
+					m_CurrentSampler[1][i],
+					D3D12_DESCRIPTOR_HEAP_TYPE_SAMPLER);
+
+			}
+		}
+
+		offset = start + 0;
+		m_CommandList->SetGraphicsRootDescriptorTable(2, m_SamplerDynamicHeap.GetGPUSlotHandle(offset)); //Pixel Samplers
+		offset = start + MAX_SAMPLERS;
+		m_CommandList->SetGraphicsRootDescriptorTable(5, m_SamplerDynamicHeap.GetGPUSlotHandle(offset)); //Vertex Samplers		
 	}
 
 	ID3D12PipelineState* PSO;

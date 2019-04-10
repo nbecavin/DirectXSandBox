@@ -4,6 +4,7 @@
 #include <D3D12HALBuffers.h>
 #include <D3D12HALConstantBuffer.h>
 #include <D3D12HALDescriptorHeaps.h>
+#include <D3D12HALSamplerState.h>
 
 using namespace Microsoft::WRL;
 
@@ -50,6 +51,7 @@ public:
 	}
 
 	D3D12DescriptorHeap& GetSrvHeap() { return m_SrvHeap; }
+	D3D12DescriptorHeap& GetSamplerHeap() { return m_SamplerHeap; }
 	ID3D12Device* GetDevice() { return m_Device.Get(); }
 	ID3D12GraphicsCommandList* GetCommandList() { return m_CommandList.Get(); }
 	D3D12_GRAPHICS_PIPELINE_STATE_DESC& GetPipelineState() { return m_CurrentPSO; }
@@ -84,6 +86,7 @@ private:
 	UINT								m_FrameCount = 1;
 
 	D3D12DescriptorHeap					m_SRVDynamicHeap;
+	D3D12DescriptorHeap					m_SamplerDynamicHeap;
 
 	// Descriptor heaps by types
 	D3D12DescriptorHeap					m_SrvHeap;
@@ -103,6 +106,8 @@ private:
 	D3D12_GRAPHICS_PIPELINE_STATE_DESC	m_CurrentPSO;
 	D3D12_CPU_DESCRIPTOR_HANDLE			m_CurrentSRV[8][MAX_SRVS];
 	D3D12_CPU_DESCRIPTOR_HANDLE			m_CurrentCBV[8][MAX_CBS];
+	D3D12_CPU_DESCRIPTOR_HANDLE			m_CurrentSampler[8][MAX_SAMPLERS];
+	D3D12SamplerStateCache				m_SamplerStateCache;
 
 	//
 	D3D12_SHADER_BYTECODE			m_VSDA[SHADER_VS_COUNT];

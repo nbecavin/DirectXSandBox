@@ -41,6 +41,24 @@ struct SamplerDesc
 	{
 		ZeroMemory(&desc, sizeof(desc));
 	}
+	bool operator ==(const SamplerDesc& _in) const
+	{
+		Bool bEqual =
+			(desc.Filter == _in.desc.Filter) &&
+			(desc.AddressU == _in.desc.AddressU) &&
+			(desc.AddressV == _in.desc.AddressV) &&
+			(desc.AddressW == _in.desc.AddressW) &&
+			(desc.MipLODBias == _in.desc.MipLODBias) &&
+			(desc.MaxAnisotropy == _in.desc.MaxAnisotropy) &&
+			(desc.ComparisonFunc == _in.desc.ComparisonFunc) &&
+			(desc.BorderColor[0] == _in.desc.BorderColor[0]) &&
+			(desc.BorderColor[1] == _in.desc.BorderColor[1]) &&
+			(desc.BorderColor[2] == _in.desc.BorderColor[2]) &&
+			(desc.BorderColor[3] == _in.desc.BorderColor[3]) &&
+			(desc.MinLOD == _in.desc.MinLOD) &&
+			(desc.MaxLOD == _in.desc.MaxLOD);
+		return bEqual;
+	}
 };
 
 #endif //__RENDERER_PIPELINE_STATE_H__

@@ -57,6 +57,23 @@ namespace D3D12Interop
 		dest.BackFace.StencilPassOp = (D3D12_STENCIL_OP)source.BackFace.StencilPassOp;
 		dest.BackFace.StencilFunc = (D3D12_COMPARISON_FUNC)source.BackFace.StencilFunc;
 	}
+
+	inline void SamplerState(D3D12_SAMPLER_DESC& dest, const D3D11_SAMPLER_DESC& source)
+	{
+		dest.Filter = (D3D12_FILTER)source.Filter;
+		dest.AddressU = (D3D12_TEXTURE_ADDRESS_MODE)source.AddressU;
+		dest.AddressV = (D3D12_TEXTURE_ADDRESS_MODE)source.AddressV;
+		dest.AddressW = (D3D12_TEXTURE_ADDRESS_MODE)source.AddressW;
+		dest.MipLODBias = source.MipLODBias;
+		dest.MaxAnisotropy = source.MaxAnisotropy;
+		dest.ComparisonFunc = (D3D12_COMPARISON_FUNC)source.ComparisonFunc;
+		dest.BorderColor[0] = source.BorderColor[0];
+		dest.BorderColor[1] = source.BorderColor[1];
+		dest.BorderColor[2] = source.BorderColor[2];
+		dest.BorderColor[3] = source.BorderColor[3];
+		dest.MinLOD = source.MinLOD;
+		dest.MaxLOD = source.MaxLOD;
+	}
 	
 };
 

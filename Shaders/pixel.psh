@@ -28,24 +28,9 @@
 		float spec = saturate( pow(EyeDotR, 96 ) );
 		light += spec.xxx*4;
 		
-		//float3 normal = tex2D(sNormal, i.uv).xyz*0.5 + 0.5;
-		//return light*i.color*tex2D(sDiffuse,i.uv);
-		//return i.color*tex2D(sDiffuse, i.uv);
-
-#ifdef _PCDX12
-		uint w, h, m;
-		sDiffuse.GetDimensions(0, w, h, m);
-
-		int3 uv;
-		uv.x = (int)((float)w*i.uv.x);
-		uv.y = (int)((float)h*i.uv.y);
-		uv.z = 0;
-
-		float4 color = sDiffuse.Load(uv) * i.color;
-		return color;
-#else
+		float3 normal = tex2D(sNormal, i.uv).xyz*0.5 + 0.5;
+		//return light*i.color*sDiffuse.Sample(sSampler, i.uv);
 		return i.color*sDiffuse.Sample(sSampler, i.uv);
-#endif
 	}
 	
 	float4 ph_gbuffer( const in VS_Output i ) : SV_TARGET

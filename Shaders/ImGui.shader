@@ -19,7 +19,7 @@ struct ImGuiVsPs
 
 float4 PsMain(in ImGuiVsPs i) : SV_Target0
 {
-#ifdef _PCDX12
+#if 0 //def _PCDX12
 	uint w, h, m;
 	t.GetDimensions(0, w, h, m);
 
