@@ -15,13 +15,12 @@ namespace sys {
 
 	void DXRenderer::MainLoop()
 	{
-		m_Camera->Update();
+		ImGui::Begin("Stats");
+		ImGui::Text("FPS %f", 1.f/GetDeltaTime());
+		ImGui::Text("Time %fms", GetDeltaTime()*1000.f);
+		ImGui::End();
 
-		ImGuiIO& io = ImGui::GetIO();
-		io.DeltaTime = 1.0f / 60.0f;              // set the time elapsed since the previous frame (in seconds)
-		io.DisplaySize.x = SizeX;             // set the current display width
-		io.DisplaySize.y = SizeY;             // set the current display height here
-		ImGui::NewFrame();
+		m_Camera->Update();
 
 		HRESULT hr;
 

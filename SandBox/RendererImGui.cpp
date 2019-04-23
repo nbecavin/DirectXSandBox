@@ -74,8 +74,9 @@ void Renderer::InitImGUI()
 
 void Renderer::DrawImGUI()
 {
-	bool showDemo = true;
-	ImGui::ShowDemoWindow(&showDemo);
+	//bool showDemo = true;
+	//ImGui::ShowDemoWindow(&showDemo);
+
 	ImGui::Render();
 
 	ImDrawData* drawData = ImGui::GetDrawData();

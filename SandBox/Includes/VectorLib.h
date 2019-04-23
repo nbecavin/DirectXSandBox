@@ -18,6 +18,11 @@ inline float Cos(float a) { return cosf(a); }
 inline float Sin(float a) { return sinf(a); }
 inline float Clamp(float a,float min,float max) { a=(a<min)?min:a; a=(a>max)?max:a; return a; }
 
+template <typename T>
+T Max(const T& a, const T& b) { return (a > b) ? a : b; }
+template <typename T>
+T Min(const T& a, const T& b) { return (a < b) ? a : b; }
+
 DECL_ALIGNED(16) struct Vec4f
 {
 	F32	x,y,z,w;

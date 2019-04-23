@@ -223,6 +223,7 @@ U64 Align(U64 uLocation, UINT uAlign)
 void D3D12HAL::CreateTexture(Bitmap * _Bm)
 {
 	ID3D12Device * Device = GET_RDR_INSTANCE()->GetD3D12HAL().GetDevice();
+	ID3D12GraphicsCommandList * pCommandList = GET_RDR_INSTANCE()->GetD3D12HAL().GetCommandList();
 
 	MESSAGE("Create texture");
 
@@ -234,7 +235,7 @@ void D3D12HAL::CreateTexture(Bitmap * _Bm)
 		_Bm->GetSx(),
 		_Bm->GetSy(),
 		_Bm->GetSz(),
-		1,
+		_Bm->GetMips(),
 		1,
 		0,
 		D3D12_RESOURCE_FLAG_NONE,
@@ -259,8 +260,6 @@ void D3D12HAL::CreateTexture(Bitmap * _Bm)
 
 	if (_Bm->GetType()&BM_TYPE_2D)
 	{
-		//Device->CreatePlacedResource();
-
 		HRESULT hr = Device->CreateCommittedResource(
 			&CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_DEFAULT),
 			D3D12_HEAP_FLAG_NONE,
@@ -277,16 +276,14 @@ void D3D12HAL::CreateTexture(Bitmap * _Bm)
 		// Fill in resource with initial data
 		if (_Bm->GetDatas())
 		{
-			//D3D12_SUBRESOURCE_DATA * pData = NULL;
-			//D3D12_SUBRESOURCE_DATA Data[32];
-			//ZeroMemory(Data, sizeof(Data));
-
 			ID3D12Resource * m_spUploadBuffer;
 			UINT8* m_pDataBegin = nullptr;    // starting position of upload buffer
 			UINT8* m_pDataCur = nullptr;      // current position of upload buffer
+			UINT8* m_pDataNext = nullptr;      // next position of upload buffer
 			UINT8* m_pDataEnd = nullptr;      // ending position of upload buffer
 
-			DWORD uSize = 16 * 1024 * 1024;
+			DWORD uSize = GetRequiredIntermediateSize(tex->Resource12, 0, _Bm->GetMips());
+			//uSize = 16*1024*1024;
 
 			HRESULT hr = Device->CreateCommittedResource(
 				&CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_UPLOAD),
@@ -303,6 +300,7 @@ void D3D12HAL::CreateTexture(Bitmap * _Bm)
 				CD3DX12_RANGE readRange(0, 0);
 				m_spUploadBuffer->Map(0, &readRange, &pData);
 				m_pDataCur = m_pDataBegin = reinterpret_cast<UINT8*>(pData);
+				m_pDataNext = m_pDataCur;
 				m_pDataEnd = m_pDataBegin + uSize;
 			}
 			else{
@@ -316,9 +314,9 @@ void D3D12HAL::CreateTexture(Bitmap * _Bm)
 			auto SuballocateFromBuffer = [&](SIZE_T _uSize, UINT _uAlign)
 			{
 				m_pDataCur = reinterpret_cast<UINT8*>(
-					Align(reinterpret_cast<SIZE_T>(m_pDataCur), _uAlign)
+					Align(reinterpret_cast<SIZE_T>(m_pDataNext), _uAlign)
 					);
-
+				//m_pDataNext = m_pDataCur + _uSize;
 				return ((m_pDataCur + _uSize) > m_pDataEnd) ? E_INVALIDARG : S_OK;
 			};
 
@@ -326,13 +324,13 @@ void D3D12HAL::CreateTexture(Bitmap * _Bm)
 			UINT NumBytes = 0;
 			UINT RowBytes = 0;
 			UINT NumRows = 0;
-			U32 index = 0;
 			for (U32 j = 0; j < 1/*desc.DepthOrArraySize*/; j++)
 			{
-				UINT w = desc.Width;
-				UINT h = desc.Height;
-				for (U32 i = 0; i < 1/*_Bm->GetMips()*/; i++)
+				for (U32 i = 0; i < _Bm->GetMips(); i++)
 				{
+					UINT w = Max<UINT>(1, desc.Width >> i);
+					UINT h = Max<UINT>(1, desc.Height >> i);
+
 					GetSurfaceInfo(w, h, desc.Format, &NumBytes, &RowBytes, &NumRows);
 
 					D3D12_SUBRESOURCE_FOOTPRINT pitchedDesc = { 0 };
@@ -342,40 +340,41 @@ void D3D12HAL::CreateTexture(Bitmap * _Bm)
 					pitchedDesc.Depth = 1;
 					pitchedDesc.RowPitch = Align(RowBytes, D3D12_TEXTURE_DATA_PITCH_ALIGNMENT);
 
-					SuballocateFromBuffer(
+					int ret = SuballocateFromBuffer(
 						pitchedDesc.Height * pitchedDesc.RowPitch,
 						D3D12_TEXTURE_DATA_PLACEMENT_ALIGNMENT
 					);
 
+					if (ret == E_INVALIDARG)
+					{
+						MESSAGE("jlkjlkj");
+					}
+
+					int SubResourceIndex = j * desc.MipLevels + i;
+
+					D3D12_PLACED_SUBRESOURCE_FOOTPRINT _footprint;
+					UINT _numRows;
+					UINT64 _rowSizeInBytes, _totalBytes;
+
 					D3D12_PLACED_SUBRESOURCE_FOOTPRINT placedTexture2D = { 0 };
 					placedTexture2D.Offset = m_pDataCur - m_pDataBegin;
 					placedTexture2D.Footprint = pitchedDesc;
+					m_Device->GetCopyableFootprints(&desc, SubResourceIndex, 1, m_pDataCur - m_pDataBegin, &placedTexture2D, &_numRows, &_rowSizeInBytes, &_totalBytes);
 
 					for (UINT y = 0; y < NumRows; y++)
 					{
-						UINT8 *pScan = m_pDataBegin + placedTexture2D.Offset + y * pitchedDesc.RowPitch;
+						UINT8 *pScan = m_pDataBegin + placedTexture2D.Offset + y * placedTexture2D.Footprint.RowPitch;
 						UINT8 *pSrc = pSrcBits + y * RowBytes;
 						memcpy(pScan, pSrc, RowBytes);
 					}
-					//Data[index].pData = (void*)pSrcBits;
-					//Data[index].RowPitch = RowBytes;
-					//Data[index].SlicePitch = 0;
-					++index;
 
-					ID3D12GraphicsCommandList * pCommandList = GET_RDR_INSTANCE()->GetD3D12HAL().GetCommandList();
 					pCommandList->CopyTextureRegion(
-						&CD3DX12_TEXTURE_COPY_LOCATION(tex->Resource12, 0),
+						&CD3DX12_TEXTURE_COPY_LOCATION(tex->Resource12, SubResourceIndex),
 						0, 0, 0,
 						&CD3DX12_TEXTURE_COPY_LOCATION(m_spUploadBuffer, placedTexture2D),
 						nullptr);
 
 					pSrcBits += NumBytes;
-					w = w >> 1;
-					h = h >> 1;
-					if (w == 0)
-						w = 1;
-					if (h == 0)
-						h = 1;
 				}
 			}
 		}

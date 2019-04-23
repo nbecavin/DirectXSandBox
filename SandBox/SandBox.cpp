@@ -59,8 +59,10 @@ MESSAGE("Entering mainloop");
 	gData.Rdr->SetCamera(new Camera());
 
 	Camera * cam = gData.Rdr->GetCamera();
-	cam->SetWorldPosition(Vec4f(0.f,2.f,-10.f,1.f));
-	cam->SetWorldTarget(Vec4f(0.f,0.f,0.f,1.f));
+	//cam->SetWorldPosition(Vec4f(0.f,2.f,-10.f,1.f));
+	cam->SetWorldPosition(Vec4f(11.5, -4.2f, 0.349f, 1.f));
+	//cam->SetWorldTarget(Vec4f(0.f,0.f,0.f,1.f));
+	cam->SetWorldTarget(Vec4f(10.5f, -4.07f, 0.362f, 1.f));
 
 	RegisterGraphObject(new Sky());
 	//RegisterGraphObject(new Terrain());
@@ -95,6 +97,7 @@ MESSAGE("Load some mesh");
 	while(gData.GetExitStatus()==FALSE)
 	{
 		float dTime = GetDeltaTime();
+		gData.Rdr->BeginFrame(dTime);
 
 		// Get new input from external device
 		gData.Input->Update(dTime);

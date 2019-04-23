@@ -52,7 +52,6 @@ void CameraFree::Update(F32 dTime)
 	float xangle = rotateUp*speedangle - rotateDown*speedangle;
 
 	// Rotations
-#ifdef _PC
 	XMVECTOR qrotx = XMQuaternionRotationAxis(*reinterpret_cast<XMVECTOR*>(&camup),yangle);
 	XMVECTOR qroty = XMQuaternionRotationAxis(*reinterpret_cast<XMVECTOR*>(&camleft),xangle);
 	XMMATRIX mrotx = XMMatrixRotationQuaternion(qrotx);
@@ -64,5 +63,6 @@ void CameraFree::Update(F32 dTime)
 
 	cam->SetWorldPosition(campos);
 	cam->SetWorldTarget(campos+camdir);
-#endif
+
+	cam->DebugDraw();
 }

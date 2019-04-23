@@ -16,6 +16,8 @@ public:
 	Vec4f	GetWorldPosition() const { return m_WorldPos; }
 	Vec4f	GetWorldTarget() const { return m_WorldTarget; }
 	
+	void	DebugDraw();
+
 private:
 	Mat4x4				m_Node;
 	Vec4f				m_WorldPos;

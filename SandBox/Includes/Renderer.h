@@ -18,6 +18,7 @@ namespace sys {
 		virtual int	Init();
 		virtual bool InitStaticDatas();
 		virtual void Shut() = 0;
+		virtual void BeginFrame(float dTime);
 		virtual void MainLoop() = 0;
 		virtual void InitShaders();
 		virtual void SetSize(U32 _SizeX,U32 _SizeY) { SizeX=_SizeX; SizeY=_SizeY; }

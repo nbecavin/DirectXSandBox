@@ -17,3 +17,16 @@ void Camera::Update()
 	m_Node = *reinterpret_cast<Mat4x4*>(&XMMatrixLookAtRH(eye,at,up));
 #endif
 }
+
+#include <imgui.h>
+
+void Camera::DebugDraw()
+{
+	ImGui::Begin("CameraDebug", nullptr);
+	char str[1024];
+	sprintf(str, "Position %.3f %.3f %.3f", m_WorldPos.x, m_WorldPos.y, m_WorldPos.z);
+	ImGui::Text(str);
+	sprintf(str, "Target %.3f %.3f %.3f", m_WorldTarget.x, m_WorldTarget.y, m_WorldTarget.z);	
+	ImGui::Text(str);
+	ImGui::End();
+}

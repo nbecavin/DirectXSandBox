@@ -44,4 +44,13 @@ namespace sys {
 		SetConstantBuffer(0, Type, m_GlobalConstant);
 	}
 
+	void Renderer::BeginFrame(float dTime)
+	{
+		ImGuiIO& io = ImGui::GetIO();
+		io.DeltaTime = dTime;              // set the time elapsed since the previous frame (in seconds)
+		io.DisplaySize.x = SizeX;             // set the current display width
+		io.DisplaySize.y = SizeY;             // set the current display height here
+		ImGui::NewFrame();
+	}
+
 };
