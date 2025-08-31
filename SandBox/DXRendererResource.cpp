@@ -2,8 +2,6 @@
 
 #include <DX11Renderer.h>
 #include <WinMain.h>
-#include <D3D11HAL.h>
-#include <D3D11HALBuffers.h>
 #include <D3D12HAL.h>
 #include <D3D12HALBuffers.h>
 #include <Material.h>
@@ -73,14 +71,9 @@ namespace sys {
 		CpFlag |= D3DCOMPILE_ENABLE_BACKWARDS_COMPATIBILITY;
 
 		D3D_SHADER_MACRO mac[128]; U32 macnb=0;
-		mac[macnb].Name = "_PCDX11";
-		mac[macnb].Definition = "1";
-		macnb++;
-#if defined(USE_D3D12)
 		mac[macnb].Name = "_PCDX12";
 		mac[macnb].Definition = "1";
 		macnb++;
-#endif
 		mac[macnb].Name = 0;
 		mac[macnb].Definition = 0;
 		macnb++;
