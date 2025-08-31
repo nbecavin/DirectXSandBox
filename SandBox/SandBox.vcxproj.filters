@@ -419,7 +419,6 @@
     <None Include="..\Shaders\shaders.compile.bat">
       <Filter>Shaders</Filter>
     </None>
-    <None Include="d3dcompiler_46.dll" />
     <None Include="..\Shaders\ImGui.shader">
       <Filter>Shaders</Filter>
     </None>

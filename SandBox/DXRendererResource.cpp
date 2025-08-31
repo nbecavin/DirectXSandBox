@@ -35,6 +35,18 @@ namespace sys {
 		return ret;
 	}
 
+	const char* GetShaderProfile(U32 type)
+	{
+		switch (type)
+		{
+		case SHADER_TYPE_VERTEX:	return "vs_6_5";
+		case SHADER_TYPE_PIXEL:	return "ps_6_5";
+		case SHADER_TYPE_COMPUTE:	return "cs_6_5";
+		case SHADER_TYPE_MESH:	return "ms_6_5";
+		case SHADER_TYPE_RAYGEN:	return "lib_6_5";
+		};
+	}
+
 	void DXRenderer::RegisterShaderFromSourceFile(U32 _ShaderUID,const char* src,const char* epoint)
 	{
 		HRESULT hr;
@@ -47,18 +59,7 @@ namespace sys {
 		U32 Type = (_ShaderUID&SHADER_TYPE_MASK)>>SHADER_TYPE_BITS;
 		U32 SID = (_ShaderUID&(~SHADER_TYPE_MASK));
 
-		if(Type==SHADER_TYPE_VERTEX)
-		{
-			strcpy(profile,"vs_5_0");
-		}
-		if(Type==SHADER_TYPE_PIXEL)
-		{
-			strcpy(profile,"ps_5_0");
-		}
-		if(Type==SHADER_TYPE_COMPUTE)
-		{
-			strcpy(profile,"cs_5_0");
-		}
+		strcpy(profile, GetShaderProfile(Type));
 
 		DWORD CpFlag = 0;//*D3DCOMPILE_ENABLE_STRICTNESS;
 	#if defined( DEBUG ) || defined( _DEBUG )
