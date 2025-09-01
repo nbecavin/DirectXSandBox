@@ -81,9 +81,6 @@
     <Filter Include="Assets">
       <UniqueIdentifier>{f2e75475-53ea-4f0b-9c5f-f4bd37caeb32}</UniqueIdentifier>
     </Filter>
-    <Filter Include="PC\D3D11">
-      <UniqueIdentifier>{665beda8-144c-439d-8be8-29cb2cbeaf3a}</UniqueIdentifier>
-    </Filter>
     <Filter Include="PC\D3D12">
       <UniqueIdentifier>{e12b9704-806a-4220-be6b-fd045eab7013}</UniqueIdentifier>
     </Filter>
@@ -92,6 +89,9 @@
     </Filter>
     <Filter Include="Tools\ImGui">
       <UniqueIdentifier>{47e044ba-9cc1-48fb-8128-f4e500d94409}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="PC\Vulkan">
+      <UniqueIdentifier>{665beda8-144c-439d-8be8-29cb2cbeaf3a}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -188,20 +188,11 @@
     <ClCompile Include="DX11RendererInit.cpp">
       <Filter>PC</Filter>
     </ClCompile>
-    <ClCompile Include="D3D11HALSwapChain.cpp">
-      <Filter>PC\D3D11</Filter>
-    </ClCompile>
     <ClCompile Include="D3D12HALSwapChain.cpp">
       <Filter>PC\D3D12</Filter>
     </ClCompile>
     <ClCompile Include="D3D12HALShaders.cpp">
       <Filter>PC\D3D12</Filter>
-    </ClCompile>
-    <ClCompile Include="D3D11HALShaders.cpp">
-      <Filter>PC\D3D11</Filter>
-    </ClCompile>
-    <ClCompile Include="D3D11HALBuffers.cpp">
-      <Filter>PC\D3D11</Filter>
     </ClCompile>
     <ClCompile Include="D3D12HALBuffers.cpp">
       <Filter>PC\D3D12</Filter>
@@ -224,12 +215,6 @@
     <ClCompile Include="RendererImGui.cpp">
       <Filter>Common Platform\Renderer</Filter>
     </ClCompile>
-    <ClCompile Include="D3D11HALTexture.cpp">
-      <Filter>PC\D3D11</Filter>
-    </ClCompile>
-    <ClCompile Include="D3D11HALPipelineState.cpp">
-      <Filter>PC\D3D11</Filter>
-    </ClCompile>
     <ClCompile Include="D3D12HALTexture.cpp">
       <Filter>PC\D3D12</Filter>
     </ClCompile>
@@ -239,14 +224,17 @@
     <ClCompile Include="Includes\D3D12Interop.h">
       <Filter>PC\D3D12</Filter>
     </ClCompile>
-    <ClCompile Include="D3D11HALConstantBuffer.cpp">
-      <Filter>PC\D3D11</Filter>
-    </ClCompile>
     <ClCompile Include="D3D12HALDescriptorHeaps.cpp">
       <Filter>PC\D3D12</Filter>
     </ClCompile>
     <ClCompile Include="D3D12HALSamplerState.cpp">
       <Filter>PC\D3D12</Filter>
+    </ClCompile>
+    <ClCompile Include="Model.cpp">
+      <Filter>Common Platform\Scenery Objects\Mesh</Filter>
+    </ClCompile>
+    <ClCompile Include="ModelH3D.cpp">
+      <Filter>Common Platform\Scenery Objects\Mesh</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -362,12 +350,6 @@
     <ClInclude Include="Includes\D3D12HAL.h">
       <Filter>PC\D3D12</Filter>
     </ClInclude>
-    <ClInclude Include="Includes\D3D11HAL.h">
-      <Filter>PC\D3D11</Filter>
-    </ClInclude>
-    <ClInclude Include="Includes\D3D11HALBuffers.h">
-      <Filter>PC\D3D11</Filter>
-    </ClInclude>
     <ClInclude Include="Includes\D3D12HALBuffers.h">
       <Filter>PC\D3D12</Filter>
     </ClInclude>
@@ -398,14 +380,14 @@
     <ClInclude Include="Includes\RendererPipelineState.h">
       <Filter>Common Platform\Renderer</Filter>
     </ClInclude>
-    <ClInclude Include="Includes\D3D11HALConstantBuffer.h">
-      <Filter>PC\D3D11</Filter>
-    </ClInclude>
     <ClInclude Include="Includes\D3D12HALDescriptorHeaps.h">
       <Filter>PC\D3D12</Filter>
     </ClInclude>
     <ClInclude Include="Includes\D3D12HALSamplerState.h">
       <Filter>PC\D3D12</Filter>
+    </ClInclude>
+    <ClInclude Include="Includes\Model.h">
+      <Filter>Common Platform\Scenery Objects\Mesh</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -419,7 +401,6 @@
     <None Include="..\Shaders\shaders.compile.bat">
       <Filter>Shaders</Filter>
     </None>
-    <None Include="d3dcompiler_46.dll" />
     <None Include="..\Shaders\ImGui.shader">
       <Filter>Shaders</Filter>
     </None>

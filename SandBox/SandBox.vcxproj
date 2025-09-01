@@ -31,40 +31,40 @@
     <RootNamespace>SandBox</RootNamespace>
     <Keyword>Win32Proj</Keyword>
     <MinimumVisualStudioVersion>11.0</MinimumVisualStudioVersion>
-    <WindowsTargetPlatformVersion>10.0.17134.0</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <CharacterSet>MultiByte</CharacterSet>
     <WholeProgramOptimization>true</WholeProgramOptimization>
-    <PlatformToolset>v141</PlatformToolset>
+    <PlatformToolset>v143</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <CharacterSet>MultiByte</CharacterSet>
     <WholeProgramOptimization>true</WholeProgramOptimization>
-    <PlatformToolset>v141</PlatformToolset>
+    <PlatformToolset>v143</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug DX11|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <CharacterSet>MultiByte</CharacterSet>
-    <PlatformToolset>v141</PlatformToolset>
+    <PlatformToolset>v143</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug DX11|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <CharacterSet>MultiByte</CharacterSet>
-    <PlatformToolset>v141</PlatformToolset>
+    <PlatformToolset>v143</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug DX12|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <CharacterSet>MultiByte</CharacterSet>
-    <PlatformToolset>v141</PlatformToolset>
+    <PlatformToolset>v143</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug DX12|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <CharacterSet>MultiByte</CharacterSet>
-    <PlatformToolset>v141</PlatformToolset>
+    <PlatformToolset>v143</PlatformToolset>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
   <Import Project="PropertySheets\Common.props" />
@@ -214,7 +214,7 @@
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>dxgi.lib;d3d11.lib;d3d12.lib;d3dcompiler.lib;dxguid.lib;dinput8.lib;xinput.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>dxgi.lib;d3d12.lib;dxguid.lib;dinput8.lib;xinput.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <OutputFile>$(OutDir)$(TargetFileName)</OutputFile>
       <Version>0.1</Version>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -276,12 +276,6 @@
     <ClCompile Include="AssetCache.cpp" />
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="CameraFree.cpp" />
-    <ClCompile Include="D3D11HALBuffers.cpp" />
-    <ClCompile Include="D3D11HALConstantBuffer.cpp" />
-    <ClCompile Include="D3D11HALPipelineState.cpp" />
-    <ClCompile Include="D3D11HALShaders.cpp" />
-    <ClCompile Include="D3D11HALSwapChain.cpp" />
-    <ClCompile Include="D3D11HALTexture.cpp" />
     <ClCompile Include="D3D12HALBuffers.cpp" />
     <ClCompile Include="D3D12HALConstantBuffer.cpp" />
     <ClCompile Include="D3D12HALDescriptorHeaps.cpp" />
@@ -292,6 +286,12 @@
     <ClCompile Include="D3D12HALTexture.cpp" />
     <ClCompile Include="GraphObject.cpp" />
     <ClCompile Include="Includes\D3D12Interop.h" />
+    <ClCompile Include="Model.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug DX12|x64'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="ModelH3D.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug DX12|x64'">true</ExcludedFromBuild>
+    </ClCompile>
     <ClCompile Include="RendererImGui.cpp" />
     <ClCompile Include="SandBox.cpp" />
     <ClCompile Include="SandBoxFile.cpp" />
@@ -341,15 +341,13 @@
     <ClInclude Include="Includes\AssetCache.h" />
     <ClInclude Include="Includes\Camera.h" />
     <ClInclude Include="Includes\CameraFree.h" />
-    <ClInclude Include="Includes\D3D11HAL.h" />
-    <ClInclude Include="Includes\D3D11HALConstantBuffer.h" />
     <ClInclude Include="Includes\D3D12HAL.h" />
-    <ClInclude Include="Includes\D3D11HALBuffers.h" />
     <ClInclude Include="Includes\D3D12HALBuffers.h" />
     <ClInclude Include="Includes\D3D12HALConstantBuffer.h" />
     <ClInclude Include="Includes\D3D12HALDescriptorHeaps.h" />
     <ClInclude Include="Includes\D3D12HALSamplerState.h" />
     <ClInclude Include="Includes\d3dx12.h" />
+    <ClInclude Include="Includes\Model.h" />
     <ClInclude Include="Includes\RendererPipelineState.h" />
     <ClInclude Include="Includes\SandBoxFile.h" />
     <ClInclude Include="Includes\ScriptObject.h" />
@@ -419,7 +417,6 @@
     <Text Include="..\Shaders\vertex_factory.vsh">
       <FileType>Document</FileType>
     </Text>
-    <None Include="d3dcompiler_46.dll" />
     <None Include="SandBox.ico" />
     <None Include="small.ico" />
     <None Include="ReadMe.txt" />

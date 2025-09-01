@@ -2,8 +2,6 @@
 
 #include <DX11Renderer.h>
 #include <WinMain.h>
-#include <D3D11HAL.h>
-#include <D3D11HALBuffers.h>
 #include <D3D12HAL.h>
 #include <D3D12HALBuffers.h>
 #include <Material.h>
@@ -35,6 +33,18 @@ namespace sys {
 		return ret;
 	}
 
+	const char* GetShaderProfile(U32 type)
+	{
+		switch (type)
+		{
+		case SHADER_TYPE_VERTEX:	return "vs_6_5";
+		case SHADER_TYPE_PIXEL:	return "ps_6_5";
+		case SHADER_TYPE_COMPUTE:	return "cs_6_5";
+		case SHADER_TYPE_MESH:	return "ms_6_5";
+		case SHADER_TYPE_RAYGEN:	return "lib_6_5";
+		};
+	}
+
 	void DXRenderer::RegisterShaderFromSourceFile(U32 _ShaderUID,const char* src,const char* epoint)
 	{
 		HRESULT hr;
@@ -47,18 +57,7 @@ namespace sys {
 		U32 Type = (_ShaderUID&SHADER_TYPE_MASK)>>SHADER_TYPE_BITS;
 		U32 SID = (_ShaderUID&(~SHADER_TYPE_MASK));
 
-		if(Type==SHADER_TYPE_VERTEX)
-		{
-			strcpy(profile,"vs_5_0");
-		}
-		if(Type==SHADER_TYPE_PIXEL)
-		{
-			strcpy(profile,"ps_5_0");
-		}
-		if(Type==SHADER_TYPE_COMPUTE)
-		{
-			strcpy(profile,"cs_5_0");
-		}
+		strcpy(profile, GetShaderProfile(Type));
 
 		DWORD CpFlag = 0;//*D3DCOMPILE_ENABLE_STRICTNESS;
 	#if defined( DEBUG ) || defined( _DEBUG )
@@ -73,17 +72,19 @@ namespace sys {
 		CpFlag |= D3DCOMPILE_ENABLE_BACKWARDS_COMPATIBILITY;
 
 		D3D_SHADER_MACRO mac[128]; U32 macnb=0;
-		mac[macnb].Name = "_PCDX11";
-		mac[macnb].Definition = "1";
-		macnb++;
-#if defined(USE_D3D12)
 		mac[macnb].Name = "_PCDX12";
 		mac[macnb].Definition = "1";
 		macnb++;
-#endif
 		mac[macnb].Name = 0;
 		mac[macnb].Definition = 0;
 		macnb++;
+
+		std::vector<LPWSTR> arguments;
+		// -E for the entry point (eg. 'main')
+		arguments.push_back(L"-E");
+		arguments.push_back(epoint);
+
+
 
 		ID3DBlob * pError = NULL;
 		ID3DBlob * pCode = NULL;
@@ -111,6 +112,26 @@ namespace sys {
 		{
 			GetHAL().CreateShaderResource(pCode, Type, SID);
 		}
+
+		ComPtr<IDxcUtils> pUtils;
+		DxcCreateInstance(CLSID_DxcUtils, IID_PPV_ARGS(pUtils.GetAddressOf()));
+
+		ComPtr<IDxcBlobEncoding> pSource;
+		pUtils->CreateBlob(pShaderSource, shaderSourceSize, CP_UTF8, pSource.GetAddressOf());
+
+		DxcBuffer sourceBuffer;
+		sourceBuffer.Ptr = pSource->GetBufferPointer();
+		sourceBuffer.Size = pSource->GetBufferSize();
+		sourceBuffer.Encoding = 0;
+
+		ComPtr<IDxcCompiler3> pCompiler;
+		DxcCreateInstance(CLSID_DxcCompiler, IID_PPV_ARGS(pCompiler.GetAddressOf()));
+
+		pCompiler->Compile(&pSource, arguments.data(), argument.size(), nullptr, 
+			REFIID             riid,
+			LPVOID * ppResult
+		);
+
 	}
 
 	ID3DBlob * DXRenderer::GetShaderBlob(U32 _ShaderUID)

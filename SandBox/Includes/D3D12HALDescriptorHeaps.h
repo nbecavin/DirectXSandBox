@@ -42,7 +42,7 @@ public:
 	D3D12_DESCRIPTOR_HEAP_DESC GetDesc() const { return m_Desc; }
 
 private:
-	ComPtr<ID3D12DescriptorHeap> m_Heap;
+	Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> m_Heap;
 	D3D12_DESCRIPTOR_HEAP_DESC m_Desc;
 
 	D3D12_CPU_DESCRIPTOR_HANDLE	m_CPUBase = {};

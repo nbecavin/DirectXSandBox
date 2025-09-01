@@ -12,5 +12,7 @@ void D3D12DescriptorHeap::Init(D3D12_DESCRIPTOR_HEAP_DESC& heapDesc, const char 
 
 	// Notify other layers of heap change
 	m_CPUBase = m_Heap->GetCPUDescriptorHandleForHeapStart();
-	m_GPUBase = m_Heap->GetGPUDescriptorHandleForHeapStart();
+
+	if(heapDesc.Flags & D3D12_DESCRIPTOR_HEAP_FLAG_SHADER_VISIBLE)
+		m_GPUBase = m_Heap->GetGPUDescriptorHandleForHeapStart();
 }
