@@ -75,66 +75,68 @@ void D3D12HAL::DrawIndexed(UINT IndexCount, UINT StartIndexLocation, INT BaseVer
 {
 	// Update descriptor table
 	{
-		U32 start = m_SRVDynamicHeap.AllocateSlot(SRV_CBV_DESCRIPTOR_TABLE_OFFSET * 2);
-		U32 offset = start;
-
 		//pixel - SRV
-		for (int i = 0; i < MAX_SRVS; i++, offset++)
 		{
-			if (m_CurrentSRV[0][i].ptr != 0)
+			U32 slot = m_SRVDynamicHeap.AllocateSlot(MAX_SRVS);
+			for (int i = 0; i < MAX_SRVS; i++)
 			{
-				m_Device->CopyDescriptorsSimple(1,
-					m_SRVDynamicHeap.GetCPUSlotHandle(offset),
-					m_CurrentSRV[0][i],
-					D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
-
+				if (m_CurrentSRV[0][i].ptr != 0)
+				{
+					m_Device->CopyDescriptorsSimple(1,
+						m_SRVDynamicHeap.GetCPUSlotHandle(slot + i),
+						m_CurrentSRV[0][i],
+						D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
+				}
 			}
+			m_CommandList->SetGraphicsRootDescriptorTable(0, m_SRVDynamicHeap.GetGPUSlotHandle(slot));
 		}
 		//pixel - CBV
-		for (int i = 0; i < MAX_CBS; i++, offset++)
 		{
-			if (m_CurrentCBV[0][i].ptr != 0)
+			U32 slot = m_SRVDynamicHeap.AllocateSlot(MAX_SRVS);
+			for (int i = 0; i < MAX_CBS; i++)
 			{
-				m_Device->CopyDescriptorsSimple(1,
-					m_SRVDynamicHeap.GetCPUSlotHandle(offset),
-					m_CurrentCBV[0][i],
-					D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
+				if (m_CurrentCBV[0][i].ptr != 0)
+				{
+					m_Device->CopyDescriptorsSimple(1,
+						m_SRVDynamicHeap.GetCPUSlotHandle(slot + i),
+						m_CurrentCBV[0][i],
+						D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
 
+				}
 			}
+			m_CommandList->SetGraphicsRootDescriptorTable(1, m_SRVDynamicHeap.GetGPUSlotHandle(slot));
 		}
 		//vertex - SRV
-		for (int i = 0; i < MAX_SRVS; i++, offset++)
 		{
-			if (m_CurrentSRV[1][i].ptr != 0)
+			U32 slot = m_SRVDynamicHeap.AllocateSlot(MAX_SRVS);
+			for (int i = 0; i < MAX_SRVS; i++)
 			{
-				m_Device->CopyDescriptorsSimple(1,
-					m_SRVDynamicHeap.GetCPUSlotHandle(offset),
-					m_CurrentSRV[1][i],
-					D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
+				if (m_CurrentSRV[1][i].ptr != 0)
+				{
+					m_Device->CopyDescriptorsSimple(1,
+						m_SRVDynamicHeap.GetCPUSlotHandle(slot + i),
+						m_CurrentSRV[1][i],
+						D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
 
+				}
 			}
+			m_CommandList->SetGraphicsRootDescriptorTable(3, m_SRVDynamicHeap.GetGPUSlotHandle(slot));
 		}
 		//vertex - CBS
-		for (int i = 0; i < MAX_CBS; i++, offset++)
 		{
-			if (m_CurrentCBV[1][i].ptr != 0)
+			U32 slot = m_SRVDynamicHeap.AllocateSlot(MAX_SRVS);
+			for (int i = 0; i < MAX_CBS; i++)
 			{
-				m_Device->CopyDescriptorsSimple(1,
-					m_SRVDynamicHeap.GetCPUSlotHandle(offset),
-					m_CurrentCBV[1][i],
-					D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
-
+				if (m_CurrentCBV[1][i].ptr != 0)
+				{
+					m_Device->CopyDescriptorsSimple(1,
+						m_SRVDynamicHeap.GetCPUSlotHandle(slot + i),
+						m_CurrentCBV[1][i],
+						D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
+				}
 			}
+			m_CommandList->SetGraphicsRootDescriptorTable(4, m_SRVDynamicHeap.GetGPUSlotHandle(slot));
 		}
-		
-		offset = start + 0;
-		m_CommandList->SetGraphicsRootDescriptorTable(0, m_SRVDynamicHeap.GetGPUSlotHandle(offset)); //Pixel SRV
-		offset = start + MAX_SRVS;
-		m_CommandList->SetGraphicsRootDescriptorTable(1, m_SRVDynamicHeap.GetGPUSlotHandle(offset)); //Pixel CBV
-		offset = start + SRV_CBV_DESCRIPTOR_TABLE_OFFSET;
-		m_CommandList->SetGraphicsRootDescriptorTable(3, m_SRVDynamicHeap.GetGPUSlotHandle(offset)); //Vertex SRV
-		offset = start + SRV_CBV_DESCRIPTOR_TABLE_OFFSET + MAX_SRVS;
-		m_CommandList->SetGraphicsRootDescriptorTable(4, m_SRVDynamicHeap.GetGPUSlotHandle(offset)); //Vertex CBV
 	}
 
 	{

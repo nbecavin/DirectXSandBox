@@ -13,8 +13,6 @@ using namespace Microsoft::WRL;
 #define MAX_SAMPLERS 16
 #define MAX_UAVS 8
 
-#define SRV_CBV_DESCRIPTOR_TABLE_OFFSET	(MAX_SRVS+MAX_CBS)
-
 class D3D12HAL
 {
 public:
