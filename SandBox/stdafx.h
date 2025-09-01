@@ -30,6 +30,7 @@
 #	include <d3dx12.h>
 #	include <DirectXMath.h>
 #	include <dxcapi.h>
+#	include <d3d12shader.h>
 	using namespace DirectX;
 #	define __CDECL	__cdecl
 #elif defined(_ANDROID)

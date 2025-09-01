@@ -21,7 +21,6 @@ namespace sys
 	};
 };
 
-#include <D3D11HAL.h>
 #include <D3D12HAL.h>
 
 struct Vertex2D
@@ -102,16 +101,9 @@ namespace sys {
 
 		ID3DBlob *				GetShaderBlob(U32 _ShaderUID);
 
-		D3D11HAL				m_D3D11HAL;
-		D3D11HAL&				GetD3D11HAL() { return m_D3D11HAL; }
 		D3D12HAL				m_D3D12HAL;
 		D3D12HAL&				GetD3D12HAL() { return m_D3D12HAL; }
-
-#if defined(USE_D3D12)
 		D3D12HAL&				GetHAL() { return m_D3D12HAL; }
-#else
-		D3D11HAL&				GetHAL() { return m_D3D11HAL; }
-#endif
 
 	private:
 		VertexBufferDA					m_VertexBufferDA;
