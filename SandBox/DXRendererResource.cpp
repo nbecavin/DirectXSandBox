@@ -40,11 +40,11 @@ namespace sys {
 	{
 		switch (type)
 		{
-		case SHADER_TYPE_VERTEX:	return "vs_6_5";
-		case SHADER_TYPE_PIXEL:	return "ps_6_5";
-		case SHADER_TYPE_COMPUTE:	return "cs_6_5";
-		case SHADER_TYPE_MESH:	return "ms_6_5";
-		case SHADER_TYPE_RAYGEN:	return "lib_6_5";
+		case SHADER_TYPE_VERTEX:	return "vs_6_8";
+		case SHADER_TYPE_PIXEL:		return "ps_6_8";
+		case SHADER_TYPE_COMPUTE:	return "cs_6_8";
+		case SHADER_TYPE_MESH:		return "ms_6_8";
+		case SHADER_TYPE_RAYGEN:	return "lib_6_8";
 		};
 	}
 
