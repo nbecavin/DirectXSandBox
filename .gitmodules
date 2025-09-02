@@ -2,3 +2,7 @@
 	path = Tools/imgui
 	url = https://github.com/ocornut/imgui
 	branch = master
+[submodule "Tools/RTXDI"]
+	path = Tools/RTXDI
+	url = https://github.com/NVIDIA-RTX/RTXDI-Library
+	branch = main
