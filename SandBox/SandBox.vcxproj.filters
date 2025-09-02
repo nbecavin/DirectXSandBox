@@ -221,9 +221,6 @@
     <ClCompile Include="D3D12HALPipelineState.cpp">
       <Filter>PC\D3D12</Filter>
     </ClCompile>
-    <ClCompile Include="Includes\D3D12Interop.h">
-      <Filter>PC\D3D12</Filter>
-    </ClCompile>
     <ClCompile Include="D3D12HALDescriptorHeaps.cpp">
       <Filter>PC\D3D12</Filter>
     </ClCompile>
@@ -235,6 +232,9 @@
     </ClCompile>
     <ClCompile Include="ModelH3D.cpp">
       <Filter>Common Platform\Scenery Objects\Mesh</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Tools\imgui\imgui_tables.cpp">
+      <Filter>Tools\ImGui</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -404,6 +404,7 @@
     <None Include="..\Shaders\ImGui.shader">
       <Filter>Shaders</Filter>
     </None>
+    <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="SandBox.rc">

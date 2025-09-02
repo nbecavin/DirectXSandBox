@@ -78,12 +78,12 @@
 
 	// Compatibility layer
 
-	float	texDepth2D ( sampler2D depthBuffer, const in float2 uv )
+	float	texDepth2D ( Texture2D depthBuffer, SamplerState depthCompare, const in float2 uv )
     {
 		#ifdef INVERTED_ZBUFFER
 			return 1.0f - tex2D( depthBuffer, uv ).x;
 		#else
-			return tex2D( depthBuffer, uv ).x;
+			return depthBuffer.Sample(depthCompare, uv).x;
 		#endif
     }
 

@@ -14,9 +14,10 @@ void Renderer::InitImGUI()
 
 	io.BackendFlags |= ImGuiBackendFlags_HasMouseCursors;         // We can honor GetMouseCursor() values (optional)
 	io.BackendFlags |= ImGuiBackendFlags_HasSetMousePos;          // We can honor io.WantSetMousePos requests (optional, rarely used)
-	io.ImeWindowHandle = sys::pc::hWnd;
+	//io.ImeWindowHandle = sys::pc::hWnd;
 
 	// Keyboard mapping. ImGui will use those indices to peek into the io.KeysDown[] array that we will update during the application lifetime.
+	/*
 	io.KeyMap[ImGuiKey_Tab] = VK_TAB;
 	io.KeyMap[ImGuiKey_LeftArrow] = VK_LEFT;
 	io.KeyMap[ImGuiKey_RightArrow] = VK_RIGHT;
@@ -24,7 +25,7 @@ void Renderer::InitImGUI()
 	io.KeyMap[ImGuiKey_DownArrow] = VK_DOWN;
 	io.KeyMap[ImGuiKey_PageUp] = VK_PRIOR;
 	io.KeyMap[ImGuiKey_PageDown] = VK_NEXT;
-	io.KeyMap[ImGuiKey_Home] = VK_HOME;
+	io.SetKeyEventNativeData(ImGuiKey_Home, VK_HOME);
 	io.KeyMap[ImGuiKey_End] = VK_END;
 	io.KeyMap[ImGuiKey_Insert] = VK_INSERT;
 	io.KeyMap[ImGuiKey_Delete] = VK_DELETE;
@@ -38,6 +39,7 @@ void Renderer::InitImGUI()
 	io.KeyMap[ImGuiKey_X] = 'X';
 	io.KeyMap[ImGuiKey_Y] = 'Y';
 	io.KeyMap[ImGuiKey_Z] = 'Z';
+	*/
 
 	// Setup style
 	ImGui::StyleColorsDark();
@@ -115,8 +117,8 @@ void Renderer::DrawImGUI()
 	//// Setup orthographic projection matrix into our constant buffer
 	//// Our visible imgui space lies from draw_data->DisplayPos (top left) to draw_data->DisplayPos+data_data->DisplaySize (bottom right). 
 	//{
-	//	D3D11_MAPPED_SUBRESOURCE mapped_resource;
-	//	if (ctx->Map(g_pVertexConstantBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mapped_resource) != S_OK)
+	//	D3D12_MAPPED_SUBRESOURCE mapped_resource;
+	//	if (ctx->Map(g_pVertexConstantBuffer, 0, D3D12_MAP_WRITE_DISCARD, 0, &mapped_resource) != S_OK)
 	//		return;
 	//	VERTEX_CONSTANT_BUFFER* constant_buffer = (VERTEX_CONSTANT_BUFFER*)mapped_resource.pData;
 	//	float L = draw_data->DisplayPos.x;
@@ -147,18 +149,18 @@ void Renderer::DrawImGUI()
 	//ctx->VSSetConstantBuffers(0, 1, &g_pVertexConstantBuffer);
 	//ctx->PSSetSamplers(0, 1, &g_pFontSampler);
 	SamplerDesc fontSampler;
-	fontSampler.desc.Filter = D3D11_FILTER_MIN_MAG_MIP_LINEAR;
-	fontSampler.desc.AddressU = fontSampler.desc.AddressV = fontSampler.desc.AddressW = D3D11_TEXTURE_ADDRESS_WRAP;
+	fontSampler.desc.Filter = D3D12_FILTER_MIN_MAG_MIP_LINEAR;
+	fontSampler.desc.AddressU = fontSampler.desc.AddressV = fontSampler.desc.AddressW = D3D12_TEXTURE_ADDRESS_MODE_WRAP;
 	fontSampler.desc.MaxAnisotropy = 1;
-	fontSampler.desc.ComparisonFunc = D3D11_COMPARISON_ALWAYS;
-	fontSampler.desc.MaxLOD = D3D11_FLOAT32_MAX;
+	fontSampler.desc.ComparisonFunc = D3D12_COMPARISON_FUNC_ALWAYS;
+	fontSampler.desc.MaxLOD = D3D12_FLOAT32_MAX;
 	SetSampler(0, SHADER_TYPE_PIXEL, fontSampler);
 
 	//// Setup render state
 	BlendDesc blend;
 	blend.desc.RenderTarget[0].BlendEnable = TRUE;
-	blend.desc.RenderTarget[0].SrcBlend = D3D11_BLEND_SRC_ALPHA;
-	blend.desc.RenderTarget[0].DestBlend = D3D11_BLEND_INV_SRC_ALPHA;
+	blend.desc.RenderTarget[0].SrcBlend = D3D12_BLEND_SRC_ALPHA;
+	blend.desc.RenderTarget[0].DestBlend = D3D12_BLEND_INV_SRC_ALPHA;
 	SetBlendState(blend);
 	
 	DepthStencilDesc ds;
@@ -166,7 +168,7 @@ void Renderer::DrawImGUI()
 	SetDepthStencilState(ds);
 	
 	RasterizerDesc rs;
-	rs.desc.CullMode = D3D11_CULL_NONE;
+	rs.desc.CullMode = D3D12_CULL_MODE_NONE;
 	SetRasterizerState(rs);
 
 	// Render command lists
@@ -187,11 +189,11 @@ void Renderer::DrawImGUI()
 			else
 			{
 				// Apply scissor/clipping rectangle
-				const D3D11_RECT r = { (LONG)(pcmd->ClipRect.x - pos.x), (LONG)(pcmd->ClipRect.y - pos.y), (LONG)(pcmd->ClipRect.z - pos.x), (LONG)(pcmd->ClipRect.w - pos.y) };
+				const D3D12_RECT r = { (LONG)(pcmd->ClipRect.x - pos.x), (LONG)(pcmd->ClipRect.y - pos.y), (LONG)(pcmd->ClipRect.z - pos.x), (LONG)(pcmd->ClipRect.w - pos.y) };
 				//ctx->RSSetScissorRects(1, &r);
 
 				// Bind texture, Draw
-				Bitmap* bmap = static_cast<Bitmap*>(pcmd->TextureId);
+				Bitmap* bmap = reinterpret_cast<Bitmap*>(pcmd->GetTexID());
 				SetShaderResource(0, SHADER_TYPE_PIXEL, bmap);
 				DrawIndexed(pcmd->ElemCount, idx_offset, vtx_offset);
 			}

@@ -31,9 +31,9 @@ void D3D12VertexBuffer::Create(U32 _Size, U32 _Usage, U32 _Fmt, void * _Datas)
 	{
 		//heapProperties = CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_DEFAULT);
 		heapProperties = CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_UPLOAD);
-		//bufferDesc.Usage = D3D11_USAGE_DEFAULT;
+		//bufferDesc.Usage = D3D12_USAGE_DEFAULT;
 		//bufferDesc.ByteWidth = _Size;
-		//bufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
+		//bufferDesc.BindFlags = D3D12_BIND_VERTEX_BUFFER;
 		//bufferDesc.CPUAccessFlags = 0;
 		//bufferDesc.MiscFlags = 0;
 
@@ -43,10 +43,10 @@ void D3D12VertexBuffer::Create(U32 _Size, U32 _Usage, U32 _Fmt, void * _Datas)
 	else
 	{
 		heapProperties = CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_UPLOAD);
-		//bufferDesc.Usage = D3D11_USAGE_DYNAMIC;
+		//bufferDesc.Usage = D3D12_USAGE_DYNAMIC;
 		//bufferDesc.ByteWidth = _Size;
-		//bufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
-		//bufferDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
+		//bufferDesc.BindFlags = D3D12_BIND_VERTEX_BUFFER;
+		//bufferDesc.CPUAccessFlags = D3D12_CPU_ACCESS_WRITE;
 		//bufferDesc.MiscFlags = 0;
 	}
 	
@@ -82,14 +82,14 @@ void D3D12IndexBuffer::Create(U32 _Size, U32 _Usage, U32 _Fmt, void * _Datas)
 	U32 _ItemSize = (_Fmt == FMT_IDX_16) ? 2 : 4;
 
 	// Fill in a buffer description.
-	D3D11_BUFFER_DESC bufferDesc;
-	D3D11_SUBRESOURCE_DATA initData;
-	D3D11_SUBRESOURCE_DATA * pInitData = NULL;
+	D3D12_BUFFER_DESC bufferDesc;
+	D3D12_SUBRESOURCE_DATA initData;
+	D3D12_SUBRESOURCE_DATA * pInitData = NULL;
 	if (_Datas)
 	{
-		bufferDesc.Usage = D3D11_USAGE_DEFAULT;
+		bufferDesc.Usage = D3D12_USAGE_DEFAULT;
 		bufferDesc.ByteWidth = _Size;
-		bufferDesc.BindFlags = D3D11_BIND_INDEX_BUFFER;
+		bufferDesc.BindFlags = D3D12_BIND_INDEX_BUFFER;
 		bufferDesc.CPUAccessFlags = 0;
 		bufferDesc.MiscFlags = 0;
 
@@ -98,10 +98,10 @@ void D3D12IndexBuffer::Create(U32 _Size, U32 _Usage, U32 _Fmt, void * _Datas)
 	}
 	else
 	{
-		bufferDesc.Usage = D3D11_USAGE_DYNAMIC;
+		bufferDesc.Usage = D3D12_USAGE_DYNAMIC;
 		bufferDesc.ByteWidth = _Size;
-		bufferDesc.BindFlags = D3D11_BIND_INDEX_BUFFER;
-		bufferDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
+		bufferDesc.BindFlags = D3D12_BIND_INDEX_BUFFER;
+		bufferDesc.CPUAccessFlags = D3D12_CPU_ACCESS_WRITE;
 		bufferDesc.MiscFlags = 0;
 	}
 	*/

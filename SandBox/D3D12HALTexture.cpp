@@ -250,8 +250,6 @@ void D3D12HAL::CreateTexture(Bitmap * _Bm)
 
 	sys::TextureLink * tex = new sys::TextureLink;
 	tex->Resource12 = NULL;
-	tex->ShaderView = NULL;
-	tex->Surface = NULL;
 
 	//if(desc.Width != desc.Height)
 	//	return;
@@ -399,9 +397,9 @@ void D3D12HAL::CreateTexture(Bitmap * _Bm)
 	/*
 	if (_Bm->GetType()&BM_TYPE_RT)
 	{ // Create the render target view
-		D3D11_RENDER_TARGET_VIEW_DESC DescRT;
+		D3D12_RENDER_TARGET_VIEW_DESC DescRT;
 		DescRT.Format = desc.Format;
-		DescRT.ViewDimension = D3D11_RTV_DIMENSION_TEXTURE2D;
+		DescRT.ViewDimension = D3D12_RTV_DIMENSION_TEXTURE2D;
 		DescRT.Texture2D.MipSlice = 0;
 		GetDevice()->CreateRenderTargetView(tex->Resource, &DescRT, &tex->Surface);
 	}

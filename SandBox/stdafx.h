@@ -5,6 +5,8 @@
 
 #pragma once
 
+#define D3D12_AGILITYSDK_VERSION	616
+
 #if defined(_PC)
 //#	include "targetver.h"
 #	define WIN32_LEAN_AND_MEAN             // Exclure les en-têtes Windows rarement utilisés
@@ -24,12 +26,13 @@
 #	include <ppl.h>
 #	include <ppltasks.h>
 #	include <dxgitype.h>
-#	include <d3d11_3.h>
-#	include <dxgi1_4.h>
+#	include <dxgi1_6.h>
+//#	include <d3d11_4.h>
 #	include <d3d12.h>
 #	include <d3dx12.h>
 #	include <DirectXMath.h>
 #	include <dxcapi.h>
+#	include <../../Tools/dxc/inc/dxcapi.h>
 #	include <d3d12shader.h>
 	using namespace DirectX;
 #	define __CDECL	__cdecl

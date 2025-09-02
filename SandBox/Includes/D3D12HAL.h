@@ -1,6 +1,5 @@
 #pragma once
 
-#include <D3D12Interop.h>
 #include <D3D12HALBuffers.h>
 #include <D3D12HALConstantBuffer.h>
 #include <D3D12HALDescriptorHeaps.h>
@@ -63,7 +62,7 @@ public:
 	void SetConstantBuffer(U32 Slot, EShaderType Type, ConstantBuffer* CBV);
 	void SetShaderResource(U32 Slot, EShaderType Type, sys::TextureLink* View);
 	void DrawIndexed(UINT IndexCount, UINT StartIndexLocation, INT BaseVertexLocation);
-	void SetViewports(D3D11_VIEWPORT& Viewport);
+	void SetViewports(D3D12_VIEWPORT& Viewport);
 
 	D3D12_CPU_DESCRIPTOR_HANDLE& GetCurrentBackBufferView() {
 		return m_RenderTargetsView[m_FrameIndex];

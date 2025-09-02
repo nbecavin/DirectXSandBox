@@ -238,13 +238,13 @@ IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hwnd, UINT msg, WPARA
 		return 0;
 	case WM_KEYDOWN:
 	case WM_SYSKEYDOWN:
-		if (wParam < 256)
-			io.KeysDown[wParam] = 1;
-		return 0;
 	case WM_KEYUP:
 	case WM_SYSKEYUP:
 		if (wParam < 256)
-			io.KeysDown[wParam] = 0;
+		{
+			//io.KeysDown[wParam] = 0;
+			//io.AddKeyEvent(key, down);
+		}
 		return 0;
 	case WM_CHAR:
 		// You can also use ToAscii()+GetKeyboardState() to retrieve characters.

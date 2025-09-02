@@ -3,17 +3,12 @@
 
 void D3D12HAL::SetDepthStencilState(DepthStencilDesc& Desc)
 {
-	D3D12_DEPTH_STENCIL_DESC ds;
-	D3D12Interop::DepthStencilState(ds, Desc.desc);
-	m_CurrentPSO.DepthStencilState = ds;
+	m_CurrentPSO.DepthStencilState = Desc.desc;
 }
 
 void D3D12HAL::SetRasterizerState(RasterizerDesc& Desc)
 {
-	D3D12_RASTERIZER_DESC rs;
-	D3D12Interop::RasterizerState(rs, Desc.desc);
-	rs.ForcedSampleCount = 0;
-	m_CurrentPSO.RasterizerState = rs;
+	m_CurrentPSO.RasterizerState = Desc.desc;
 }
 
 void D3D12HAL::SetShaderResource(U32 Slot, EShaderType Type, sys::TextureLink* View)
@@ -56,11 +51,11 @@ void D3D12HAL::SetSampler(U32 Slot, EShaderType Type, SamplerDesc& Sampler)
 
 void D3D12HAL::SetBlendState(BlendDesc& Blend)
 {
-	D3D12Interop::BlendState(m_CurrentPSO.BlendState, Blend.desc);
+	m_CurrentPSO.BlendState = Blend.desc;
 	m_CurrentPSO.SampleMask = 0xffffffff;
 }
 
-void D3D12HAL::SetViewports(D3D11_VIEWPORT& Vp)
+void D3D12HAL::SetViewports(D3D12_VIEWPORT& Vp)
 {
 	m_CommandList->RSSetViewports(1, reinterpret_cast<D3D12_VIEWPORT*>(&Vp));
 	D3D12_RECT rect;
@@ -170,7 +165,7 @@ void D3D12HAL::DrawIndexed(UINT IndexCount, UINT StartIndexLocation, INT BaseVer
 		m_CommandList->SetGraphicsRootDescriptorTable(5, m_SamplerDynamicHeap.GetGPUSlotHandle(offset)); //Vertex Samplers		
 	}
 
-	ID3D12PipelineState* PSO;
+	ID3D12PipelineState* PSO = nullptr;
 	m_CurrentPSO.pRootSignature = m_RootSignature.Get();
 	GetDevice()->CreateGraphicsPipelineState(&m_CurrentPSO, IID_PPV_ARGS(&PSO));
 	PSO->SetName(L"test");

@@ -13,18 +13,18 @@
 		float4		gSampleOffsetWeight[16];
 	};
 
-	sampler2D	sAdaptedLuminance;
-	sampler2D	s0 : register(s0);
-	sampler2D	s1 : register(s1);
-	sampler2D	s2 : register(s2);
-	sampler2D	s3 : register(s3);
-	sampler2D	s4 : register(s4);
-	sampler2D	s5 : register(s5);
-	sampler2D	s6 : register(s6);
+	Texture2D sAdaptedLuminance;
+	Texture2D t0 : register(t0); SamplerState s0 : register(s0);
+	Texture2D t1 : register(t1); SamplerState s1 : register(s1);
+	Texture2D t2 : register(t2); SamplerState s2 : register(s2);
+	Texture2D t3 : register(t3); SamplerState s3 : register(s3);
+	Texture2D t4 : register(t4); SamplerState s4 : register(s4);
+	Texture2D t5 : register(t5); SamplerState s5 : register(s5);
+	Texture2D t6 : register(t6); SamplerState s6 : register(s6);
 		
-	float4 ph_ambientocclusion_linearzbuf(const float4 vPos : VPOS) : COLOR0
+	float4 ph_ambientocclusion_linearzbuf(const float4 vPos : VPOS) : SV_Target
 	{
-		float storedZ = texDepth2D( s0, vPos * gPostProcess[0].xy );
+		float storedZ = texDepth2D( t0, s0, vPos * gPostProcess[0].xy );
 		float4 storedPos = float4( 0.f, 0.f, storedZ, 1.f);
 		float4 storedViewPos = Mul(storedPos, invProjMatrix);
 		float linearZ = storedViewPos.z/storedViewPos.w;
@@ -33,10 +33,10 @@
 		#endif
 		return linearZ;
 	/*	
-		float A = texDepth2D( s0, (vPos + float2(0.25,0.25)) * gPostProcess[0].xy );
-		float B = texDepth2D( s0, (vPos + float2(0.75,0.25)) * gPostProcess[0].xy );
-		float C = texDepth2D( s0, (vPos + float2(0.25,0.75)) * gPostProcess[0].xy );
-		float D = texDepth2D( s0, (vPos + float2(0.75,0.75)) * gPostProcess[0].xy );
+		float A = texDepth2D( t0, s0, (vPos + float2(0.25,0.25)) * gPostProcess[0].xy );
+		float B = texDepth2D( t0, s0, (vPos + float2(0.75,0.25)) * gPostProcess[0].xy );
+		float C = texDepth2D( t0, s0, (vPos + float2(0.25,0.75)) * gPostProcess[0].xy );
+		float D = texDepth2D( t0, s0, (vPos + float2(0.75,0.75)) * gPostProcess[0].xy );
 		
 		float storedZAvg = (A+B+C+D)*0.25;			//réduit l'aliasing et le z fight
 		float storedZMax = max(A,max(B,max(C,D)));	//réduit les contours
@@ -121,7 +121,7 @@
 	};
 #endif
 
-	float4 ph_ambientocclusion(in float4 vPos : VPOS) : COLOR0
+	float4 ph_ambientocclusion(in float4 vPos : VPOS) : SV_Target
 	{
 		float2 uvScreen = (vPos/*+0.5*/) * gPostProcess[0].xy;
 		float2 uvSinCos = (vPos/*+0.5*/) * gPostProcess[1].xy; // invSinCosMapSize;
@@ -133,7 +133,7 @@
 			float2(-sinCos.x, sinCos.y)
 		};
 		
-		float depth = tex2D(s0, uvScreen).x;
+		float depth = t0.Sample(s0, uvScreen).x;
 
 		float occlusionAmount = 0.5 * centerWeight;
 
@@ -159,9 +159,9 @@
 				
 				// Sample pair of points
 				float2 uvSample1 = min( uvScreen + samplePoint.xy, gPostProcess[2].xy );
-				float depthSample1 = tex2D(s0, uvSample1).x;
+				float depthSample1 = t0.Sample(s0, uvSample1).x;
 				float2 uvSample2 = min( uvScreen - samplePoint.xy, gPostProcess[2].xy );
-				float depthSample2 = tex2D(s0, uvSample2).x;
+				float depthSample2 = t0.Sample(s0, uvSample2).x;
 				
 				// How much of the sphere do the samples occlude...
 				float2 depthSamples = float2(depthSample1, depthSample2);
@@ -200,14 +200,14 @@
 	static float g_ssaoBlurRadius = g_ssaoRadius1 * 0.5f;
 	static float g_ssaoBlurDepth = g_ssaoDepth1 * 0.1f;
 	
-	float4 ph_ambientocclusionblur(in float2 vScreenPosition : TEXCOORD0) : COLOR0
+	float4 ph_ambientocclusionblur(in float2 vScreenPosition : TEXCOORD0) : SV_Target
 	{
 		float2 uv = vScreenPosition;
 		static const int nSample = 5;
 		
 		// Get center point
-		float depth	 = tex2D(s1, uv);
-		float center = tex2D(s0, uv);
+		float depth	 = t1.Sample(s1, uv);
+		float center = t0.Sample(s0, uv);
 		
 		float totalWeight = gSampleOffsetWeight[2].z;
 		float sum = gSampleOffsetWeight[2].z*center;
@@ -221,12 +221,12 @@
 			uv2 = min( uv2, gPostProcess[2].xy );
 			uv3 = min( uv3, gPostProcess[2].xy );
 			
-			float zWeight = (depth - tex2D(s1, uv3)); //abs viré = pas de contours blancs
+			float zWeight = (depth - t1.Sample(s1, uv3)); //abs viré = pas de contours blancs
 			zWeight = 1.0 - saturate(zWeight*idepth);
 			
 			float weight = gSampleOffsetWeight[i].z * zWeight;
 			totalWeight += weight;
-			sum +=  tex2D(s0, uv2) * weight;
+			sum +=  t0.Sample(s0, uv2) * weight;
 		}
 		
 		// 2nd half
@@ -237,12 +237,12 @@
 			uv2 = min( uv2, gPostProcess[2].xy );
 			uv3 = min( uv3, gPostProcess[2].xy );
 						
-			float zWeight = (depth - tex2D(s1, uv3)); //abs viré = pas de contours blancs
+			float zWeight = (depth - t1.Sample(s1, uv3)); //abs viré = pas de contours blancs
 			zWeight = 1.0 - saturate(zWeight*idepth);
 			
 			float weight = gSampleOffsetWeight[i].z * zWeight;
 			totalWeight += weight;
-			sum +=  tex2D(s0, uv2) * weight;
+			sum +=  t0.Sample(s0, uv2) * weight;
 		}
 
 		return sum / totalWeight;

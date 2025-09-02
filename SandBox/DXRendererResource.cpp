@@ -6,10 +6,13 @@
 #include <D3D12HALBuffers.h>
 #include <Material.h>
 #include <Bitmap.h>
+#include <unordered_set>
 
 #if WINAPI_FAMILY==WINAPI_FAMILY_APP
 #define MessageBox(i,j,k,l)		OutputDebugStringA(j)
 #endif
+
+#pragma comment(lib,"../Tools/dxc/lib/x64/dxcompiler.lib")
 
 namespace sys {
 
@@ -45,12 +48,55 @@ namespace sys {
 		};
 	}
 
+	class CustomIncludeHandler : public IDxcIncludeHandler
+	{
+		ComPtr<IDxcUtils> m_pUtils;
+	public:
+		CustomIncludeHandler(const ComPtr<IDxcUtils>& _pUtils) : m_pUtils(_pUtils) {};
+		HRESULT STDMETHODCALLTYPE LoadSource(_In_ LPCWSTR pFilename, _COM_Outptr_result_maybenull_ IDxcBlob** ppIncludeSource) override
+		{
+			//sprintf(path, "..\\Shaders\\%s", src);
+			ComPtr<IDxcBlobEncoding> pEncoding;
+			std::wstring path = std::wstring(L"..//Shaders").append(pFilename);
+			if (IncludedFiles.find(path) != IncludedFiles.end())
+			{
+				// Return empty string blob if this file has been included before
+				static const char nullStr[] = " ";
+				m_pUtils->CreateBlobFromPinned(nullStr, ARRAYSIZE(nullStr), DXC_CP_ACP, pEncoding.GetAddressOf());
+				*ppIncludeSource = pEncoding.Detach();
+				return S_OK;
+			}
+
+			HRESULT hr = m_pUtils->LoadFile(pFilename, nullptr, pEncoding.GetAddressOf());
+			if (SUCCEEDED(hr))
+			{
+				IncludedFiles.insert(path);
+				*ppIncludeSource = pEncoding.Detach();
+			}
+			return hr;
+		}
+
+		HRESULT STDMETHODCALLTYPE QueryInterface(REFIID riid, _COM_Outptr_ void __RPC_FAR* __RPC_FAR* ppvObject) override { return E_NOINTERFACE; }
+		ULONG STDMETHODCALLTYPE AddRef(void) override { return 0; }
+		ULONG STDMETHODCALLTYPE Release(void) override { return 0; }
+
+		std::unordered_set<std::wstring> IncludedFiles;
+	};
+
 	void DXRenderer::RegisterShaderFromSourceFile(U32 _ShaderUID,const char* src,const char* epoint)
 	{
 		HRESULT hr;
 
 		char profile[32]="";
 		char path[1024];
+		WCHAR wstr[256][256];
+		int wstr_id = 0;
+
+		auto ToWSTR = [&wstr,&wstr_id](const char* str) -> LPWSTR
+			{
+				MultiByteToWideChar(CP_ACP, 0, str, -1, wstr[wstr_id], 1024);
+				return wstr[wstr_id++];
+			};
 
 		sprintf(path,"..\\Shaders\\%s",src);
 	
@@ -59,79 +105,56 @@ namespace sys {
 
 		strcpy(profile, GetShaderProfile(Type));
 
-		DWORD CpFlag = 0;//*D3DCOMPILE_ENABLE_STRICTNESS;
-	#if defined( DEBUG ) || defined( _DEBUG )
-		// Set the D3DCOMPILE_DEBUG flag to embed debug information in the shaders.
-		// Setting this flag improves the shader debugging experience, but still allows 
-		// the shaders to be optimized and to run exactly the way they will run in 
-		// the release configuration of this program.
-		//CpFlag |= D3DCOMPILE_DEBUG;
-	#endif
-		//CpFlag |= D3DCOMPILE_PACK_MATRIX_ROW_MAJOR;
-		CpFlag |= D3DCOMPILE_PACK_MATRIX_COLUMN_MAJOR;
-		CpFlag |= D3DCOMPILE_ENABLE_BACKWARDS_COMPATIBILITY;
-
-		D3D_SHADER_MACRO mac[128]; U32 macnb=0;
-		mac[macnb].Name = "_PCDX12";
-		mac[macnb].Definition = "1";
-		macnb++;
-		mac[macnb].Name = 0;
-		mac[macnb].Definition = 0;
-		macnb++;
-
 		std::vector<LPWSTR> arguments;
+
 		// -E for the entry point (eg. 'main')
 		arguments.push_back(L"-E");
-		arguments.push_back(epoint);
-
-
-
-		ID3DBlob * pError = NULL;
-		ID3DBlob * pCode = NULL;
+		arguments.push_back(ToWSTR(epoint));
+		arguments.push_back(L"-T");
+		arguments.push_back(ToWSTR(GetShaderProfile(Type)));
+		arguments.push_back(L"-I ../Shaders");
 
 		WCHAR wpath[2049];
 		MultiByteToWideChar(CP_ACP,0,path,-1,wpath,2048);
-		hr = D3DCompileFromFile(wpath,mac,D3D_COMPILE_STANDARD_FILE_INCLUDE,epoint,profile,CpFlag,0,&pCode,&pError);
-		if(hr!=S_OK)
-		{
-			if(hr==D3D11_ERROR_FILE_NOT_FOUND)
-				MessageBox(NULL,"File not found","Shader Error",MB_OK);
-			else
-			{
-				char str[256];
-				sprintf(str,"HR=%d\n",hr);
-				MessageBox(NULL,str,"Shader Error",MB_OK);
-			}
-			if(pError)
-				MessageBox(NULL,(char*)pError->GetBufferPointer(),"Shader Error",MB_OK);
-		}
-		if( pError )
-			pError->Release();
 
-		if(pCode)
-		{
-			GetHAL().CreateShaderResource(pCode, Type, SID);
-		}
+		ComPtr<IDxcCompiler3> pCompiler;
+		DxcCreateInstance(CLSID_DxcCompiler, IID_PPV_ARGS(pCompiler.GetAddressOf()));
 
 		ComPtr<IDxcUtils> pUtils;
 		DxcCreateInstance(CLSID_DxcUtils, IID_PPV_ARGS(pUtils.GetAddressOf()));
 
+		UINT32 code_page = CP_UTF8;
+
 		ComPtr<IDxcBlobEncoding> pSource;
-		pUtils->CreateBlob(pShaderSource, shaderSourceSize, CP_UTF8, pSource.GetAddressOf());
+		pUtils->LoadFile(wpath, &code_page, pSource.GetAddressOf());
 
 		DxcBuffer sourceBuffer;
 		sourceBuffer.Ptr = pSource->GetBufferPointer();
 		sourceBuffer.Size = pSource->GetBufferSize();
 		sourceBuffer.Encoding = 0;
 
-		ComPtr<IDxcCompiler3> pCompiler;
-		DxcCreateInstance(CLSID_DxcCompiler, IID_PPV_ARGS(pCompiler.GetAddressOf()));
+		CustomIncludeHandler includeHandler(pUtils);
 
-		pCompiler->Compile(&pSource, arguments.data(), argument.size(), nullptr, 
-			REFIID             riid,
-			LPVOID * ppResult
-		);
+		ComPtr<IDxcResult> pResults;
+		pCompiler->Compile(&sourceBuffer, (LPCWSTR*)arguments.data(), arguments.size(), &includeHandler, IID_PPV_ARGS(&pResults));
 
+		ComPtr<IDxcBlobUtf8> pErrors;
+		pResults->GetOutput(DXC_OUT_ERRORS, IID_PPV_ARGS(pErrors.GetAddressOf()), nullptr);
+		pResults->GetStatus(&hr);
+
+		ComPtr<ID3DBlob> pCode;
+
+		if (hr != S_OK && pErrors && pErrors->GetStringLength() > 0)
+		{
+			OutputDebugString((char*)pErrors->GetBufferPointer());
+			MessageBox(NULL, (char*)pErrors->GetBufferPointer(), "Shader Error", MB_OK);
+		}
+		else
+		{
+			pResults->GetResult((IDxcBlob**)pCode.GetAddressOf());
+			GetHAL().CreateShaderResource(pCode.Get(), Type, SID);
+			pCode.Detach(); //detach from resource (ouais ca leak)
+		}
 	}
 
 	ID3DBlob * DXRenderer::GetShaderBlob(U32 _ShaderUID)

@@ -8,6 +8,9 @@
 #include <..\..\Shaders\ShaderRegs.h>
 #include <ShaderConstants.h>
 
+extern "C" { __declspec(dllexport) extern const UINT D3D12SDKVersion = D3D12_AGILITYSDK_VERSION; }
+extern "C" { __declspec(dllexport) extern const char* D3D12SDKPath = u8".\\D3D12\\"; }
+
 namespace sys {
 
 	void InitDevice();
@@ -27,7 +30,7 @@ namespace sys {
 		GetHAL().SetAndClearRenderTarget();
 
 		// Setup the viewport
-		D3D11_VIEWPORT vp;
+		D3D12_VIEWPORT vp;
 		vp.Width = (FLOAT)SizeX;
 		vp.Height = (FLOAT)SizeY;
 		vp.MinDepth = 0.0f;
@@ -85,7 +88,7 @@ namespace sys {
 					DeviceContext->ClearRenderTargetView( rtex->Surface, ClearColor2 );
 
 					// Setup the viewport
-					D3D11_VIEWPORT vp;
+					D3D12_VIEWPORT vp;
 					vp.Width = (FLOAT)SizeX;
 					vp.Height = (FLOAT)SizeY;
 					vp.MinDepth = 0.0f;
@@ -167,14 +170,14 @@ namespace sys {
 		{
 			RasterizerDesc rs;
 			rs.desc.AntialiasedLineEnable = FALSE;
-			rs.desc.CullMode = D3D11_CULL_NONE;
+			rs.desc.CullMode = D3D12_CULL_MODE_NONE;
 			rs.desc.DepthBias = 0.f;
 			rs.desc.DepthBiasClamp = 0.f;
 			rs.desc.DepthClipEnable = TRUE;
-			rs.desc.FillMode = D3D11_FILL_SOLID;
+			rs.desc.FillMode = D3D12_FILL_MODE_SOLID;
 			rs.desc.FrontCounterClockwise = FALSE;
 			rs.desc.MultisampleEnable = FALSE;
-			rs.desc.ScissorEnable = FALSE;
+			//rs.desc.ScissorEnable = FALSE;
 			rs.desc.SlopeScaledDepthBias = 0.f;
 			SetRasterizerState(rs);
 
@@ -200,7 +203,7 @@ namespace sys {
 		FullScreenQuad(Vec2f(1.f, 1.f), Vec2f(0.f, 0.f));
 
 		// Setup the viewport
-		D3D11_VIEWPORT vp;
+		D3D12_VIEWPORT vp;
 		vp.Width = (FLOAT)SizeX;
 		vp.Height = (FLOAT)SizeY;
 		vp.MinDepth = 0.0f;
@@ -303,7 +306,7 @@ namespace sys {
 		GetCommandList()->SetPipelineState(PSO);
 #endif
 
-		GetCommandList()->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP);
+		GetCommandList()->IASetPrimitiveTopology(D3D12_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP);
 		GetCommandList()->DrawInstanced(4,1,0,0);
 
 #ifdef _PCDX12

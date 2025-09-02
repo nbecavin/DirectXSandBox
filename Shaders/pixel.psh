@@ -5,9 +5,9 @@
 	
 	Texture2D sDiffuse  : register(t0);
 	SamplerState sSampler : register(s0);
-	sampler2D sNormal   : register(s1);
-	sampler2D sSpecular : register(s2);
-	sampler2D sSSAO		: register(s7);
+	Texture2D sNormal   : register(t1);
+	Texture2D sSpecular : register(t2);
+	Texture2D sSSAO		: register(t7);
 
 	float4 ph_base( const in VS_Output i ) : SV_TARGET
 	{
@@ -26,9 +26,9 @@
 		float  EyeDotR = saturate(dot(normalize(DLIGHT_DIR),ref));
 
 		float spec = saturate( pow(EyeDotR, 96 ) );
-		light += spec.xxx*4;
+		light += spec*4;
 		
-		float3 normal = tex2D(sNormal, i.uv).xyz*0.5 + 0.5;
+		float3 normal = sNormal.Sample(sSampler, i.uv).xyz*0.5 + 0.5;
 		//return light*i.color*sDiffuse.Sample(sSampler, i.uv);
 		return i.color*sDiffuse.Sample(sSampler, i.uv);
 	}
@@ -36,7 +36,7 @@
 	float4 ph_gbuffer( const in VS_Output i ) : SV_TARGET
 	{
 		float albedo_alpha = sDiffuse.Sample(sSampler, i.uv).a;
-		float3 normal = tex2D(sNormal,i.uv).xyz*0.5+0.5;//i.normal;
+		float3 normal = sNormal.Sample(sSampler, i.uv).xyz*0.5+0.5;//i.normal;
 
 		// get normal in world space
 
