@@ -75,7 +75,9 @@ MESSAGE("Load some mesh");
 
 	//
 	SceneImporter imp;
-	imp.LoadScene(std::string("D:\\SRC_EXTERNAL\\Bistro_v5_2\\BistroInterior.fbx"));
+//	imp.LoadScene(std::string("..\\GameDB\\assets\\Bistro_v5_2\\BistroInterior.fbx"));
+	imp.LoadScene(std::string("..\\GameDB\\assets\\bistro\\bistro.gltf"));
+//	imp.LoadScene(std::string("..\\GameDB\\assets\\sponza\\sponza.gltf"));
 
 	Mesh * pMesh;
 	pMesh = new Mesh();

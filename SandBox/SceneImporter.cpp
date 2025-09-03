@@ -22,7 +22,7 @@ void SceneImporter::LoadScene(std::string& filepath)
 
 	if (pScene)
 	{
-		OutputDebugString("Succeeded");
+		OutputDebugString("Succeeded loading\n");
 
 		for (int i = 0; i< pScene->mNumMeshes; i++)
 		{
@@ -41,6 +41,6 @@ void SceneImporter::LoadScene(std::string& filepath)
 	}
 	else
 	{
-		OutputDebugString("Failed");
+		OutputDebugString("Failed\n");
 	}
 }
