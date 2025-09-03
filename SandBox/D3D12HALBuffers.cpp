@@ -4,18 +4,14 @@
 VertexBuffer* D3D12HAL::CreateVertexBuffer(U32 _Size, U32 _Usage, void* _Datas)
 {
 	D3D12VertexBuffer* vb = new D3D12VertexBuffer();
-	MESSAGE("Begin create VB");
 	vb->Create(_Size, _Usage, 0, _Datas);
-	MESSAGE("End create VB");
 	return (vb->IsInited()) ? vb : nullptr;
 }
 
 IndexBuffer* D3D12HAL::CreateIndexBuffer(U32 _Size, U32 _Usage, U32 _Fmt, void* _Datas)
 {
 	D3D12IndexBuffer* ib = new D3D12IndexBuffer();
-	MESSAGE("Begin create IB");
 	ib->Create(_Size, _Usage, _Fmt, _Datas);
-	MESSAGE("End create IB");
 	return (ib->IsInited()) ? ib : nullptr;
 }
 

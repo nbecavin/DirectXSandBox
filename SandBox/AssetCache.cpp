@@ -4,7 +4,7 @@
 
 namespace asset
 {
-	bool Cache::LoadAsset(Type _type,char * path,GraphObject ** oAsset)
+	bool Cache::LoadAsset(Type _type,const char * path,GraphObject ** oAsset)
 	{
 		for(U32 i=0;i<m_AssetDA.GetSize();i++)
 		{
