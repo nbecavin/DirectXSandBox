@@ -418,6 +418,9 @@
     </None>
     <None Include="packages.config" />
     <None Include="PropertySheets\Common.props" />
+    <None Include="DeployDeps.bat">
+      <Filter>Common Platform</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="SandBox.rc">
