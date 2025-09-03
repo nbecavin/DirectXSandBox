@@ -6,9 +6,10 @@
   <ItemDefinitionGroup>
     <ClCompile>
       <AdditionalIncludeDirectories>
-        $(SolutionDir)\Tools\imgui;
-        %(AdditionalIncludeDirectories)
-      </AdditionalIncludeDirectories>
+		  $(SolutionDir)\Tools\imgui;
+		  $(SolutionDir)\Tools\assimp\include\;
+		  %(AdditionalIncludeDirectories)
+	  </AdditionalIncludeDirectories>
     </ClCompile>
   </ItemDefinitionGroup>
   <ItemGroup />

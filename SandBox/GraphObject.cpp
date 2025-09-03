@@ -2,6 +2,7 @@
 
 GraphObject::GraphObject()
 {
+	SetName(std::string("Unknown"));
 }
 
 void GraphObject::SetScale(float scale)

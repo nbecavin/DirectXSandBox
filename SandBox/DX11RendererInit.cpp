@@ -22,8 +22,8 @@ namespace sys
 
 	int DXRenderer::Init()
 	{
-		SizeX = 1280;
-		SizeY = 720;
+		SizeX = 1920;
+		SizeY = 1080;
 
 		GetHAL().Init(SizeX, SizeY, this);
 

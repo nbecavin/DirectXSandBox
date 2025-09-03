@@ -6,11 +6,17 @@ using namespace sys;
 void Renderer::InitImGUI()
 {
 	ImGui::CreateContext();
+
 	ImGuiIO& io = ImGui::GetIO(); (void)io;
 	//io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;  // Enable Keyboard Controls
 
 	//ImGui_ImplWin32_Init(hwnd);
 	//ImGui_ImplDX11_Init(g_pd3dDevice, g_pd3dDeviceContext);
+
+	io.BackendPlatformName = "x64";
+
+	ImGuiViewport* main_viewport = ImGui::GetMainViewport();
+	main_viewport->PlatformHandle = (void*)sys::pc::hWnd;
 
 	io.BackendFlags |= ImGuiBackendFlags_HasMouseCursors;         // We can honor GetMouseCursor() values (optional)
 	io.BackendFlags |= ImGuiBackendFlags_HasSetMousePos;          // We can honor io.WantSetMousePos requests (optional, rarely used)

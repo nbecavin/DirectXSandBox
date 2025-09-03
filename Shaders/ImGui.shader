@@ -37,7 +37,7 @@ float4 PsMain(in ImGuiVsPs i) : SV_Target0
 
 void VsMain(in ImGuiVertex i, out ImGuiVsPs o)
 {
-	o.position.xy = i.position.xy / float2(1280,720);
+	o.position.xy = i.position.xy / float2(1920,1080);
 
 	// UV to NDC...
 	o.position.xy = o.position.xy * 2 - 1;

@@ -12,6 +12,7 @@ namespace sys
 
 	void Init();
 
+	void UpdateEditorMenu();
 	void MainLoop();
 	void EndFrame();
 

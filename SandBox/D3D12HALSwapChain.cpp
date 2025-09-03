@@ -111,7 +111,7 @@ void D3D12HAL::Init(int sizeX, int sizeY, sys::Renderer* owner)
 
 	D3D12CreateDevice(
 		NULL,//hardwareAdapter.Get(),
-		D3D_FEATURE_LEVEL_12_0,
+		D3D_FEATURE_LEVEL_12_1,
 		IID_PPV_ARGS(&m_Device)
 	);
 

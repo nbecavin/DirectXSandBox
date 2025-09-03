@@ -13,6 +13,8 @@
 #include <Mesh.h>
 #include <CameraFree.h>
 
+#include <SceneImporter.h>
+
 sys::Globals gData;
 
 void sys::Globals::Init()
@@ -71,6 +73,10 @@ MESSAGE("Entering mainloop");
 
 MESSAGE("Load some mesh");
 
+	//
+	SceneImporter imp;
+	imp.LoadScene(std::string("D:\\SRC_EXTERNAL\\Bistro_v5_2\\BistroInterior.fbx"));
+
 	Mesh * pMesh;
 	pMesh = new Mesh();
 	//pMesh->Load("assets\\models\\powerplant.sdkmesh");
@@ -92,6 +98,7 @@ MESSAGE("Load some mesh");
 
 	CameraFree * pCameraScript = new CameraFree;
 	RegisterScriptObject(pCameraScript);
+
 //
 
 	while(gData.GetExitStatus()==FALSE)
@@ -101,6 +108,8 @@ MESSAGE("Load some mesh");
 
 		// Get new input from external device
 		gData.Input->Update(dTime);
+
+		UpdateEditorMenu();
 
 		// Update script
 		for(U32 i=0;i<gData.m_ScriptObjectDA.GetSize();i++)
@@ -146,4 +155,50 @@ void sys::RegisterScriptObject(ScriptObject * object)
 float sys::GetDeltaTime()
 {
 	return gData.DeltaTime;
+}
+
+void sys::UpdateEditorMenu()
+{
+	if (ImGui::BeginMainMenuBar())
+	{
+		if (ImGui::BeginMenu("File"))
+		{
+			//ShowExampleMenuFile();
+			ImGui::EndMenu();
+		}
+		if (ImGui::BeginMenu("Edit"))
+		{
+			if (ImGui::MenuItem("Undo", "CTRL+Z")) {}
+			if (ImGui::MenuItem("Redo", "CTRL+Y", false, false)) {} // Disabled item
+			ImGui::Separator();
+			if (ImGui::MenuItem("Cut", "CTRL+X")) {}
+			if (ImGui::MenuItem("Copy", "CTRL+C")) {}
+			if (ImGui::MenuItem("Paste", "CTRL+V")) {}
+			ImGui::EndMenu();
+		}
+		ImGui::EndMainMenuBar();
+	}
+
+
+
+	// show hierarchy
+	{
+		if (ImGui::Begin("Hierarchy"))
+		{
+			for (int i = 0; i < gData.m_GraphObjectDA.GetSize(); i++)
+			{
+				ImGui::PushID(i);
+				auto it = gData.m_GraphObjectDA[i];
+				//it.
+
+				if (ImGui::TreeNode(std::string(it->GetName()).c_str()))
+				{
+					ImGui::Text("schbeul");
+					ImGui::TreePop();
+				}
+				ImGui::PopID();
+			}
+		}
+		ImGui::End();
+	}
 }

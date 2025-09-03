@@ -93,6 +93,12 @@
     <Filter Include="PC\Vulkan">
       <UniqueIdentifier>{665beda8-144c-439d-8be8-29cb2cbeaf3a}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Tools\assimp">
+      <UniqueIdentifier>{1dd3c88a-2405-448b-8931-4f0c6b3b28fc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Common Platform\Assets\Import">
+      <UniqueIdentifier>{c9ed1d51-1f6b-44c8-8188-7a93b2028f0a}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="SandBox.cpp">
@@ -235,6 +241,9 @@
     </ClCompile>
     <ClCompile Include="..\Tools\imgui\imgui_tables.cpp">
       <Filter>Tools\ImGui</Filter>
+    </ClCompile>
+    <ClCompile Include="SceneImporter.cpp">
+      <Filter>Common Platform\Assets\Import</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -389,6 +398,9 @@
     <ClInclude Include="Includes\Model.h">
       <Filter>Common Platform\Scenery Objects\Mesh</Filter>
     </ClInclude>
+    <ClInclude Include="Includes\SceneImporter.h">
+      <Filter>Common Platform\Assets\Import</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="SandBox.ico">
@@ -405,6 +417,7 @@
       <Filter>Shaders</Filter>
     </None>
     <None Include="packages.config" />
+    <None Include="PropertySheets\Common.props" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="SandBox.rc">
