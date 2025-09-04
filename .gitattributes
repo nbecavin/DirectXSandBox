@@ -57,5 +57,4 @@
 #*.PDF   diff=astextplain
 #*.rtf   diff=astextplain
 #*.RTF   diff=astextplain
-*.fbx filter=lfs diff=lfs merge=lfs -text
-GameDB/assets/Bistro_v5_2/** filter=lfs diff=lfs merge=lfs -text
+GameDB/assets/** filter=lfs diff=lfs merge=lfs -text
