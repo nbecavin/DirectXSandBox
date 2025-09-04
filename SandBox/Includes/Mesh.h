@@ -4,6 +4,8 @@
 #include <GraphObject.h>
 #include <Renderer.h>
 
+class aiMesh;
+
 class Mesh : public GraphObject
 {
 public:
@@ -16,6 +18,7 @@ public:
 
 public:
 	void Load(char * fname);
+	void LoadFromAiMesh(aiMesh* importMesh);
 
 	struct MeshSubSet {
 		VertexBuffer *	VB;

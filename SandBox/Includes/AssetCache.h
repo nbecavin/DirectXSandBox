@@ -13,7 +13,7 @@ namespace asset
 	class Cache {
 	public:
 		
-		bool LoadAsset(Type _type,char * path,GraphObject ** oAsset);
+		bool LoadAsset(Type _type,const char * path,GraphObject ** oAsset);
 		bool Exist(char * path);
 
 		static Cache& GetInstance() {

@@ -75,7 +75,9 @@ MESSAGE("Load some mesh");
 
 	//
 	SceneImporter imp;
-	imp.LoadScene(std::string("D:\\SRC_EXTERNAL\\Bistro_v5_2\\BistroInterior.fbx"));
+//	imp.LoadScene(std::string("..\\GameDB\\assets\\Bistro_v5_2\\BistroInterior.fbx"));
+	imp.LoadScene(std::string("..\\GameDB\\assets\\bistro\\bistro.gltf"));
+//	imp.LoadScene(std::string("..\\GameDB\\assets\\sponza\\sponza.gltf"));
 
 	Mesh * pMesh;
 	pMesh = new Mesh();
@@ -86,15 +88,15 @@ MESSAGE("Load some mesh");
 	pMesh->Load("assets\\models\\sponza\\SponzaNoFlag.sdkmesh");
 	pMesh->SetScale(0.01f);
 	pMesh->SetWorldPosition(60.5f*0.01f,-128.f*0.01f,-5.f*0.01f);
-	RegisterGraphObject(pMesh);
+	//RegisterGraphObject(pMesh);
 
 	Mesh * pMesh2;
 	pMesh2 = new Mesh();
 	//pMesh2->Load("assets\\models\\TorusKnot\\tk.sdkmesh");
 	pMesh2->Load("assets\\models\\sponza\\flag.sdkmesh");
 	pMesh2->SetScale(0.01f);
-	pMesh->SetWorldPosition(-24.f*0.01f,-71.f*0.01f,9.6f*0.01f);
-	RegisterGraphObject(pMesh2);
+	pMesh2->SetWorldPosition(-24.f*0.01f,-71.f*0.01f,9.6f*0.01f);
+	//RegisterGraphObject(pMesh2);
 
 	CameraFree * pCameraScript = new CameraFree;
 	RegisterScriptObject(pCameraScript);

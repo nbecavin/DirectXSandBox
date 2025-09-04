@@ -415,6 +415,9 @@
     <None Include="..\Shaders\ImGui.hlsl">
       <Filter>Shaders</Filter>
     </None>
+    <None Include="DeployDeps.bat">
+      <Filter>Common Platform</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="SandBox.rc">

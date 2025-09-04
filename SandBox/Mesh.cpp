@@ -32,7 +32,8 @@ void Mesh::Draw()
 	{
 		MeshSubSet * pMesh = &SubSetsDA[i];
 
-		gData.Rdr->PushMaterial( &MtlDA[pMesh->MtlId] );
+		if(MtlDA.GetSize())
+			gData.Rdr->PushMaterial( &MtlDA[pMesh->MtlId] );
 
 		gData.Rdr->PushVertexDeclaration(pMesh->Decl);
 
