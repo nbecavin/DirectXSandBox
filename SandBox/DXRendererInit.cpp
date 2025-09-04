@@ -19,12 +19,102 @@ float ConvertDipsToPixels(float dips)
 
 namespace sys
 {
+	/// Load and return the newest pix version, newest than minVersion.
+	/// The version has to be formatted as "xxxx.xx" with x being a number as it will be compared with string comp
+	HMODULE LoadWinPixWithMinVersion(const wchar_t* minVersion)
+	{
+		HMODULE libHandle{};
+
+		if (GetModuleHandleExW(0, L"WinPixGpuCapturer.dll", &libHandle))
+		{
+			return libHandle;
+		}
+
+		LPWSTR programFilesPath = nullptr;
+		if (FAILED(SHGetKnownFolderPath(FOLDERID_ProgramFiles, KF_FLAG_DEFAULT, NULL, &programFilesPath)))
+		{
+			CoTaskMemFree(programFilesPath);
+			return nullptr;
+		}
+
+		wchar_t pixSearchPath[MAX_PATH];
+
+		if (FAILED(StringCchCopyW(pixSearchPath, MAX_PATH, programFilesPath)))
+		{
+			CoTaskMemFree(programFilesPath);
+			return nullptr;
+		}
+		CoTaskMemFree(programFilesPath);
+
+		if (FAILED(StringCchCatW(pixSearchPath, MAX_PATH, L"\\Microsoft PIX\\*")))
+			return nullptr;
+
+		WIN32_FIND_DATAW findData;
+		bool foundPixInstallation = false;
+		wchar_t newestVersionFound[MAX_PATH];
+		wchar_t output[MAX_PATH];
+		wchar_t possibleOutput[MAX_PATH];
+
+		HANDLE hFind = FindFirstFileW(pixSearchPath, &findData);
+		if (hFind != INVALID_HANDLE_VALUE)
+		{
+			do
+			{
+				if (((findData.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) == FILE_ATTRIBUTE_DIRECTORY) &&
+					(findData.cFileName[0] != '.'))
+				{
+					if ((!foundPixInstallation || wcscmp(newestVersionFound, findData.cFileName) <= 0) && wcscmp(findData.cFileName, minVersion) >= 0)
+					{
+						// length - 1 to get rid of the wildcard character in the search path
+						if (FAILED(StringCchCopyNW(possibleOutput, MAX_PATH, pixSearchPath, wcslen(pixSearchPath) - 1)))
+							return nullptr;
+
+						if (FAILED(StringCchCatW(possibleOutput, MAX_PATH, findData.cFileName)))
+							return nullptr;
+
+						if (FAILED(StringCchCatW(possibleOutput, MAX_PATH, L"\\WinPixGpuCapturer.dll")))
+							return nullptr;
+
+						DWORD result = GetFileAttributesW(possibleOutput);
+
+						if (result != INVALID_FILE_ATTRIBUTES && !(result & FILE_ATTRIBUTE_DIRECTORY))
+						{
+							foundPixInstallation = true;
+							if (FAILED(StringCchCopyW(newestVersionFound, _countof(newestVersionFound), findData.cFileName)))
+								return nullptr;
+							if (FAILED(StringCchCopyW(output, _countof(possibleOutput), possibleOutput)))
+								return nullptr;
+						}
+					}
+				}
+			} while (FindNextFileW(hFind, &findData) != 0);
+		}
+
+		FindClose(hFind);
+
+		if (!foundPixInstallation)
+		{
+			SetLastError(ERROR_FILE_NOT_FOUND);
+			return nullptr;
+		}
+
+		return LoadLibraryW(output);
+
+	}
 
 	int DXRenderer::Init()
 	{
 		Renderer::Init();
 		SizeX = 1920;
 		SizeY = 1080;
+
+		m_PixModule = LoadWinPixWithMinVersion(L"2208.10");
+		if (m_PixModule) {
+			MESSAGE("PIXGpuCapturer Loaded");
+			PIXSetHUDOptions(PIX_HUD_SHOW_ON_NO_WINDOWS);
+		}
+		else
+			MESSAGE("Impossible to load PIXGpuCapturer. Either you don't have PIX installed OR you don't have a version greater than 2208.10");
 
 		GetHAL().Init(SizeX, SizeY, this);
 
@@ -121,6 +211,14 @@ namespace sys
 		m_GlobalConstant = CreateConstantBuffer(sizeof(GlobalConstant));
 
 		return TRUE;
+	}
+
+	void DXRenderer::Shut()
+	{
+		ReleaseAllResources();
+		GetHAL().Shut();
+		if (m_PixModule)
+			FreeLibrary(m_PixModule);
 	}
 
 };

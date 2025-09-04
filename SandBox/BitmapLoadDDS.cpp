@@ -57,32 +57,38 @@ bool Bitmap::LoadDDS(const char* filename)
 	Sx = dds.GetWidth();
 	Sy = dds.GetHeight();
 	Sz = dds.GetDepth();
-	Mips = 1;// dds.GetMipCount();
+	Mips = dds.GetMipCount();
 	Type = ((dds.GetTextureDimension() == tinyddsloader::DDSFile::TextureDimension::Texture2D) && (dds.GetArraySize() == 6)) ? BM_TYPE_CUBE : BM_TYPE_2D;
 
-	// compute total size
+	// Compute total size
 	DataSize = 0;
-	
-	for (uint32_t arrayIdx = 0; arrayIdx < dds.GetArraySize(); arrayIdx++) {
-		const auto* imageData = dds.GetImageData(0, arrayIdx);
-		DataSize = imageData->m_memSlicePitch * dds.GetArraySize();
-		//for (uint32_t mipIdx = 0; mipIdx < dds.GetMipCount(); mipIdx++) {
-		//	const auto* imageData = dds.GetImageData(mipIdx, arrayIdx);
-		//	DataSize += imageData->m_memPitch
-
-		//	std::cout << "Array[" << arrayIdx << "] "
-		//		<< "Mip[" << mipIdx << "]: "
-		//		<< "(" << imageData->m_width << ", "
-		//		<< imageData->m_height << ", " << imageData->m_depth
-		//		<< ")\n";
-		//}
+	for (uint32_t arrayIdx = 0; arrayIdx < dds.GetArraySize(); arrayIdx++)
+	{
+		for (uint32_t mipIdx = 0; mipIdx < dds.GetMipCount(); mipIdx++)
+		{
+			const auto* imageData = dds.GetImageData(mipIdx, arrayIdx);
+			//DataSize += imageData->m_memPitch * imageData->m_height;
+			DataSize += imageData->m_memSlicePitch;
+		}
 	}
 
-//	DataSize = dds.mBytelen;
+	// Allocate
+	Datas = (U8*)malloc(DataSize);
 
-	Datas = (U8*)malloc(DataSize*8);
-	const auto* imageData = dds.GetImageData(0, 0);
-	memcpy(Datas, (U8*)imageData->m_mem, imageData->m_memSlicePitch);
+	// Copy data
+	void* writePtr = Datas;
+	for (uint32_t arrayIdx = 0; arrayIdx < dds.GetArraySize(); arrayIdx++)
+	{
+		for (uint32_t mipIdx = 0; mipIdx < dds.GetMipCount(); mipIdx++)
+		{
+			const auto* imageData = dds.GetImageData(mipIdx, arrayIdx);
+			memcpy(writePtr, (U8*)imageData->m_mem, imageData->m_memSlicePitch);
+
+			memset(writePtr, mipIdx*8, imageData->m_memSlicePitch);
+			writePtr = (char*)writePtr + imageData->m_memSlicePitch;
+		}
+	}
+
 	delete[] buffer;
 
 	switch (dds.GetFormat())

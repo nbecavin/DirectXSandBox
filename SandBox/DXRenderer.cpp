@@ -288,12 +288,6 @@ namespace sys {
 		Renderer::InitShaders();
 	}
 
-	void DXRenderer::Shut()
-	{
-		ReleaseAllResources();
-		GetHAL().Shut();
-	}
-
 	void DXRenderer::ReleaseAllResources()
 	{
 	}

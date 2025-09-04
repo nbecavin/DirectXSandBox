@@ -132,6 +132,7 @@ namespace sys {
 		};
 		StateCache					m_StateCache;
 
+		HMODULE m_PixModule = nullptr;
 	};
 
 };
