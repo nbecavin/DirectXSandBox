@@ -6,15 +6,16 @@
 class Bitmap : public GraphObject
 {
 protected:
-	U8 *	Datas;
-	U32		DataSize;
+	U8 *	Datas = nullptr;
+	U32		DataSize = 0;
 	U32		Sx,Sy,Sz;
+	U32		ArraySize = 1;
 	BitmapFormat		Format;
-	U32		Mips;
+	U32		Mips = 1;
 	U32		MultisampleType;
 	U32		Type;
-	U32		Flags;
-	U64		HwResId;
+	U32		Flags = 0;
+	U64		HwResId = 0;
 
 public:
 	Bitmap() : Flags(BM_SRGB), Datas(NULL), DataSize(0), Sx(0), Sy(0), Sz(1), Format(BM_R8G8B8A8_UNORM), Mips(1), MultisampleType(BM_MSAA_NONE), Type(BM_TYPE_2D), HwResId(BM_INVALIDHWRESID) {}
@@ -37,6 +38,7 @@ public:
 	inline	U32		GetSz() const { return Sz; }
 	inline	BitmapFormat GetFormat() const { return Format; }
 	inline	U32		GetMips() const { return Mips; }
+	inline	U32		GetArraySize() const { return ArraySize; }
 	inline	U32		GetType() const { return Type; }
 	inline	U32		GetMultisampleType() const { return MultisampleType; }
 

@@ -279,8 +279,7 @@ void D3D12HAL::CreateTexture(Bitmap * _Bm)
 			UINT8* m_pDataNext = nullptr;      // next position of upload buffer
 			UINT8* m_pDataEnd = nullptr;      // ending position of upload buffer
 
-			DWORD uSize = GetRequiredIntermediateSize(tex->Resource12, 0, _Bm->GetMips());
-			//uSize = 16*1024*1024;
+			DWORD uSize = GetRequiredIntermediateSize(tex->Resource12, 0, _Bm->GetMips() * _Bm->GetArraySize());
 
 			HRESULT hr = Device->CreateCommittedResource(
 				&CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_UPLOAD),
@@ -318,57 +317,49 @@ void D3D12HAL::CreateTexture(Bitmap * _Bm)
 			};
 
 			BYTE* pSrcBits = _Bm->GetDatas();
-			UINT NumBytes = 0;
-			UINT RowBytes = 0;
-			UINT NumRows = 0;
-			for (U32 j = 0; j < 1/*desc.DepthOrArraySize*/; j++)
+			D3D12_PLACED_SUBRESOURCE_FOOTPRINT DestLayout;
+			UINT DestNumRows;
+			UINT64 DestRowSizeInBytes;
+			UINT64 DestTotalBytes;
+			UINT DestOffset = 0;
+			for (U32 j = 0; j < _Bm->GetArraySize(); j++)
 			{
 				for (U32 i = 0; i < _Bm->GetMips(); i++)
 				{
 					UINT w = Max<UINT>(1, desc.Width >> i);
 					UINT h = Max<UINT>(1, desc.Height >> i);
+					int SubResourceIndex = D3D12CalcSubresource(i, j, 0, _Bm->GetMips(), _Bm->GetArraySize());
 
+					// Destination layout
+					m_Device->GetCopyableFootprints(&desc, SubResourceIndex, 1, DestOffset, &DestLayout, &DestNumRows, &DestRowSizeInBytes, &DestTotalBytes);
+					DestOffset += DestTotalBytes;
+
+					// Source layout
+					UINT NumBytes = 0;
+					UINT RowBytes = 0;
+					UINT NumRows = 0;
 					GetSurfaceInfo(w, h, desc.Format, &NumBytes, &RowBytes, &NumRows);
 
-					D3D12_SUBRESOURCE_FOOTPRINT pitchedDesc = { 0 };
-					pitchedDesc.Format = desc.Format;
-					pitchedDesc.Width = w;
-					pitchedDesc.Height = h;
-					pitchedDesc.Depth = 1;
-					pitchedDesc.RowPitch = Align(RowBytes, D3D12_TEXTURE_DATA_PITCH_ALIGNMENT);
-
-					int ret = SuballocateFromBuffer(
-						pitchedDesc.Height * pitchedDesc.RowPitch,
-						D3D12_TEXTURE_DATA_PLACEMENT_ALIGNMENT
-					);
-
-					if (ret == E_INVALIDARG)
+					if (DestTotalBytes > RowBytes)
 					{
-					//	MESSAGE("ret == E_INVALIDARG");
+						for (UINT y = 0; y < NumRows; y++)
+						{
+							UINT8 *pScan = m_pDataBegin + DestLayout.Offset + y * DestRowSizeInBytes;
+							UINT8 *pSrc = pSrcBits + y * RowBytes;
+							memcpy(pScan, pSrc, RowBytes);
+						}
+					}
+					else
+					{
+						memcpy(m_pDataBegin + DestLayout.Offset, pSrcBits, NumBytes);
 					}
 
-					int SubResourceIndex = j * desc.MipLevels + i;
-
-					D3D12_PLACED_SUBRESOURCE_FOOTPRINT _footprint;
-					UINT _numRows;
-					UINT64 _rowSizeInBytes, _totalBytes;
-
-					D3D12_PLACED_SUBRESOURCE_FOOTPRINT placedTexture2D = { 0 };
-					placedTexture2D.Offset = m_pDataCur - m_pDataBegin;
-					placedTexture2D.Footprint = pitchedDesc;
-					m_Device->GetCopyableFootprints(&desc, SubResourceIndex, 1, m_pDataCur - m_pDataBegin, &placedTexture2D, &_numRows, &_rowSizeInBytes, &_totalBytes);
-
-					for (UINT y = 0; y < NumRows; y++)
-					{
-						UINT8 *pScan = m_pDataBegin + placedTexture2D.Offset + y * placedTexture2D.Footprint.RowPitch;
-						UINT8 *pSrc = pSrcBits + y * RowBytes;
-						memcpy(pScan, pSrc, RowBytes);
-					}
+					//memset(m_pDataBegin + DestLayout.Offset, (i & 1) ? 0xff : 0, DestTotalBytes);
 
 					pCommandList->CopyTextureRegion(
 						&CD3DX12_TEXTURE_COPY_LOCATION(tex->Resource12, SubResourceIndex),
 						0, 0, 0,
-						&CD3DX12_TEXTURE_COPY_LOCATION(m_spUploadBuffer, placedTexture2D),
+						&CD3DX12_TEXTURE_COPY_LOCATION(m_spUploadBuffer, DestLayout),
 						nullptr);
 
 					pSrcBits += NumBytes;

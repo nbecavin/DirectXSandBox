@@ -87,7 +87,7 @@ void D3D12HAL::Init(int sizeX, int sizeY, sys::Renderer* owner)
 	int cy = (int)(rcWindow.bottom - rcWindow.top);
 	SetWindowPos(sys::pc::hWnd, 0, 0, 0, cx, cy, SWP_NOZORDER | SWP_NOMOVE);
 
-#if 0 //defined(_DEBUG)
+#if 1 //defined(_DEBUG)
 	// Enable the D3D12 debug layer.
 	{
 		ComPtr<ID3D12Debug> debugController;
@@ -99,7 +99,7 @@ void D3D12HAL::Init(int sizeX, int sizeY, sys::Renderer* owner)
 		if (SUCCEEDED(debugController->QueryInterface(IID_PPV_ARGS(&debugController1))))
 		{
 			debugController1->EnableDebugLayer();
-			debugController1->SetEnableGPUBasedValidation(true);
+			debugController1->SetEnableGPUBasedValidation(false);
 		}
 	}
 #endif
@@ -424,6 +424,8 @@ void D3D12HAL::PresentFrame()
 	}
 
 	m_FrameIndex = m_SwapChain->GetCurrentBackBufferIndex();
+
+	m_CommandAllocator->Reset();
 
 	m_CommandList->Reset(m_CommandAllocator.Get(), nullptr);
 	D3D12_RESOURCE_BARRIER barrier;

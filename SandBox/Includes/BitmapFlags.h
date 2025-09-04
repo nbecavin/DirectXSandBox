@@ -16,7 +16,6 @@ enum BitmapFormat {
 	BM_R8G8_SINT,
 	BM_R8G8B8A8_UNORM,
 	BM_R8G8B8A8_SNORM,
-	// At the end to avoid changing the BF version
 	BM_R8G8B8A8_UINT, 
 	BM_R8G8B8A8_SINT,
 	BM_B8G8R8A8_UNORM,

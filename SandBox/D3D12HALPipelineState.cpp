@@ -1,6 +1,161 @@
 #include <DXRenderer.h>
 #include <D3D12HAL.h>
 
+#include <functional>
+#include <unordered_map>
+#include <cstring>
+
+// ============ Helpers generiques ============
+
+inline void hash_combine(std::size_t& seed, std::size_t h) {
+	seed ^= h + 0x9e3779b9 + (seed << 6) + (seed >> 2);
+}
+
+inline std::size_t hash_memory(const void* data, size_t size) {
+	const unsigned char* p = static_cast<const unsigned char*>(data);
+	std::size_t h = 1469598103934665603ull; // FNV offset
+	for (size_t i = 0; i < size; ++i) {
+		h ^= static_cast<std::size_t>(p[i]);
+		h *= 1099511628211ull; // FNV prime
+	}
+	return h;
+}
+
+// Hash d'une structure trivially copyable (ex: D3D12_RASTERIZER_DESC)
+template <typename T>
+inline std::size_t hash_struct(const T& s) {
+	return hash_memory(&s, sizeof(T));
+}
+
+// Comparaison memoire brute (OK pour structs sans pointeurs)
+template <typename T>
+inline bool equal_struct(const T& a, const T& b) {
+	return std::memcmp(&a, &b, sizeof(T)) == 0;
+}
+
+// ============ Hash & Equal pour PSO ============
+
+struct PipelineDescHash {
+	std::size_t operator()(const D3D12_GRAPHICS_PIPELINE_STATE_DESC& desc) const noexcept {
+		std::size_t seed = 0;
+
+		// RootSignature -> on hash juste le pointeur (optionnel : GUID unique ?)
+		hash_combine(seed, std::hash<void*>{}(desc.pRootSignature));
+
+		// Shaders (contenu, pas pointeur)
+		if (desc.VS.pShaderBytecode)
+			hash_combine(seed, hash_memory(desc.VS.pShaderBytecode, desc.VS.BytecodeLength));
+		if (desc.PS.pShaderBytecode)
+			hash_combine(seed, hash_memory(desc.PS.pShaderBytecode, desc.PS.BytecodeLength));
+		if (desc.DS.pShaderBytecode)
+			hash_combine(seed, hash_memory(desc.DS.pShaderBytecode, desc.DS.BytecodeLength));
+		if (desc.HS.pShaderBytecode)
+			hash_combine(seed, hash_memory(desc.HS.pShaderBytecode, desc.HS.BytecodeLength));
+		if (desc.GS.pShaderBytecode)
+			hash_combine(seed, hash_memory(desc.GS.pShaderBytecode, desc.GS.BytecodeLength));
+
+		// Fixed function state
+		hash_combine(seed, hash_struct(desc.BlendState));
+		hash_combine(seed, hash_struct(desc.RasterizerState));
+		hash_combine(seed, hash_struct(desc.DepthStencilState));
+		hash_combine(seed, hash_struct(desc.SampleDesc));
+
+		// Input layout
+		for (UINT i = 0; i < desc.InputLayout.NumElements; i++) {
+			hash_combine(seed, hash_struct(desc.InputLayout.pInputElementDescs[i]));
+		}
+
+		// IA / RT formats
+		hash_combine(seed, std::hash<D3D12_PRIMITIVE_TOPOLOGY_TYPE>{}(desc.PrimitiveTopologyType));
+		for (UINT i = 0; i < desc.NumRenderTargets; i++) {
+			hash_combine(seed, std::hash<DXGI_FORMAT>{}(desc.RTVFormats[i]));
+		}
+		hash_combine(seed, std::hash<DXGI_FORMAT>{}(desc.DSVFormat));
+
+		// Misc
+		hash_combine(seed, std::hash<UINT>{}(desc.SampleMask));
+		hash_combine(seed, std::hash<UINT>{}(desc.NodeMask));
+		//hash_combine(seed, std::hash<D3D12_CACHED_PIPELINE_STATE>{}(desc.CachedPSO));
+		hash_combine(seed, std::hash<D3D12_PIPELINE_STATE_FLAGS>{}(desc.Flags));
+
+		return seed;
+	}
+};
+
+struct PipelineDescEqual {
+	bool operator()(const D3D12_GRAPHICS_PIPELINE_STATE_DESC& a,
+		const D3D12_GRAPHICS_PIPELINE_STATE_DESC& b) const noexcept {
+		// RootSignature (même pointeur attendu ici)
+		if (a.pRootSignature != b.pRootSignature) return false;
+
+		// Shaders
+		auto cmp_shader = [](auto& A, auto& B) {
+			if (A.BytecodeLength != B.BytecodeLength) return false;
+			if (A.BytecodeLength == 0) return true;
+			return std::memcmp(A.pShaderBytecode, B.pShaderBytecode, A.BytecodeLength) == 0;
+			};
+		if (!cmp_shader(a.VS, b.VS)) return false;
+		if (!cmp_shader(a.PS, b.PS)) return false;
+		if (!cmp_shader(a.DS, b.DS)) return false;
+		if (!cmp_shader(a.HS, b.HS)) return false;
+		if (!cmp_shader(a.GS, b.GS)) return false;
+
+		// Fixed function
+		if (!equal_struct(a.BlendState, b.BlendState)) return false;
+		if (!equal_struct(a.RasterizerState, b.RasterizerState)) return false;
+		if (!equal_struct(a.DepthStencilState, b.DepthStencilState)) return false;
+		if (!equal_struct(a.SampleDesc, b.SampleDesc)) return false;
+
+		// InputLayout
+		if (a.InputLayout.NumElements != b.InputLayout.NumElements) return false;
+		for (UINT i = 0; i < a.InputLayout.NumElements; i++) {
+			if (!equal_struct(a.InputLayout.pInputElementDescs[i], b.InputLayout.pInputElementDescs[i]))
+				return false;
+		}
+
+		// IA / RT
+		if (a.PrimitiveTopologyType != b.PrimitiveTopologyType) return false;
+		if (a.NumRenderTargets != b.NumRenderTargets) return false;
+		for (UINT i = 0; i < a.NumRenderTargets; i++) {
+			if (a.RTVFormats[i] != b.RTVFormats[i]) return false;
+		}
+		if (a.DSVFormat != b.DSVFormat) return false;
+
+		// Misc
+		if (a.SampleMask != b.SampleMask) return false;
+		if (a.NodeMask != b.NodeMask) return false;
+		if (a.Flags != b.Flags) return false;
+
+		return true;
+	}
+};
+
+// ============ Alias pour le cache ============
+using PipelineCache = std::unordered_map<
+	D3D12_GRAPHICS_PIPELINE_STATE_DESC,
+	ComPtr<ID3D12PipelineState>,
+	PipelineDescHash,
+	PipelineDescEqual
+>;
+std::vector<ComPtr<ID3D12PipelineState>> m_PSOStore;
+
+PipelineCache m_GraphicPSOCache;
+
+ID3D12PipelineState* getOrCreatePipeline(ID3D12Device* device,
+	const D3D12_GRAPHICS_PIPELINE_STATE_DESC& desc) {
+	auto it = m_GraphicPSOCache.find(desc);
+	if (it != m_GraphicPSOCache.end()) {
+		return it->second.Get(); // déjà en cache
+	}
+
+	ID3D12PipelineState* pipeline = nullptr;
+	HRESULT hr = device->CreateGraphicsPipelineState(&desc, IID_PPV_ARGS(&pipeline));
+	if (SUCCEEDED(hr)) {
+		m_GraphicPSOCache[desc] = pipeline;
+	}
+	return pipeline;
+}
+
 void D3D12HAL::SetDepthStencilState(DepthStencilDesc& Desc)
 {
 	m_CurrentPSO.DepthStencilState = Desc.desc;
@@ -165,10 +320,16 @@ void D3D12HAL::DrawIndexed(UINT IndexCount, UINT StartIndexLocation, INT BaseVer
 		m_CommandList->SetGraphicsRootDescriptorTable(5, m_SamplerDynamicHeap.GetGPUSlotHandle(offset)); //Vertex Samplers		
 	}
 
-	ID3D12PipelineState* PSO = nullptr;
 	m_CurrentPSO.pRootSignature = m_RootSignature.Get();
-	GetDevice()->CreateGraphicsPipelineState(&m_CurrentPSO, IID_PPV_ARGS(&PSO));
-	PSO->SetName(L"test");
-	m_CommandList->SetPipelineState(PSO);
+
+	ComPtr<ID3D12PipelineState> PSO;
+#if 1
+	PSO = getOrCreatePipeline(GetDevice(), m_CurrentPSO);
+#else
+	GetDevice()->CreateGraphicsPipelineState(&m_CurrentPSO, IID_PPV_ARGS(PSO.ReleaseAndGetAddressOf()));
+	PSO->SetName(L"GPSO");
+	PSO->AddRef();
+#endif
+	m_CommandList->SetPipelineState(PSO.Get());
 	m_CommandList->DrawIndexedInstanced(IndexCount, 1, StartIndexLocation, BaseVertexLocation, 0);
 }

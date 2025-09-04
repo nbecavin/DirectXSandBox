@@ -83,10 +83,45 @@ bool Bitmap::LoadDDS(const char* filename)
 		{
 			const auto* imageData = dds.GetImageData(mipIdx, arrayIdx);
 			memcpy(writePtr, (U8*)imageData->m_mem, imageData->m_memSlicePitch);
-
-			memset(writePtr, mipIdx*8, imageData->m_memSlicePitch);
 			writePtr = (char*)writePtr + imageData->m_memSlicePitch;
 		}
+	}
+
+	// Pipotron 3000
+	if(0)
+	{
+		Sx = 128;
+		Sy = 128;
+		Sz = 1;
+		Mips = 8;
+		Type = BM_TYPE_2D;		
+		Format = BM_R8G8B8A8_UINT;
+
+		DataSize = 0;
+		for (uint32_t mipIdx = 0; mipIdx < Mips; mipIdx++)
+		{
+			U32 mipSx = Sx >> mipIdx;
+			U32 mipSy = Sy >> mipIdx;
+			U32 slicePitch = mipSx * mipSy * sizeof(U32);
+			DataSize += slicePitch;
+		}
+
+		delete[] buffer;
+		free(Datas);
+		Datas = (U8*)malloc(DataSize);
+
+		// Copy data
+		void* writePtr = Datas;
+		for (uint32_t mipIdx = 0; mipIdx < Mips; mipIdx++)
+		{
+			U32 mipSx = Sx >> mipIdx;
+			U32 mipSy = Sy >> mipIdx;
+			U32 slicePitch = mipSx * mipSy * sizeof(U32);
+			memset(writePtr, (mipIdx & 1) ? 0xff : 0, slicePitch);
+			writePtr = (char*)writePtr + slicePitch;
+		}
+
+		return true;
 	}
 
 	delete[] buffer;
