@@ -4,6 +4,7 @@
 #include <assimp/scene.h>
 #include <assimp/postprocess.h>
 #include <assimp/Importer.hpp>
+#include <filesystem>
 
 #include <Mesh.h>
 #include <Bitmap.h>
@@ -11,52 +12,99 @@
 
 #pragma comment(lib, "../Tools/assimp/lib/x64/assimp-vc143-mt.lib")
 
+std::string str_toupper(std::string s)
+{
+	std::transform(s.begin(), s.end(), s.begin(),
+		// static_cast<int(*)(int)>(std::toupper)         // wrong
+		// [](int c){ return std::toupper(c); }           // wrong
+		// [](char c){ return std::toupper(c); }          // wrong
+		[](unsigned char c) { return std::toupper(c); } // correct
+	);
+	return s;
+}
+
 void SceneImporter::LoadScene(std::string& filepath)
 {
-	Assimp::Importer importer;
+	std::string with_alias = "..\\GameDB\\" + filepath;
+	std::filesystem::path directory(with_alias);
 
-	const aiScene* pScene = importer.ReadFile(filepath,
-		aiProcess_CalcTangentSpace |
-		aiProcess_JoinIdenticalVertices |
-		aiProcess_Triangulate | aiProcess_SortByPType |
-		aiProcess_GenBoundingBoxes |
-		aiProcess_PreTransformVertices
-	);
-
-	if (pScene)
+	std::string extension = str_toupper(directory.extension().string());
+	if (extension.compare(".SDKMESH")==0)
 	{
-		OutputDebugString("Succeeded loading\n");
-
-		for (int i = 0; i < pScene->mNumMaterials; i++)
-		{
-			aiMaterial* pAiMaterial = pScene->mMaterials[i];
-			for (int t = 0; t < pAiMaterial->GetTextureCount(aiTextureType_DIFFUSE); t++)
-			{
-				aiString tex;
-				pAiMaterial->GetTexture(aiTextureType_DIFFUSE, t, &tex, nullptr, nullptr, nullptr, nullptr, nullptr);
-				OutputDebugString(tex.C_Str());
-				OutputDebugString("tex\n");
-			}
-		}
-
-		for (int i = 0; i< pScene->mNumMeshes; i++)
-		{
-			aiMesh* pAiMesh = pScene->mMeshes[i];
-
-			// Add mesh to the global scene
-			Mesh* pMesh = new Mesh();
-			pMesh->LoadFromAiMesh(pAiMesh);
-			pMesh->SetWorldPosition(0, 0, 0);
-			sys::RegisterGraphObject(pMesh);
-		}
+		Mesh* pMesh;
+		pMesh = new Mesh();
+		pMesh->Load(filepath.c_str());
+		pMesh->SetScale(0.01f);
+		pMesh->SetWorldPosition(60.5f * 0.01f, -128.f * 0.01f, -5.f * 0.01f);
+		sys::RegisterGraphObject(pMesh);
 	}
-	else
+	else //ASSIMP
 	{
-		OutputDebugString("Failed\n");
+		directory.remove_filename();
+
+		Assimp::Importer importer;
+
+		const aiScene* pScene = importer.ReadFile(with_alias,
+			aiProcess_CalcTangentSpace |
+			aiProcess_JoinIdenticalVertices |
+			aiProcess_Triangulate | aiProcess_SortByPType |
+			aiProcess_GenBoundingBoxes |
+			aiProcess_PreTransformVertices
+		);
+
+		if (pScene)
+		{
+			/*for (int i = 0; i < pScene->mNumMaterials; i++)
+			{
+				aiMaterial* pAiMaterial = pScene->mMaterials[i];
+				for (int t = 0; t < pAiMaterial->GetTextureCount(aiTextureType_DIFFUSE); t++)
+				{
+					aiString tex;
+					{
+						pAiMaterial->GetTexture(aiTextureType_DIFFUSE, t, &tex, nullptr, nullptr, nullptr, nullptr, nullptr);
+						OutputDebugString(tex.C_Str());
+						OutputDebugString("\n");
+					}
+					{
+						pAiMaterial->GetTexture(aiTextureType_NORMALS, t, &tex, nullptr, nullptr, nullptr, nullptr, nullptr);
+						OutputDebugString(tex.C_Str());
+						OutputDebugString("\n");
+					}
+				}
+			}*/
+
+			for (int i = 0; i < pScene->mNumMeshes; i++)
+			{
+				aiMesh* pAiMesh = pScene->mMeshes[i];
+				aiMaterial* pAiMaterial = pScene->mMaterials[pAiMesh->mMaterialIndex];
+
+				// Add mesh to the global scene
+				Mesh* pMesh = new Mesh();
+				pMesh->LoadFromAiMesh(directory, pAiMesh, pAiMaterial);
+				pMesh->SetWorldPosition(0, 0, 0);
+				sys::RegisterGraphObject(pMesh);
+			}
+
+			if (pScene->HasCameras())
+			{
+				MESSAGE("Scene has %d cameras", pScene->mNumCameras);
+				for (int i = 0; i < pScene->mNumCameras; i++)
+				{
+					auto pCamera = pScene->mCameras[i];
+					MESSAGE("Camera %d %s", i, pCamera->mName.C_Str());
+				}
+			}
+
+			MESSAGE("Succeeded loading %s", filepath.c_str());
+		}
+		else
+		{
+			MESSAGE("Failed loading %s", filepath.c_str());
+		}
 	}
 }
 
-void Mesh::LoadFromAiMesh(aiMesh* importMesh)
+void Mesh::LoadFromAiMesh(std::filesystem::path directory, aiMesh* importMesh, aiMaterial* importMaterial)
 {
 	SetName(std::string(importMesh->mName.C_Str()));
 
@@ -160,6 +208,69 @@ void Mesh::LoadFromAiMesh(aiMesh* importMesh)
 		std::string albedo, normal;
 		Bitmap* bm;
 
+#if 1
+		auto LoadBitmap = [&](MaterialStage stage)
+			{
+				std::string tex;
+
+				aiTextureType type = aiTextureType_NONE;
+				switch (stage)
+				{
+				case MTL_STAGE_ALBEDO:		type = aiTextureType_DIFFUSE; break;
+				case MTL_STAGE_ROUGHNESS:	type = aiTextureType_SPECULAR; break;
+				default:
+					return;
+				};
+
+				aiString aitex;
+				importMaterial->GetTexture(aiTextureType_DIFFUSE, 0, &aitex, nullptr, nullptr, nullptr, nullptr, nullptr);
+
+				std::filesystem::path path(directory);
+				path.append(aitex.C_Str());
+				path.replace_extension(std::string("dds"));
+
+				Bitmap* bm = nullptr;
+				asset::Cache& asset = asset::Cache::GetInstance();
+				tex = path.string();
+				Bool bNew = asset.LoadAsset(asset::Type::BITMAP, tex.c_str(), (GraphObject**)&bm);
+				if (bNew)
+				{
+					if (bm->LoadDDS(tex.c_str()))
+					{
+						gData.Rdr->CreateTexture(bm);
+						pMat->SetBitmap(bm, stage);
+					}					
+				}				
+			};
+
+		LoadBitmap(MTL_STAGE_ALBEDO);
+		//LoadBitmap(std::string("..\\GameDB\\assets\\models\\sponza\\spnza_bricks_a_normal.dds"), MTL_STAGE_NORMAL);
+		LoadBitmap(MTL_STAGE_ROUGHNESS);
+
+		auto LoadBitmapFromPath = [&](std::string& tex, MaterialStage stage)
+			{
+				Bitmap* bm = nullptr;
+				asset::Cache& asset = asset::Cache::GetInstance();
+				Bool bNew = asset.LoadAsset(asset::Type::BITMAP, tex.c_str(), (GraphObject**)&bm);
+				if (bNew)
+				{
+					if (bm->LoadDDS(tex.c_str()))
+					{
+						gData.Rdr->CreateTexture(bm);
+						pMat->SetBitmap(bm, stage);
+					}
+				}				
+			};
+
+		if (!pMat->GetBitmap(MTL_STAGE_ALBEDO))
+		{
+			LoadBitmapFromPath(std::string("..\\GameDB\\assets\\models\\sponza\\spnza_bricks_a_diff.dds"), MTL_STAGE_ALBEDO);
+		}
+		if (!pMat->GetBitmap(MTL_STAGE_ROUGHNESS))
+		{
+			LoadBitmapFromPath(std::string("..\\GameDB\\assets\\models\\sponza\\spnza_bricks_a_diff.dds"), MTL_STAGE_ROUGHNESS);
+		}
+#else
 		auto LoadBitmap = [&](std::string& tex, MaterialStage stage)
 			{
 				Bitmap* bm = nullptr;
@@ -173,8 +284,9 @@ void Mesh::LoadFromAiMesh(aiMesh* importMesh)
 				pMat->SetBitmap(bm, stage);
 			};
 
-		LoadBitmap(std::string("..\\GameDB\\assets\\models\\sponza\\spnza_bricks_a_diff.dds"), MTL_STAGE_DIFFUSE);
+		LoadBitmap(std::string("..\\GameDB\\assets\\models\\sponza\\spnza_bricks_a_diff.dds"), MTL_STAGE_ALBEDO);
 		//LoadBitmap(std::string("..\\GameDB\\assets\\models\\sponza\\spnza_bricks_a_normal.dds"), MTL_STAGE_NORMAL);
-		LoadBitmap(std::string("..\\GameDB\\assets\\models\\sponza\\spnza_bricks_a_spec.DDS"), MTL_STAGE_SPEC);
+		LoadBitmap(std::string("..\\GameDB\\assets\\models\\sponza\\spnza_bricks_a_spec.DDS"), MTL_STAGE_ROUGHNESS);
+#endif
 	}
 }

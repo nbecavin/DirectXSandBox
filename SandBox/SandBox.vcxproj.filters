@@ -146,9 +146,6 @@
     <ClCompile Include="BitmapLoadDDS.cpp">
       <Filter>Common Platform\Assets\Materials\Load</Filter>
     </ClCompile>
-    <ClCompile Include="ddsloader.cpp">
-      <Filter>Common Platform\Assets\Materials\Load</Filter>
-    </ClCompile>
     <ClCompile Include="InputManager.cpp">
       <Filter>Common Platform\InputManager</Filter>
     </ClCompile>
@@ -160,9 +157,6 @@
     </ClCompile>
     <ClCompile Include="WinTimer.cpp">
       <Filter>PC</Filter>
-    </ClCompile>
-    <ClCompile Include="stdafx.cpp">
-      <Filter>Common Platform</Filter>
     </ClCompile>
     <ClCompile Include="WinInputManager.cpp">
       <Filter>PC</Filter>
@@ -245,6 +239,7 @@
     <ClCompile Include="SceneImporter.cpp">
       <Filter>Common Platform\Assets\Import</Filter>
     </ClCompile>
+    <ClCompile Include="stdafx.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="SandBox.h">
@@ -312,9 +307,6 @@
     </ClInclude>
     <ClInclude Include="Includes\Material.h">
       <Filter>Common Platform\Assets\Materials</Filter>
-    </ClInclude>
-    <ClInclude Include="Includes\ddsloader.h">
-      <Filter>Common Platform\Assets\Materials\Load</Filter>
     </ClInclude>
     <ClInclude Include="Includes\InputManager.h">
       <Filter>Common Platform\InputManager</Filter>
@@ -397,6 +389,9 @@
     </ClInclude>
     <ClInclude Include="Includes\SceneImporter.h">
       <Filter>Common Platform\Assets\Import</Filter>
+    </ClInclude>
+    <ClInclude Include="Includes\tinyddsloader.h">
+      <Filter>Common Platform\Assets\Materials\Load</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

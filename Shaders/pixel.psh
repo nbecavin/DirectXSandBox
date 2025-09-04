@@ -43,29 +43,3 @@
 
 		return float4(normal,albedo_alpha);
 	}
-
-	/*
-	// SH ambient.
-	float4 cAr = float4(sh_coeffs[0].x, sh_coeffs[1].x, sh_coeffs[2].x, sh_coeffs[3].x); // first 4 red irradiance coefficients
-	float4 cAg = float4(sh_coeffs[0].y, sh_coeffs[1].y, sh_coeffs[2].y, sh_coeffs[3].y); // first 4 green irradiance coefficients
-	float4 cAb = float4(sh_coeffs[0].z, sh_coeffs[1].z, sh_coeffs[2].z, sh_coeffs[3].z); // first 4 blue irradiance coefficients
-	float4 cBr = float4(sh_coeffs[4].x, sh_coeffs[5].x, sh_coeffs[6].x, sh_coeffs[7].x); // second 4 red irradiance coefficients
-	float4 cBg = float4(sh_coeffs[4].y, sh_coeffs[5].y, sh_coeffs[6].y, sh_coeffs[7].y); // second 4 green irradiance coefficients
-	float4 cBb = float4(sh_coeffs[4].z, sh_coeffs[5].z, sh_coeffs[6].z, sh_coeffs[7].z); // second 4 blue irradiance coefficients
-	float4 cC  = float4(sh_coeffs[8].x, sh_coeffs[8].y, sh_coeffs[8].z, 0.f); // last 1 irradiance coefficient for red, blue and green
-	float3 x1, x2, x3;
-	// Linear + constant polynomial terms
-	x1.r = dot(cAr, normal);
-	x1.g = dot(cAg, normal);
-	x1.b = dot(cAb, normal);
-	// 4 of the quadratic polynomials
-	float4 vB = normal.xyzz * normal.yzzx;
-	x2.r = dot(cBr, vB);
-	x2.g = dot(cBg, vB);
-	x2.b = dot(cBb, vB);
-	// Final quadratic polynomial
-	float vC = normal.x*normal.x - normal.y*normal.y;
-	x3 = cC.rgb * vC;
-	///Output.Diffuse.rgb = x1 + x2 + x3;
-	normal = x1;// + x2 + x3;
-	*/

@@ -32,7 +32,7 @@ public:
     SDKANIMATION_FRAME_DATA* m_pAnimationFrameData;
 };
 
-void Mesh::Load(char * fname)
+void Mesh::Load(const char * fname)
 {
     HRESULT hr = S_OK;
 
@@ -258,7 +258,7 @@ loadmesh:
 				}
 				if (bm)
 				{
-					pMat->SetBitmap(bm, MTL_STAGE_DIFFUSE);
+					pMat->SetBitmap(bm, MTL_STAGE_ALBEDO);
 				}
 
 				// sponza super machin truc
@@ -297,24 +297,6 @@ loadmesh:
 						}
 					}
 				}
-
-				/*
-				{
-					char _tex[1024];
-					strcpy(_tex,tex);
-					char* token = strstr(_tex,"diff");
-					if(token)
-					{
-						strcpy(token,"spec.dds");
-						Bool bNew = asset.LoadAsset(asset::Type::BITMAP,_tex,(GraphObject**)&bm);
-						if(bNew)
-						{
-							bm->LoadDDS(_tex);
-							gData.Rdr->CreateTexture(bm);
-						}
-						pMat->SetBitmap(bm,MTL_STAGE_SPEC);
-					}
-				}*/
 			}
 			if( pMaterials[m].NormalTexture[0] != 0 )
 			{
@@ -340,7 +322,7 @@ loadmesh:
 					bm->LoadDDS(tex);
 					gData.Rdr->CreateTexture(bm);
 				}
-				pMat->SetBitmap(bm,MTL_STAGE_SPEC);
+				pMat->SetBitmap(bm, MTL_STAGE_ROUGHNESS);
 			}
 		}
     }

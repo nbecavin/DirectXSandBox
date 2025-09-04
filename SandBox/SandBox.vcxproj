@@ -158,7 +158,6 @@
     <ClCompile Include="Bitmap.cpp" />
     <ClCompile Include="Material.cpp" />
     <ClCompile Include="BitmapLoadDDS.cpp" />
-    <ClCompile Include="ddsloader.cpp" />
     <ClCompile Include="InputManager.cpp" />
     <ClCompile Include="DXRenderer.cpp" />
     <ClCompile Include="DXRendererInit.cpp" />
@@ -196,6 +195,7 @@
     <ClInclude Include="Includes\SandBoxFile.h" />
     <ClInclude Include="Includes\SceneImporter.h" />
     <ClInclude Include="Includes\ScriptObject.h" />
+    <ClInclude Include="Includes\tinyddsloader.h" />
     <ClInclude Include="Includes\WinFile.h" />
     <ClInclude Include="Includes\WinInputManager.h" />
     <ClInclude Include="SandBox.h" />
@@ -220,7 +220,6 @@
     <ClInclude Include="Includes\Bitmap.inl.h" />
     <ClInclude Include="Includes\BitmapFlags.h" />
     <ClInclude Include="Includes\Material.h" />
-    <ClInclude Include="Includes\ddsloader.h" />
     <ClInclude Include="Includes\InputManager.h" />
     <Text Include="..\Shaders\sh_const.h" />
     <Text Include="..\Shaders\sh_math.h" />

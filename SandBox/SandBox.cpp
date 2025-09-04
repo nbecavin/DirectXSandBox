@@ -55,9 +55,8 @@ void sys::MainLoop()
 	float StartTime = GetAbsoluteTime();
 	gData.DeltaTime = 0.016f;
 
-MESSAGE("Entering mainloop");
+	MESSAGE("Initialization");
 
-//super temp
 	gData.Rdr->SetCamera(new Camera());
 
 	Camera * cam = gData.Rdr->GetCamera();
@@ -66,42 +65,31 @@ MESSAGE("Entering mainloop");
 	//cam->SetWorldTarget(Vec4f(0.f,0.f,0.f,1.f));
 	cam->SetWorldTarget(Vec4f(10.5f, -4.07f, 0.362f, 1.f));
 
+	CameraFree* pCameraScript = new CameraFree;
+	RegisterScriptObject(pCameraScript);
+
 	RegisterGraphObject(new Sky());
 	//RegisterGraphObject(new Terrain());
 	//RegisterGraphObject(new Proc(sphere));
 	//RegisterGraphObject(new Proc(torus));
 
-MESSAGE("Load some mesh");
+	MESSAGE("Load some assets");
 
-	//
 	SceneImporter imp;
-//	imp.LoadScene(std::string("..\\GameDB\\assets\\Bistro_v5_2\\BistroInterior.fbx"));
-	imp.LoadScene(std::string("..\\GameDB\\assets\\bistro\\bistro.gltf"));
-//	imp.LoadScene(std::string("..\\GameDB\\assets\\sponza\\sponza.gltf"));
+//	imp.LoadScene("assets\\Bistro_v5_2\\BistroInterior.fbx");
+//	imp.LoadScene("assets\\Bistro_v5_2\\BistroExterior.fbx");
+	imp.LoadScene("assets\\bistro\\bistro.gltf");
+	cam->SetWorldPosition(Vec4f(-22.787, 2.395, 10.013, 1));
+	cam->SetWorldTarget(Vec4f(-21.788, 2.368, 10.051, 1));
+//	imp.LoadScene("assets\\sponza\\sponza.gltf");
+//	imp.LoadScene("assets\\\sponza.FBX");
+//	imp.LoadScene("assets\\models\\sponza\\SponzaNoFlag.sdkmesh");
+//	imp.LoadScene("assets\\models\\powerplant.sdkmesh");
+//	imp.LoadScene("assets\\models\\MicroscopeCity\\scanner.sdkmesh");
+//	imp.LoadScene("assets\\models\\MicroscopeCity\\column.sdkmesh");
+//	imp.LoadScene("assets\\models\\Dwarf\\dwarf.sdkmesh");
 
-	Mesh * pMesh;
-	pMesh = new Mesh();
-	//pMesh->Load("assets\\models\\powerplant.sdkmesh");
-	//pMesh->Load("assets\\models\\MicroscopeCity\\scanner.sdkmesh");
-	//pMesh->Load("assets\\models\\MicroscopeCity\\column.sdkmesh");
-	//pMesh->Load("assets\\models\\Dwarf\\dwarf.sdkmesh");
-	pMesh->Load("assets\\models\\sponza\\SponzaNoFlag.sdkmesh");
-	pMesh->SetScale(0.01f);
-	pMesh->SetWorldPosition(60.5f*0.01f,-128.f*0.01f,-5.f*0.01f);
-	//RegisterGraphObject(pMesh);
-
-	Mesh * pMesh2;
-	pMesh2 = new Mesh();
-	//pMesh2->Load("assets\\models\\TorusKnot\\tk.sdkmesh");
-	pMesh2->Load("assets\\models\\sponza\\flag.sdkmesh");
-	pMesh2->SetScale(0.01f);
-	pMesh2->SetWorldPosition(-24.f*0.01f,-71.f*0.01f,9.6f*0.01f);
-	//RegisterGraphObject(pMesh2);
-
-	CameraFree * pCameraScript = new CameraFree;
-	RegisterScriptObject(pCameraScript);
-
-//
+	MESSAGE("Entering mainloop");
 
 	while(gData.GetExitStatus()==FALSE)
 	{

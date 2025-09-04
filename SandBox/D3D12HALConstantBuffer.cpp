@@ -6,9 +6,7 @@ static const int sConstantBufferSize = 16 * 1024 * 1024;
 ConstantBuffer* D3D12HAL::CreateConstantBuffer(U32 _Size)
 {
 	D3D12ConstantBuffer* cb = new D3D12ConstantBuffer();
-	MESSAGE("Begin create CB");
 	cb->Create(_Size);
-	MESSAGE("End create CB");
 	return (cb->IsInited()) ? cb : nullptr;
 }
 

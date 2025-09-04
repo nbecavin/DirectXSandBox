@@ -5,9 +5,10 @@ class Bitmap;
 
 enum MaterialStage
 {
-	MTL_STAGE_DIFFUSE,
+	MTL_STAGE_ALBEDO,
 	MTL_STAGE_NORMAL,
-	MTL_STAGE_SPEC
+	MTL_STAGE_ROUGHNESS,
+	MTL_STAGE_METAL,
 };
 
 class Material

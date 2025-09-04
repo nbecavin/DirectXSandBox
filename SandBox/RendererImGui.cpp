@@ -62,7 +62,7 @@ void Renderer::InitImGUI()
 	//MyTexture* texture = MyEngine::CreateTextureFromMemoryPixels(pixels, width, height, TEXTURE_TYPE_RGBA32)
 
 	Bitmap* bmap = new Bitmap();
-	bmap->SetFormat(BM_FORMAT_ABGR8888);
+	bmap->SetFormat(BM_R8G8B8A8_UNORM);
 	bmap->SetSize(width, height);
 	bmap->SetType(BM_TYPE_2D);
 	bmap->SetData(pixels, width*height*bpp);	

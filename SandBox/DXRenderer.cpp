@@ -372,7 +372,7 @@ namespace sys {
 	void DXRenderer::PushMaterial(Material* Mat)
 	{
 		Bitmap* bm = NULL;
-		bm = Mat->GetBitmap(MTL_STAGE_DIFFUSE);
+		bm = Mat->GetBitmap(MTL_STAGE_ALBEDO);
 		if(bm)
 		{
 			SetShaderResource(0, SHADER_TYPE_PIXEL, bm);
@@ -382,7 +382,7 @@ namespace sys {
 		{
 			SetShaderResource(1, SHADER_TYPE_PIXEL, bm);
 		}
-		bm = Mat->GetBitmap(MTL_STAGE_SPEC);
+		bm = Mat->GetBitmap(MTL_STAGE_ROUGHNESS);
 		if(bm)
 		{
 			SetShaderResource(2, SHADER_TYPE_PIXEL, bm);

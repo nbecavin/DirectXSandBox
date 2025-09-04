@@ -2,16 +2,17 @@
 #include <D3D12HAL.h>
 #include <Bitmap.h>
 
-static inline DXGI_FORMAT GetDXFormat(U32 Format, Bool sRGB = TRUE)
+static inline DXGI_FORMAT GetDXFormat(BitmapFormat Format, Bool sRGB = TRUE)
 {
 	switch (Format) {
-	case BM_FORMAT_DXT1:
+	case BM_BC1_UNORM:
 		return sRGB ? DXGI_FORMAT_BC1_UNORM_SRGB : DXGI_FORMAT_BC1_UNORM;
-	case BM_FORMAT_DXT5:
+	case BM_BC7_UNORM:
 		return sRGB ? DXGI_FORMAT_BC7_UNORM_SRGB : DXGI_FORMAT_BC7_UNORM;
-	case BM_FORMAT_R32F:
+	case BM_R32_FLOAT:
 		return sRGB ? DXGI_FORMAT_R32_FLOAT : DXGI_FORMAT_R32_FLOAT;
-	case BM_FORMAT_ABGR8888:
+	case BM_R8G8B8A8_UNORM:
+		return sRGB ? DXGI_FORMAT_R8G8B8A8_UNORM_SRGB : DXGI_FORMAT_R8G8B8A8_UNORM;
 	default:
 		return sRGB ? DXGI_FORMAT_R8G8B8A8_UNORM_SRGB : DXGI_FORMAT_R8G8B8A8_UNORM;
 	}
@@ -225,8 +226,6 @@ void D3D12HAL::CreateTexture(Bitmap * _Bm)
 	ID3D12Device * Device = GET_RDR_INSTANCE()->GetD3D12HAL().GetDevice();
 	ID3D12GraphicsCommandList * pCommandList = GET_RDR_INSTANCE()->GetD3D12HAL().GetCommandList();
 
-	MESSAGE("Create texture");
-
 	bool sRGB = (_Bm->GetFlags()&BM_SRGB) ? true : false;
 
 	CD3DX12_RESOURCE_DESC desc;
@@ -345,7 +344,7 @@ void D3D12HAL::CreateTexture(Bitmap * _Bm)
 
 					if (ret == E_INVALIDARG)
 					{
-						MESSAGE("jlkjlkj");
+					//	MESSAGE("ret == E_INVALIDARG");
 					}
 
 					int SubResourceIndex = j * desc.MipLevels + i;
@@ -404,6 +403,4 @@ void D3D12HAL::CreateTexture(Bitmap * _Bm)
 		GetDevice()->CreateRenderTargetView(tex->Resource, &DescRT, &tex->Surface);
 	}
 	*/
-
-	MESSAGE("DX resource created");
 }

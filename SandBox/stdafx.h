@@ -39,6 +39,8 @@
 #	include <pix3.h>
 #endif
 
+#include <filesystem>
+
 #include <SandBoxTypes.h>
 #include <SandBoxDebug.h>
 #include <SandBoxMemory.h>

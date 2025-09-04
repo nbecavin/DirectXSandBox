@@ -5,6 +5,7 @@
 #include <Renderer.h>
 
 class aiMesh;
+class aiMaterial;
 
 class Mesh : public GraphObject
 {
@@ -17,8 +18,8 @@ public:
 	virtual void DrawGBuffer();
 
 public:
-	void Load(char * fname);
-	void LoadFromAiMesh(aiMesh* importMesh);
+	void Load(const char * fname);
+	void LoadFromAiMesh(std::filesystem::path directory, aiMesh* importMesh, aiMaterial* importMaterial);
 
 	struct MeshSubSet {
 		VertexBuffer *	VB;
