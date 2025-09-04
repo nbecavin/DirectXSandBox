@@ -36,26 +36,12 @@
 #	include <d3d12shader.h>
 	using namespace DirectX;
 #	define __CDECL	__cdecl
-#elif defined(_ANDROID)
-#	include <stdlib.h>
-#	include <malloc.h>
-#	include <memory.h>
-#	include <stdio.h>
-#	include <jni.h>
-#	include <string.h>
-#	include <GLES2/gl2.h>
-#	include <unistd.h>
-#	include <math.h>
-#	include <time.h>
-#	include <nv_debug.h>
-#	define __CDECL
+#	include <pix3.h>
 #endif
 
-#ifdef __cplusplus
 #include <SandBoxTypes.h>
 #include <SandBoxDebug.h>
 #include <SandBoxMemory.h>
 #include <SandBoxFile.h>
 #include <VectorLib.h>
 #include "SandBox.h"
-#endif

@@ -23,6 +23,21 @@ namespace sys {
 		virtual void InitShaders();
 		virtual void SetSize(U32 _SizeX,U32 _SizeY) { SizeX=_SizeX; SizeY=_SizeY; }
 
+		virtual void ProfileBeginEvent(U32 _ColorRGBA, const char* _Message) = 0;
+		virtual void ProfileBeginEventArgs(U32 _ColorRGBA, const char* _Format, ...)
+		{
+			va_list args, args_copy;
+			va_start(args, _Format);
+			va_copy(args_copy, args);
+			const auto len = std::vsnprintf(nullptr, 0, _Format, args) + 1;
+			std::string str(len, ' ');
+			std::vsnprintf(&str.front(), len, _Format, args_copy);
+			va_end(args);
+			va_end(args_copy);
+			ProfileBeginEvent(_ColorRGBA, str.c_str());
+		}
+		virtual void ProfileEndEvent() = 0;
+
 		// ImGui integration
 		virtual void InitImGUI();
 		virtual void DrawImGUI();
@@ -66,6 +81,8 @@ namespace sys {
 
 	protected:
 		int		SizeX, SizeY;
+
+		int						m_FrameIndex;
 
 		VertexBuffer		*	m_FullscreenQuadVB;
 		VertexDeclaration	*	m_ScreenVertexDecl;

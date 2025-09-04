@@ -149,8 +149,8 @@
     <ClCompile Include="BitmapLoadDDS.cpp" />
     <ClCompile Include="ddsloader.cpp" />
     <ClCompile Include="InputManager.cpp" />
-    <ClCompile Include="DX11Renderer.cpp" />
-    <ClCompile Include="DX11RendererInit.cpp" />
+    <ClCompile Include="DXRenderer.cpp" />
+    <ClCompile Include="DXRendererInit.cpp" />
     <ClCompile Include="DXRendererResource.cpp" />
     <ClCompile Include="WinFile.cpp" />
     <ClCompile Include="WinInputManager.cpp" />
@@ -214,7 +214,6 @@
     <Text Include="..\Shaders\sh_const.h" />
     <Text Include="..\Shaders\sh_math.h" />
     <Text Include="..\Shaders\ShaderRegs.h" />
-    <ClInclude Include="Includes\DX11Renderer.h" />
     <ClInclude Include="Includes\DXRenderer.h" />
     <ClInclude Include="targetver.h" />
     <ClInclude Include="Includes\WinMain.h" />
@@ -243,7 +242,6 @@
     <Text Include="..\Shaders\post_process.psh">
       <FileType>Document</FileType>
     </Text>
-    <None Include="..\Shaders\ImGui.shader" />
     <None Include="..\Shaders\shaders.compile.bat" />
     <Text Include="..\Shaders\ssao.psh">
       <FileType>Document</FileType>
@@ -274,9 +272,15 @@
       <DeploymentContent>true</DeploymentContent>
     </Image>
   </ItemGroup>
+  <ItemGroup>
+    <None Include="..\Shaders\ImGui.hlsl">
+      <FileType>Document</FileType>
+    </None>
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
     <Import Project="..\packages\Microsoft.Direct3D.D3D12.1.616.1\build\native\Microsoft.Direct3D.D3D12.targets" Condition="Exists('..\packages\Microsoft.Direct3D.D3D12.1.616.1\build\native\Microsoft.Direct3D.D3D12.targets')" />
+    <Import Project="..\packages\WinPixEventRuntime.1.0.240308001\build\WinPixEventRuntime.targets" Condition="Exists('..\packages\WinPixEventRuntime.1.0.240308001\build\WinPixEventRuntime.targets')" />
   </ImportGroup>
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>
@@ -284,5 +288,6 @@
     </PropertyGroup>
     <Error Condition="!Exists('..\packages\Microsoft.Direct3D.D3D12.1.616.1\build\native\Microsoft.Direct3D.D3D12.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.Direct3D.D3D12.1.616.1\build\native\Microsoft.Direct3D.D3D12.props'))" />
     <Error Condition="!Exists('..\packages\Microsoft.Direct3D.D3D12.1.616.1\build\native\Microsoft.Direct3D.D3D12.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.Direct3D.D3D12.1.616.1\build\native\Microsoft.Direct3D.D3D12.targets'))" />
+    <Error Condition="!Exists('..\packages\WinPixEventRuntime.1.0.240308001\build\WinPixEventRuntime.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\WinPixEventRuntime.1.0.240308001\build\WinPixEventRuntime.targets'))" />
   </Target>
 </Project>

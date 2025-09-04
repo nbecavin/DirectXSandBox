@@ -18,6 +18,8 @@ namespace sys {
 
 	void DXRenderer::MainLoop()
 	{
+		ProfileBeginEventArgs(0, "Frame %d", m_FrameIndex);
+
 		ImGui::Begin("Stats");
 		ImGui::Text("FPS %f", 1.f/GetDeltaTime());
 		ImGui::Text("Time %fms", GetDeltaTime()*1000.f);
@@ -166,8 +168,15 @@ namespace sys {
 		*/
 #endif
 
-		//		D3DPERF_BeginEvent(0,L"Forward");
 		{
+			ProfileBeginEvent(0, "Build Acceleration Structure");
+
+			ProfileEndEvent();
+		}
+
+		{
+			ProfileBeginEvent(0, "Forward Pass");
+
 			RasterizerDesc rs;
 			rs.desc.AntialiasedLineEnable = FALSE;
 			rs.desc.CullMode = D3D12_CULL_MODE_NONE;
@@ -186,8 +195,9 @@ namespace sys {
 				GraphObject * it = gData.m_GraphObjectDA[i];
 				it->Draw();
 			}
+
+			ProfileEndEvent();
 		}
-		//		D3DPERF_EndEvent();
 
 #if 0
 //		D3DPERF_BeginEvent(0,L"PostProcess");
@@ -252,6 +262,9 @@ namespace sys {
 		DrawImGUI();
 
 		GetHAL().PresentFrame();
+
+		ProfileEndEvent();
+		m_FrameIndex++;
 	}
 
 	void DXRenderer::SetShaderResource(U32 Slot, EShaderType Type, Bitmap* Texture)

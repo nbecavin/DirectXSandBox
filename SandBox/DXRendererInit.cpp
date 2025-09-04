@@ -22,6 +22,7 @@ namespace sys
 
 	int DXRenderer::Init()
 	{
+		Renderer::Init();
 		SizeX = 1920;
 		SizeY = 1080;
 

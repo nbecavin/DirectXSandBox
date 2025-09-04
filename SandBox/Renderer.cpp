@@ -5,6 +5,7 @@ namespace sys {
 
 	int Renderer::Init()
 	{
+		m_FrameIndex = 0;
 		return 0;
 	}
 

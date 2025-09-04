@@ -17,8 +17,8 @@ namespace sys {
 		RegisterShaderFromSourceFile( SHADER_PS_SSAO,					"ssao.psh", "ph_ambientocclusion");
 		RegisterShaderFromSourceFile( SHADER_PS_LINEAR_DEPTH,			"ssao.psh", "ph_ambientocclusion_linearzbuf");
 
-		RegisterShaderFromSourceFile(SHADER_VS_IMGUI, "ImGui.shader", "VsMain");
-		RegisterShaderFromSourceFile(SHADER_PS_IMGUI, "ImGui.shader", "PsMain");
+		RegisterShaderFromSourceFile(SHADER_VS_IMGUI, "ImGui.hlsl", "VsMain");
+		RegisterShaderFromSourceFile(SHADER_PS_IMGUI, "ImGui.hlsl", "PsMain");
 
 		// Register compute shaders
 		RegisterShaderFromSourceFile( SHADER_CS_TEST, "compute_test.csh","ch_main");

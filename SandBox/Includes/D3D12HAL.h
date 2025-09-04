@@ -16,6 +16,7 @@ class D3D12HAL
 {
 public:
 	const char * GetName() { return "D3D12"; }
+
 	void Init(int sizeX,int sizeY, sys::Renderer* owner);
 	void Shut();
 

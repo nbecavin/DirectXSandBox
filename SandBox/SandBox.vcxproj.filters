@@ -188,10 +188,10 @@
     <ClCompile Include="WinFile.cpp">
       <Filter>PC</Filter>
     </ClCompile>
-    <ClCompile Include="DX11Renderer.cpp">
+    <ClCompile Include="DXRenderer.cpp">
       <Filter>PC</Filter>
     </ClCompile>
-    <ClCompile Include="DX11RendererInit.cpp">
+    <ClCompile Include="DXRendererInit.cpp">
       <Filter>PC</Filter>
     </ClCompile>
     <ClCompile Include="D3D12HALSwapChain.cpp">
@@ -353,9 +353,6 @@
     <ClInclude Include="Includes\SandBoxFile.h">
       <Filter>Common Platform\System</Filter>
     </ClInclude>
-    <ClInclude Include="Includes\DX11Renderer.h">
-      <Filter>PC</Filter>
-    </ClInclude>
     <ClInclude Include="Includes\D3D12HAL.h">
       <Filter>PC\D3D12</Filter>
     </ClInclude>
@@ -413,11 +410,11 @@
     <None Include="..\Shaders\shaders.compile.bat">
       <Filter>Shaders</Filter>
     </None>
-    <None Include="..\Shaders\ImGui.shader">
-      <Filter>Shaders</Filter>
-    </None>
     <None Include="packages.config" />
     <None Include="PropertySheets\Common.props" />
+    <None Include="..\Shaders\ImGui.hlsl">
+      <Filter>Shaders</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="SandBox.rc">
