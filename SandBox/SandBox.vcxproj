@@ -121,6 +121,12 @@
     <ClCompile Include="..\Tools\imgui\imgui_draw.cpp" />
     <ClCompile Include="..\Tools\imgui\imgui_tables.cpp" />
     <ClCompile Include="..\Tools\imgui\imgui_widgets.cpp" />
+    <ClCompile Include="..\Tools\RTXDI\Source\ImportanceSamplingContext.cpp" />
+    <ClCompile Include="..\Tools\RTXDI\Source\ReGIR.cpp" />
+    <ClCompile Include="..\Tools\RTXDI\Source\ReSTIRDI.cpp" />
+    <ClCompile Include="..\Tools\RTXDI\Source\ReSTIRGI.cpp" />
+    <ClCompile Include="..\Tools\RTXDI\Source\RISBufferSegmentAllocator.cpp" />
+    <ClCompile Include="..\Tools\RTXDI\Source\RtxdiUtils.cpp" />
     <ClCompile Include="AssetCache.cpp" />
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="CameraFree.cpp" />
@@ -181,6 +187,10 @@
     <ClInclude Include="..\Tools\imgui\imstb_rectpack.h" />
     <ClInclude Include="..\Tools\imgui\imstb_textedit.h" />
     <ClInclude Include="..\Tools\imgui\imstb_truetype.h" />
+    <ClInclude Include="..\Tools\RTXDI\Include\Rtxdi\ImportanceSamplingContext.h" />
+    <ClInclude Include="..\Tools\RTXDI\Include\Rtxdi\RtxdiParameters.h" />
+    <ClInclude Include="..\Tools\RTXDI\Include\Rtxdi\RtxdiTypes.h" />
+    <ClInclude Include="..\Tools\RTXDI\Include\Rtxdi\RtxdiUtils.h" />
     <ClInclude Include="Includes\AssetCache.h" />
     <ClInclude Include="Includes\Camera.h" />
     <ClInclude Include="Includes\CameraFree.h" />

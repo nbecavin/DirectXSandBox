@@ -99,6 +99,12 @@
     <Filter Include="Common Platform\Assets\Import">
       <UniqueIdentifier>{c9ed1d51-1f6b-44c8-8188-7a93b2028f0a}</UniqueIdentifier>
     </Filter>
+    <Filter Include="External">
+      <UniqueIdentifier>{ecc0c655-40e1-4200-a3de-af3f64ce0a48}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="External\RTXDI">
+      <UniqueIdentifier>{77ec8940-2aad-4dbf-b611-b0cfe1301219}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="SandBox.cpp">
@@ -240,6 +246,24 @@
       <Filter>Common Platform\Assets\Import</Filter>
     </ClCompile>
     <ClCompile Include="stdafx.cpp" />
+    <ClCompile Include="..\Tools\RTXDI\Source\RtxdiUtils.cpp">
+      <Filter>External\RTXDI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Tools\RTXDI\Source\ReGIR.cpp">
+      <Filter>External\RTXDI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Tools\RTXDI\Source\ReSTIRDI.cpp">
+      <Filter>External\RTXDI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Tools\RTXDI\Source\ReSTIRGI.cpp">
+      <Filter>External\RTXDI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Tools\RTXDI\Source\RISBufferSegmentAllocator.cpp">
+      <Filter>External\RTXDI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Tools\RTXDI\Source\ImportanceSamplingContext.cpp">
+      <Filter>External\RTXDI</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="SandBox.h">
@@ -392,6 +416,18 @@
     </ClInclude>
     <ClInclude Include="Includes\tinyddsloader.h">
       <Filter>Common Platform\Assets\Materials\Load</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Tools\RTXDI\Include\Rtxdi\ImportanceSamplingContext.h">
+      <Filter>External\RTXDI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Tools\RTXDI\Include\Rtxdi\RtxdiParameters.h">
+      <Filter>External\RTXDI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Tools\RTXDI\Include\Rtxdi\RtxdiTypes.h">
+      <Filter>External\RTXDI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Tools\RTXDI\Include\Rtxdi\RtxdiUtils.h">
+      <Filter>External\RTXDI</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -11,7 +11,9 @@
 //#	include "targetver.h"
 #	define WIN32_LEAN_AND_MEAN             // Exclure les en-têtes Windows rarement utilisés
 #	define _CRT_SECURE_NO_WARNINGS
+#	define NOMINMAX
 #	include <windows.h>
+#	include <algorithm>
 #	include <stdlib.h>
 #	include <malloc.h>
 #	include <memory.h>
