@@ -316,6 +316,9 @@ void D3D12HAL::CreateTexture(Bitmap * _Bm)
 				return ((m_pDataCur + _uSize) > m_pDataEnd) ? E_INVALIDARG : S_OK;
 			};
 
+
+			memset(m_pDataBegin, 0x80, uSize);
+
 			BYTE* pSrcBits = _Bm->GetDatas();
 			D3D12_PLACED_SUBRESOURCE_FOOTPRINT DestLayout;
 			UINT DestNumRows;
@@ -344,17 +347,17 @@ void D3D12HAL::CreateTexture(Bitmap * _Bm)
 					{
 						for (UINT y = 0; y < NumRows; y++)
 						{
-							UINT8 *pScan = m_pDataBegin + DestLayout.Offset + y * DestRowSizeInBytes;
+							UINT8 *pScan = m_pDataBegin + DestLayout.Offset + y * DestLayout.Footprint.RowPitch;
 							UINT8 *pSrc = pSrcBits + y * RowBytes;
 							memcpy(pScan, pSrc, RowBytes);
+							//memset(pScan, (i & 1) ? 0x40 : 0xf0, RowBytes);
 						}
 					}
 					else
 					{
 						memcpy(m_pDataBegin + DestLayout.Offset, pSrcBits, NumBytes);
+						//memset(m_pDataBegin + DestLayout.Offset, (i&1) ? 0xff : 0, NumBytes);
 					}
-
-					//memset(m_pDataBegin + DestLayout.Offset, (i & 1) ? 0xff : 0, DestTotalBytes);
 
 					pCommandList->CopyTextureRegion(
 						&CD3DX12_TEXTURE_COPY_LOCATION(tex->Resource12, SubResourceIndex),

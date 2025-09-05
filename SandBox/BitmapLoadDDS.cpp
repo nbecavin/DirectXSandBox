@@ -88,12 +88,12 @@ bool Bitmap::LoadDDS(const char* filename)
 	}
 
 	// Pipotron 3000
-	if(0)
+	if(0) //pour debug
 	{
-		Sx = 128;
-		Sy = 128;
+		Sx = 64;
+		Sy = 64;
 		Sz = 1;
-		Mips = 8;
+		Mips = 7;
 		Type = BM_TYPE_2D;		
 		Format = BM_R8G8B8A8_UINT;
 

@@ -75,6 +75,7 @@ namespace sys {
 		m_CameraConstant->Lock(0, 0, (void**)&camCst);
 		camCst->ProjMatrix = XMMatrixTranspose(proj);
 		camCst->ViewMatrix = XMMatrixTranspose(view);
+		camCst->EyeWorld = m_Camera->GetWorldPosition();
 		XMVECTOR det;
 		camCst->InvProjMatrix = XMMatrixTranspose(XMMatrixInverse(&det, proj));
 		m_CameraConstant->Unlock();

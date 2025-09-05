@@ -37,7 +37,8 @@
     <None Include="$(MSBuildThisFileDirectory)..\ImGui.hlsl">
       <FileType>Document</FileType>
     </None>
-    <None Include="$(MSBuildThisFileDirectory)rtxdi_integration.hlsli" />
+    <None Include="$(MSBuildThisFileDirectory)..\material_common.hlsli" />
+    <None Include="$(MSBuildThisFileDirectory)..\rtxdi_integration.hlsli" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="$(MSBuildThisFileDirectory)..\sh_const.h" />

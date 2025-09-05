@@ -10,6 +10,11 @@ ConstantBuffer* D3D12HAL::CreateConstantBuffer(U32 _Size)
 	return (cb->IsInited()) ? cb : nullptr;
 }
 
+U32 Align(U32 uLocation, UINT uAlign)
+{
+	return ((uLocation + (U64)(uAlign - 1)) & ~((U64)(uAlign - 1)));
+}
+
 void D3D12ConstantBuffer::Create(U32 _Size)
 {
 	HRESULT hr;
@@ -19,7 +24,7 @@ void D3D12ConstantBuffer::Create(U32 _Size)
 	Device->CreateCommittedResource(
 		&CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_UPLOAD),
 		D3D12_HEAP_FLAG_NONE,
-		&CD3DX12_RESOURCE_DESC::Buffer(_Size),
+		&CD3DX12_RESOURCE_DESC::Buffer(Align(_Size, 256)),
 		D3D12_RESOURCE_STATE_GENERIC_READ,
 		nullptr,
 		IID_PPV_ARGS(&res));
@@ -29,7 +34,7 @@ void D3D12ConstantBuffer::Create(U32 _Size)
 	m_RingConfig.m_EndPtr = m_RingConfig.m_BeginPtr + _Size;
 
 	m_BufferView.BufferLocation = res->GetGPUVirtualAddress();
-	m_BufferView.SizeInBytes = _Size;
+	m_BufferView.SizeInBytes = Align(_Size, 256);
 
 	auto& heap = GET_RDR_INSTANCE()->GetD3D12HAL().GetSrvHeap();
 	U32 slot = heap.AllocateSlot(1);

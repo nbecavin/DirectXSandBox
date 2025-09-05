@@ -22,6 +22,8 @@ struct CameraConstant
 	Mat4x4	ProjMatrix;
 	Mat4x4	InvProjMatrix;
 	Mat4x4	InvViewProjMatrix;
+	Vec4f	EyeWorld;
+	Vec4f   dummy[3];
 };
 
 struct PostProcessConstant

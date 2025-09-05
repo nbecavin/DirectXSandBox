@@ -46,6 +46,10 @@ void SceneImporter::LoadScene(std::string& filepath)
 
 		const aiScene* pScene = importer.ReadFile(with_alias,
 			aiProcess_CalcTangentSpace |
+			aiProcess_FlipUVs |
+			aiProcess_RemoveRedundantMaterials |
+			aiProcess_GenUVCoords |
+			aiProcess_TransformUVCoords |
 			aiProcess_JoinIdenticalVertices |
 			aiProcess_Triangulate | aiProcess_SortByPType |
 			aiProcess_GenBoundingBoxes |
@@ -136,7 +140,7 @@ void Mesh::LoadFromAiMesh(std::filesystem::path directory, aiMesh* importMesh, a
 	struct MeshVertex
 	{
 		float pos[3];
-		float nrm[3];
+		float TBN[3][3];
 		float uv[2];
 	};
 
@@ -158,9 +162,15 @@ void Mesh::LoadFromAiMesh(std::filesystem::path directory, aiMesh* importMesh, a
 			pVtx.pos[1] = importMesh->mVertices[i].y;
 			pVtx.pos[2] = importMesh->mVertices[i].z;
 
-			pVtx.nrm[0] = importMesh->mNormals[i].x;
-			pVtx.nrm[1] = importMesh->mNormals[i].y;
-			pVtx.nrm[2] = importMesh->mNormals[i].z;
+			pVtx.TBN[0][0] = importMesh->mTangents[i].x;
+			pVtx.TBN[0][1] = importMesh->mTangents[i].y;
+			pVtx.TBN[0][2] = importMesh->mTangents[i].z;
+			pVtx.TBN[1][0] = importMesh->mBitangents[i].x;
+			pVtx.TBN[1][1] = importMesh->mBitangents[i].y;
+			pVtx.TBN[1][2] = importMesh->mBitangents[i].z;
+			pVtx.TBN[2][0] = importMesh->mNormals[i].x;
+			pVtx.TBN[2][1] = importMesh->mNormals[i].y;
+			pVtx.TBN[2][2] = importMesh->mNormals[i].z;
 
 			pVtx.uv[0] = importMesh->mTextureCoords[0][i].x;
 			pVtx.uv[1] = importMesh->mTextureCoords[0][i].y;
@@ -180,9 +190,21 @@ void Mesh::LoadFromAiMesh(std::filesystem::path directory, aiMesh* importMesh, a
 		pElt->Type = DECL_FMT_FLOAT3;
 		pElt->Semantic = DECL_POSITION + 0;
 		pElt++;
+		// TANGENT
+		pElt->StreamId = 0;
+		pElt->Offset = offsetof(MeshVertex, TBN[0]);
+		pElt->Type = DECL_FMT_FLOAT3;
+		pElt->Semantic = DECL_TANGENT;
+		pElt++;
+		// BINORMAL
+		pElt->StreamId = 0;
+		pElt->Offset = offsetof(MeshVertex, TBN[1]);
+		pElt->Type = DECL_FMT_FLOAT3;
+		pElt->Semantic = DECL_BINORMAL;
+		pElt++;
 		// NORMAL
 		pElt->StreamId = 0;
-		pElt->Offset = offsetof(MeshVertex, nrm);
+		pElt->Offset = offsetof(MeshVertex, TBN[2]);
 		pElt->Type = DECL_FMT_FLOAT3;
 		pElt->Semantic = DECL_NORMAL;
 		pElt++;
@@ -208,7 +230,6 @@ void Mesh::LoadFromAiMesh(std::filesystem::path directory, aiMesh* importMesh, a
 		std::string albedo, normal;
 		Bitmap* bm;
 
-#if 1
 		auto LoadBitmap = [&](MaterialStage stage)
 			{
 				std::string tex;
@@ -217,13 +238,14 @@ void Mesh::LoadFromAiMesh(std::filesystem::path directory, aiMesh* importMesh, a
 				switch (stage)
 				{
 				case MTL_STAGE_ALBEDO:		type = aiTextureType_DIFFUSE; break;
+				case MTL_STAGE_NORMAL:		type = aiTextureType_NORMALS; break;
 				case MTL_STAGE_ROUGHNESS:	type = aiTextureType_SPECULAR; break;
 				default:
 					return;
 				};
 
 				aiString aitex;
-				importMaterial->GetTexture(aiTextureType_DIFFUSE, 0, &aitex, nullptr, nullptr, nullptr, nullptr, nullptr);
+				importMaterial->GetTexture(type, 0, &aitex, nullptr, nullptr, nullptr, nullptr, nullptr);
 
 				std::filesystem::path path(directory);
 				path.append(aitex.C_Str());
@@ -244,7 +266,7 @@ void Mesh::LoadFromAiMesh(std::filesystem::path directory, aiMesh* importMesh, a
 			};
 
 		LoadBitmap(MTL_STAGE_ALBEDO);
-		//LoadBitmap(std::string("..\\GameDB\\assets\\models\\sponza\\spnza_bricks_a_normal.dds"), MTL_STAGE_NORMAL);
+		LoadBitmap(MTL_STAGE_NORMAL);
 		LoadBitmap(MTL_STAGE_ROUGHNESS);
 
 		auto LoadBitmapFromPath = [&](std::string& tex, MaterialStage stage)
@@ -262,6 +284,7 @@ void Mesh::LoadFromAiMesh(std::filesystem::path directory, aiMesh* importMesh, a
 				}				
 			};
 
+		// dummy texture
 		if (!pMat->GetBitmap(MTL_STAGE_ALBEDO))
 		{
 			LoadBitmapFromPath(std::string("..\\GameDB\\assets\\models\\sponza\\spnza_bricks_a_diff.dds"), MTL_STAGE_ALBEDO);
@@ -270,23 +293,5 @@ void Mesh::LoadFromAiMesh(std::filesystem::path directory, aiMesh* importMesh, a
 		{
 			LoadBitmapFromPath(std::string("..\\GameDB\\assets\\models\\sponza\\spnza_bricks_a_diff.dds"), MTL_STAGE_ROUGHNESS);
 		}
-#else
-		auto LoadBitmap = [&](std::string& tex, MaterialStage stage)
-			{
-				Bitmap* bm = nullptr;
-				asset::Cache& asset = asset::Cache::GetInstance();
-				Bool bNew = asset.LoadAsset(asset::Type::BITMAP, tex.c_str(), (GraphObject**)&bm);
-				if (bNew)
-				{
-					bm->LoadDDS(tex.c_str());
-					gData.Rdr->CreateTexture(bm);
-				}
-				pMat->SetBitmap(bm, stage);
-			};
-
-		LoadBitmap(std::string("..\\GameDB\\assets\\models\\sponza\\spnza_bricks_a_diff.dds"), MTL_STAGE_ALBEDO);
-		//LoadBitmap(std::string("..\\GameDB\\assets\\models\\sponza\\spnza_bricks_a_normal.dds"), MTL_STAGE_NORMAL);
-		LoadBitmap(std::string("..\\GameDB\\assets\\models\\sponza\\spnza_bricks_a_spec.DDS"), MTL_STAGE_ROUGHNESS);
-#endif
 	}
 }

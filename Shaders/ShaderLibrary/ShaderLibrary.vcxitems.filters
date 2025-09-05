@@ -10,6 +10,9 @@
     <Filter Include="RTXDI-Integration">
       <UniqueIdentifier>{b8870869-5b5d-4691-9f89-fb114ecf1ec7}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Material">
+      <UniqueIdentifier>{ea792786-2a87-447d-86c0-66cb89d2db40}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="$(MSBuildThisFileDirectory)..\base_pass.ps.hlsl">
@@ -32,6 +35,9 @@
     <None Include="$(MSBuildThisFileDirectory)..\ImGui.hlsl" />
     <None Include="$(MSBuildThisFileDirectory)rtxdi_integration.hlsli">
       <Filter>RTXDI-Integration</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)material_common.hlsli">
+      <Filter>Material</Filter>
     </None>
   </ItemGroup>
 </Project>
