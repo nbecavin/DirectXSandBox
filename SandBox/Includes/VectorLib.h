@@ -4,15 +4,7 @@
 #define _USE_MATH_DEFINES
 #include <math.h>
 
-#define PI		static_cast<float>(M_PI)
-
-#ifndef max
-#define max(a,b)            (((a) > (b)) ? (a) : (b))
-#endif
-
-#ifndef min
-#define min(a,b)            (((a) < (b)) ? (a) : (b))
-#endif
+#define PI static_cast<float>(M_PI)
 
 inline float Cos(float a) { return cosf(a); }
 inline float Sin(float a) { return sinf(a); }

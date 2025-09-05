@@ -125,7 +125,7 @@ void sys::MainLoop()
 		float CurrentTime = GetAbsoluteTime();
 		gData.DeltaTime = CurrentTime - StartTime;
 //MESSAGE("In mainloop %f %f", gData.DeltaTime, CurrentTime);
-		gData.DeltaTime = max(gData.DeltaTime,0.0001f);
+		gData.DeltaTime = std::max(gData.DeltaTime,0.0001f);
 		StartTime = CurrentTime;
 	}
 

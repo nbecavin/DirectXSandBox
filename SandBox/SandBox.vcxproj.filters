@@ -1,88 +1,11 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <Filter Include="Common Platform">
-      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
-      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
-    </Filter>
-    <Filter Include="Common Platform\Scenery Objects">
-      <UniqueIdentifier>{b6155926-dee7-48dd-b1a3-535aa95e6c9c}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Common Platform\Scenery Objects\Terrain">
-      <UniqueIdentifier>{bf4a44e2-d66b-4b53-b456-b19b9c77d053}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Common Platform\Scenery Objects\Sky">
-      <UniqueIdentifier>{b08840bd-4e72-49b6-a2b6-1a1d07aa3baa}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Common Platform\Scenery Objects\Proc">
-      <UniqueIdentifier>{e0935776-b633-4a4b-b969-426b3a9b92e8}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Common Platform\Scenery Objects\Mesh">
-      <UniqueIdentifier>{af324ce9-25cf-4f44-9352-ae66edfc16ad}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Common Platform\Renderer">
-      <UniqueIdentifier>{5da5aa90-7970-4a77-92ed-58de9922e116}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Common Platform\System">
-      <UniqueIdentifier>{63dd6b50-363d-4f75-9056-7121fa24d55f}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Common Platform\System\Containers">
-      <UniqueIdentifier>{1c0ce596-ffb9-4ca6-90ca-f5252e2f1d8e}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Common Platform\Math Library">
-      <UniqueIdentifier>{f15ead27-d1a4-4be5-9591-3ebc60b67574}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Common Platform\Assets">
-      <UniqueIdentifier>{109d8ce1-ff21-4953-a011-af409bf61a17}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Common Platform\Assets\Materials">
-      <UniqueIdentifier>{d13b3f79-978f-4742-b26c-ca474335a170}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Common Platform\Assets\Materials\Load">
-      <UniqueIdentifier>{9c2ea980-4a81-4c9e-9885-b908baf951d9}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Common Platform\InputManager">
-      <UniqueIdentifier>{ced36fe0-63d3-45bd-b74e-d68769027786}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Shaders">
       <UniqueIdentifier>{9d9602fa-e421-4790-b73a-71f290c23e55}</UniqueIdentifier>
     </Filter>
-    <Filter Include="PC">
-      <UniqueIdentifier>{aacb45ab-2fee-4094-a6d3-5c23d3eae63e}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="PC\Fichiers de ressources">
-      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
-      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav</Extensions>
-    </Filter>
-    <Filter Include="Shaders\Post Processing">
-      <UniqueIdentifier>{735f9bf1-41f3-4d80-b8bd-4155e52be142}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Shaders\Deferred">
-      <UniqueIdentifier>{a4a1052e-8b7a-4b74-b43d-ea258a7bf98e}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Shaders\Forward Renderer">
-      <UniqueIdentifier>{e6b0bf67-a75c-4f26-b939-fc4a464d6cb2}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Shaders\Shadow Mapping">
-      <UniqueIdentifier>{53b80bbb-059c-4209-ac44-d0a13cc01f17}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Common Platform\Script Objects">
-      <UniqueIdentifier>{3be30e24-cf3d-4490-924d-08d7940dac60}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Common Platform\Script Objects\CameraFree">
-      <UniqueIdentifier>{967445df-b42b-47af-ad52-d7477641fdf0}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Common Platform\Scenery Objects\Camera">
-      <UniqueIdentifier>{86c74303-d16f-4ac5-8b7d-6bfe7f3f35fb}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Shaders\Compute">
-      <UniqueIdentifier>{2ff3407c-25bd-47e9-b544-7580d4e4f057}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Assets">
       <UniqueIdentifier>{f2e75475-53ea-4f0b-9c5f-f4bd37caeb32}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="PC\D3D12">
-      <UniqueIdentifier>{e12b9704-806a-4220-be6b-fd045eab7013}</UniqueIdentifier>
     </Filter>
     <Filter Include="Tools">
       <UniqueIdentifier>{1c3cc334-dcab-4b25-b004-6b147b39fde8}</UniqueIdentifier>
@@ -90,115 +13,180 @@
     <Filter Include="Tools\ImGui">
       <UniqueIdentifier>{47e044ba-9cc1-48fb-8128-f4e500d94409}</UniqueIdentifier>
     </Filter>
-    <Filter Include="PC\Vulkan">
-      <UniqueIdentifier>{665beda8-144c-439d-8be8-29cb2cbeaf3a}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Tools\assimp">
       <UniqueIdentifier>{1dd3c88a-2405-448b-8931-4f0c6b3b28fc}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Common Platform\Assets\Import">
+    <Filter Include="Tools\RTXDI">
+      <UniqueIdentifier>{77ec8940-2aad-4dbf-b611-b0cfe1301219}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Engine\Scenery Objects">
+      <UniqueIdentifier>{b6155926-dee7-48dd-b1a3-535aa95e6c9c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\Scenery Objects\Terrain">
+      <UniqueIdentifier>{bf4a44e2-d66b-4b53-b456-b19b9c77d053}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\Scenery Objects\Sky">
+      <UniqueIdentifier>{b08840bd-4e72-49b6-a2b6-1a1d07aa3baa}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\Scenery Objects\Proc">
+      <UniqueIdentifier>{e0935776-b633-4a4b-b969-426b3a9b92e8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\Scenery Objects\Mesh">
+      <UniqueIdentifier>{af324ce9-25cf-4f44-9352-ae66edfc16ad}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\Scenery Objects\Camera">
+      <UniqueIdentifier>{86c74303-d16f-4ac5-8b7d-6bfe7f3f35fb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\Renderer">
+      <UniqueIdentifier>{5da5aa90-7970-4a77-92ed-58de9922e116}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\System">
+      <UniqueIdentifier>{63dd6b50-363d-4f75-9056-7121fa24d55f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\System\Containers">
+      <UniqueIdentifier>{1c0ce596-ffb9-4ca6-90ca-f5252e2f1d8e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\Math Library">
+      <UniqueIdentifier>{f15ead27-d1a4-4be5-9591-3ebc60b67574}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\Assets">
+      <UniqueIdentifier>{109d8ce1-ff21-4953-a011-af409bf61a17}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\Assets\Materials">
+      <UniqueIdentifier>{d13b3f79-978f-4742-b26c-ca474335a170}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\Assets\Materials\Load">
+      <UniqueIdentifier>{9c2ea980-4a81-4c9e-9885-b908baf951d9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\Assets\Import">
       <UniqueIdentifier>{c9ed1d51-1f6b-44c8-8188-7a93b2028f0a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\InputManager">
+      <UniqueIdentifier>{ced36fe0-63d3-45bd-b74e-d68769027786}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\Script Objects">
+      <UniqueIdentifier>{3be30e24-cf3d-4490-924d-08d7940dac60}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\Script Objects\CameraFree">
+      <UniqueIdentifier>{967445df-b42b-47af-ad52-d7477641fdf0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\PC">
+      <UniqueIdentifier>{aacb45ab-2fee-4094-a6d3-5c23d3eae63e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\PC\Fichiers de ressources">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav</Extensions>
+    </Filter>
+    <Filter Include="Engine\PC\D3D12">
+      <UniqueIdentifier>{e12b9704-806a-4220-be6b-fd045eab7013}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\PC\Vulkan">
+      <UniqueIdentifier>{665beda8-144c-439d-8be8-29cb2cbeaf3a}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="SandBox.cpp">
-      <Filter>Common Platform</Filter>
+      <Filter>Engine</Filter>
     </ClCompile>
     <ClCompile Include="Terrain.cpp">
-      <Filter>Common Platform\Scenery Objects\Terrain</Filter>
+      <Filter>Engine\Scenery Objects\Terrain</Filter>
     </ClCompile>
     <ClCompile Include="Sky.cpp">
-      <Filter>Common Platform\Scenery Objects\Sky</Filter>
+      <Filter>Engine\Scenery Objects\Sky</Filter>
     </ClCompile>
     <ClCompile Include="Proc.cpp">
-      <Filter>Common Platform\Scenery Objects\Proc</Filter>
+      <Filter>Engine\Scenery Objects\Proc</Filter>
     </ClCompile>
     <ClCompile Include="Mesh.cpp">
-      <Filter>Common Platform\Scenery Objects\Mesh</Filter>
+      <Filter>Engine\Scenery Objects\Mesh</Filter>
     </ClCompile>
     <ClCompile Include="MeshLoad.cpp">
-      <Filter>Common Platform\Scenery Objects\Mesh</Filter>
+      <Filter>Engine\Scenery Objects\Mesh</Filter>
     </ClCompile>
     <ClCompile Include="PrimitiveBuffers.cpp">
-      <Filter>Common Platform\Renderer</Filter>
+      <Filter>Engine\Renderer</Filter>
     </ClCompile>
     <ClCompile Include="Renderer.cpp">
-      <Filter>Common Platform\Renderer</Filter>
+      <Filter>Engine\Renderer</Filter>
     </ClCompile>
     <ClCompile Include="RendererInit.cpp">
-      <Filter>Common Platform\Renderer</Filter>
+      <Filter>Engine\Renderer</Filter>
     </ClCompile>
     <ClCompile Include="RendererShader.cpp">
-      <Filter>Common Platform\Renderer</Filter>
+      <Filter>Engine\Renderer</Filter>
     </ClCompile>
     <ClCompile Include="SandBoxDebug.cpp">
-      <Filter>Common Platform\System</Filter>
+      <Filter>Engine\System</Filter>
     </ClCompile>
     <ClCompile Include="SandBoxMemory.cpp">
-      <Filter>Common Platform\System</Filter>
+      <Filter>Engine\System</Filter>
     </ClCompile>
     <ClCompile Include="Bitmap.cpp">
-      <Filter>Common Platform\Assets\Materials</Filter>
+      <Filter>Engine\Assets\Materials</Filter>
     </ClCompile>
     <ClCompile Include="Material.cpp">
-      <Filter>Common Platform\Assets\Materials</Filter>
+      <Filter>Engine\Assets\Materials</Filter>
     </ClCompile>
     <ClCompile Include="BitmapLoadDDS.cpp">
-      <Filter>Common Platform\Assets\Materials\Load</Filter>
+      <Filter>Engine\Assets\Materials\Load</Filter>
     </ClCompile>
     <ClCompile Include="InputManager.cpp">
-      <Filter>Common Platform\InputManager</Filter>
+      <Filter>Engine\InputManager</Filter>
     </ClCompile>
     <ClCompile Include="DXRendererResource.cpp">
-      <Filter>PC</Filter>
+      <Filter>Engine\PC</Filter>
     </ClCompile>
     <ClCompile Include="WinMain.cpp">
-      <Filter>PC</Filter>
+      <Filter>Engine\PC</Filter>
     </ClCompile>
     <ClCompile Include="WinTimer.cpp">
-      <Filter>PC</Filter>
+      <Filter>Engine\PC</Filter>
     </ClCompile>
     <ClCompile Include="WinInputManager.cpp">
-      <Filter>PC</Filter>
+      <Filter>Engine\PC</Filter>
     </ClCompile>
     <ClCompile Include="GraphObject.cpp">
-      <Filter>Common Platform\Scenery Objects</Filter>
+      <Filter>Engine\Scenery Objects</Filter>
     </ClCompile>
     <ClCompile Include="Camera.cpp">
-      <Filter>Common Platform\Scenery Objects\Camera</Filter>
+      <Filter>Engine\Scenery Objects\Camera</Filter>
     </ClCompile>
     <ClCompile Include="ScriptObject.cpp">
-      <Filter>Common Platform\Script Objects</Filter>
+      <Filter>Engine\Script Objects</Filter>
     </ClCompile>
     <ClCompile Include="CameraFree.cpp">
-      <Filter>Common Platform\Script Objects\CameraFree</Filter>
+      <Filter>Engine\Script Objects\CameraFree</Filter>
     </ClCompile>
     <ClCompile Include="AssetCache.cpp">
-      <Filter>Common Platform\Assets</Filter>
+      <Filter>Engine\Assets</Filter>
     </ClCompile>
     <ClCompile Include="SandBoxFile.cpp">
-      <Filter>Common Platform\System</Filter>
+      <Filter>Engine\System</Filter>
     </ClCompile>
     <ClCompile Include="WinFile.cpp">
-      <Filter>PC</Filter>
+      <Filter>Engine\PC</Filter>
     </ClCompile>
     <ClCompile Include="DXRenderer.cpp">
-      <Filter>PC</Filter>
+      <Filter>Engine\PC</Filter>
     </ClCompile>
     <ClCompile Include="DXRendererInit.cpp">
-      <Filter>PC</Filter>
+      <Filter>Engine\PC</Filter>
     </ClCompile>
     <ClCompile Include="D3D12HALSwapChain.cpp">
-      <Filter>PC\D3D12</Filter>
+      <Filter>Engine\PC\D3D12</Filter>
     </ClCompile>
     <ClCompile Include="D3D12HALShaders.cpp">
-      <Filter>PC\D3D12</Filter>
+      <Filter>Engine\PC\D3D12</Filter>
     </ClCompile>
     <ClCompile Include="D3D12HALBuffers.cpp">
-      <Filter>PC\D3D12</Filter>
+      <Filter>Engine\PC\D3D12</Filter>
     </ClCompile>
     <ClCompile Include="D3D12HALConstantBuffer.cpp">
-      <Filter>PC\D3D12</Filter>
+      <Filter>Engine\PC\D3D12</Filter>
     </ClCompile>
     <ClCompile Include="..\Tools\imgui\imgui.cpp">
       <Filter>Tools\ImGui</Filter>
@@ -213,149 +201,167 @@
       <Filter>Tools\ImGui</Filter>
     </ClCompile>
     <ClCompile Include="RendererImGui.cpp">
-      <Filter>Common Platform\Renderer</Filter>
+      <Filter>Engine\Renderer</Filter>
     </ClCompile>
     <ClCompile Include="D3D12HALTexture.cpp">
-      <Filter>PC\D3D12</Filter>
+      <Filter>Engine\PC\D3D12</Filter>
     </ClCompile>
     <ClCompile Include="D3D12HALPipelineState.cpp">
-      <Filter>PC\D3D12</Filter>
+      <Filter>Engine\PC\D3D12</Filter>
     </ClCompile>
     <ClCompile Include="D3D12HALDescriptorHeaps.cpp">
-      <Filter>PC\D3D12</Filter>
+      <Filter>Engine\PC\D3D12</Filter>
     </ClCompile>
     <ClCompile Include="D3D12HALSamplerState.cpp">
-      <Filter>PC\D3D12</Filter>
+      <Filter>Engine\PC\D3D12</Filter>
     </ClCompile>
     <ClCompile Include="Model.cpp">
-      <Filter>Common Platform\Scenery Objects\Mesh</Filter>
+      <Filter>Engine\Scenery Objects\Mesh</Filter>
     </ClCompile>
     <ClCompile Include="ModelH3D.cpp">
-      <Filter>Common Platform\Scenery Objects\Mesh</Filter>
+      <Filter>Engine\Scenery Objects\Mesh</Filter>
     </ClCompile>
     <ClCompile Include="..\Tools\imgui\imgui_tables.cpp">
       <Filter>Tools\ImGui</Filter>
     </ClCompile>
     <ClCompile Include="SceneImporter.cpp">
-      <Filter>Common Platform\Assets\Import</Filter>
+      <Filter>Engine\Assets\Import</Filter>
     </ClCompile>
     <ClCompile Include="stdafx.cpp" />
+    <ClCompile Include="..\Tools\RTXDI\Source\RtxdiUtils.cpp">
+      <Filter>Tools\RTXDI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Tools\RTXDI\Source\ReGIR.cpp">
+      <Filter>Tools\RTXDI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Tools\RTXDI\Source\ReSTIRDI.cpp">
+      <Filter>Tools\RTXDI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Tools\RTXDI\Source\ReSTIRGI.cpp">
+      <Filter>Tools\RTXDI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Tools\RTXDI\Source\RISBufferSegmentAllocator.cpp">
+      <Filter>Tools\RTXDI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Tools\RTXDI\Source\ImportanceSamplingContext.cpp">
+      <Filter>Tools\RTXDI</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="SandBox.h">
-      <Filter>Common Platform</Filter>
+      <Filter>Engine</Filter>
     </ClInclude>
     <ClInclude Include="Includes\GraphObject.h">
-      <Filter>Common Platform\Scenery Objects</Filter>
+      <Filter>Engine\Scenery Objects</Filter>
     </ClInclude>
     <ClInclude Include="Includes\Terrain.h">
-      <Filter>Common Platform\Scenery Objects\Terrain</Filter>
+      <Filter>Engine\Scenery Objects\Terrain</Filter>
     </ClInclude>
     <ClInclude Include="Includes\Sky.h">
-      <Filter>Common Platform\Scenery Objects\Sky</Filter>
+      <Filter>Engine\Scenery Objects\Sky</Filter>
     </ClInclude>
     <ClInclude Include="Includes\Proc.h">
-      <Filter>Common Platform\Scenery Objects\Proc</Filter>
+      <Filter>Engine\Scenery Objects\Proc</Filter>
     </ClInclude>
     <ClInclude Include="Includes\Mesh.h">
-      <Filter>Common Platform\Scenery Objects\Mesh</Filter>
+      <Filter>Engine\Scenery Objects\Mesh</Filter>
     </ClInclude>
     <ClInclude Include="Includes\MeshSDKMesh.h">
-      <Filter>Common Platform\Scenery Objects\Mesh</Filter>
+      <Filter>Engine\Scenery Objects\Mesh</Filter>
     </ClInclude>
     <ClInclude Include="Includes\PrimitiveBuffers.h">
-      <Filter>Common Platform\Renderer</Filter>
+      <Filter>Engine\Renderer</Filter>
     </ClInclude>
     <ClInclude Include="Includes\Renderer.h">
-      <Filter>Common Platform\Renderer</Filter>
+      <Filter>Engine\Renderer</Filter>
     </ClInclude>
     <ClInclude Include="Includes\RendererShader.h">
-      <Filter>Common Platform\Renderer</Filter>
+      <Filter>Engine\Renderer</Filter>
     </ClInclude>
     <ClInclude Include="Includes\ShaderConstants.h">
-      <Filter>Common Platform\Renderer</Filter>
+      <Filter>Engine\Renderer</Filter>
     </ClInclude>
     <ClInclude Include="Includes\SandBoxDebug.h">
-      <Filter>Common Platform\System</Filter>
+      <Filter>Engine\System</Filter>
     </ClInclude>
     <ClInclude Include="Includes\SandBoxMemory.h">
-      <Filter>Common Platform\System</Filter>
+      <Filter>Engine\System</Filter>
     </ClInclude>
     <ClInclude Include="Includes\SandBoxThread.h">
-      <Filter>Common Platform\System</Filter>
+      <Filter>Engine\System</Filter>
     </ClInclude>
     <ClInclude Include="Includes\SandBoxTypes.h">
-      <Filter>Common Platform\System</Filter>
+      <Filter>Engine\System</Filter>
     </ClInclude>
     <ClInclude Include="Includes\DynArray.h">
-      <Filter>Common Platform\System\Containers</Filter>
+      <Filter>Engine\System\Containers</Filter>
     </ClInclude>
     <ClInclude Include="Includes\VectorLib.h">
-      <Filter>Common Platform\Math Library</Filter>
+      <Filter>Engine\Math Library</Filter>
     </ClInclude>
     <ClInclude Include="Includes\VectorLib.inl.h">
-      <Filter>Common Platform\Math Library</Filter>
+      <Filter>Engine\Math Library</Filter>
     </ClInclude>
     <ClInclude Include="Includes\Bitmap.h">
-      <Filter>Common Platform\Assets\Materials</Filter>
+      <Filter>Engine\Assets\Materials</Filter>
     </ClInclude>
     <ClInclude Include="Includes\Bitmap.inl.h">
-      <Filter>Common Platform\Assets\Materials</Filter>
+      <Filter>Engine\Assets\Materials</Filter>
     </ClInclude>
     <ClInclude Include="Includes\BitmapFlags.h">
-      <Filter>Common Platform\Assets\Materials</Filter>
+      <Filter>Engine\Assets\Materials</Filter>
     </ClInclude>
     <ClInclude Include="Includes\Material.h">
-      <Filter>Common Platform\Assets\Materials</Filter>
+      <Filter>Engine\Assets\Materials</Filter>
     </ClInclude>
     <ClInclude Include="Includes\InputManager.h">
-      <Filter>Common Platform\InputManager</Filter>
+      <Filter>Engine\InputManager</Filter>
     </ClInclude>
     <ClInclude Include="Includes\DXRenderer.h">
-      <Filter>PC</Filter>
+      <Filter>Engine\PC</Filter>
     </ClInclude>
     <ClInclude Include="targetver.h">
-      <Filter>PC</Filter>
+      <Filter>Engine\PC</Filter>
     </ClInclude>
     <ClInclude Include="Includes\WinMain.h">
-      <Filter>PC</Filter>
+      <Filter>Engine\PC</Filter>
     </ClInclude>
     <ClInclude Include="Resource.h">
-      <Filter>PC\Fichiers de ressources</Filter>
+      <Filter>Engine\PC\Fichiers de ressources</Filter>
     </ClInclude>
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="Includes\WinInputManager.h">
-      <Filter>PC</Filter>
+      <Filter>Engine\PC</Filter>
     </ClInclude>
     <ClInclude Include="Includes\Camera.h">
-      <Filter>Common Platform\Scenery Objects\Camera</Filter>
+      <Filter>Engine\Scenery Objects\Camera</Filter>
     </ClInclude>
     <ClInclude Include="Includes\ScriptObject.h">
-      <Filter>Common Platform\Script Objects</Filter>
+      <Filter>Engine\Script Objects</Filter>
     </ClInclude>
     <ClInclude Include="Includes\CameraFree.h">
-      <Filter>Common Platform\Script Objects\CameraFree</Filter>
+      <Filter>Engine\Script Objects\CameraFree</Filter>
     </ClInclude>
     <ClInclude Include="Includes\AssetCache.h">
-      <Filter>Common Platform\Assets</Filter>
+      <Filter>Engine\Assets</Filter>
     </ClInclude>
     <ClInclude Include="Includes\WinFile.h">
-      <Filter>PC</Filter>
+      <Filter>Engine\PC</Filter>
     </ClInclude>
     <ClInclude Include="Includes\SandBoxFile.h">
-      <Filter>Common Platform\System</Filter>
+      <Filter>Engine\System</Filter>
     </ClInclude>
     <ClInclude Include="Includes\D3D12HAL.h">
-      <Filter>PC\D3D12</Filter>
+      <Filter>Engine\PC\D3D12</Filter>
     </ClInclude>
     <ClInclude Include="Includes\D3D12HALBuffers.h">
-      <Filter>PC\D3D12</Filter>
+      <Filter>Engine\PC\D3D12</Filter>
     </ClInclude>
     <ClInclude Include="Includes\d3dx12.h">
-      <Filter>PC\D3D12</Filter>
+      <Filter>Engine\PC\D3D12</Filter>
     </ClInclude>
     <ClInclude Include="Includes\D3D12HALConstantBuffer.h">
-      <Filter>PC\D3D12</Filter>
+      <Filter>Engine\PC\D3D12</Filter>
     </ClInclude>
     <ClInclude Include="..\Tools\imgui\imconfig.h">
       <Filter>Tools\ImGui</Filter>
@@ -376,47 +382,53 @@
       <Filter>Tools\ImGui</Filter>
     </ClInclude>
     <ClInclude Include="Includes\RendererPipelineState.h">
-      <Filter>Common Platform\Renderer</Filter>
+      <Filter>Engine\Renderer</Filter>
     </ClInclude>
     <ClInclude Include="Includes\D3D12HALDescriptorHeaps.h">
-      <Filter>PC\D3D12</Filter>
+      <Filter>Engine\PC\D3D12</Filter>
     </ClInclude>
     <ClInclude Include="Includes\D3D12HALSamplerState.h">
-      <Filter>PC\D3D12</Filter>
+      <Filter>Engine\PC\D3D12</Filter>
     </ClInclude>
     <ClInclude Include="Includes\Model.h">
-      <Filter>Common Platform\Scenery Objects\Mesh</Filter>
+      <Filter>Engine\Scenery Objects\Mesh</Filter>
     </ClInclude>
     <ClInclude Include="Includes\SceneImporter.h">
-      <Filter>Common Platform\Assets\Import</Filter>
+      <Filter>Engine\Assets\Import</Filter>
     </ClInclude>
     <ClInclude Include="Includes\tinyddsloader.h">
-      <Filter>Common Platform\Assets\Materials\Load</Filter>
+      <Filter>Engine\Assets\Materials\Load</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Tools\RTXDI\Include\Rtxdi\ImportanceSamplingContext.h">
+      <Filter>Tools\RTXDI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Tools\RTXDI\Include\Rtxdi\RtxdiParameters.h">
+      <Filter>Tools\RTXDI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Tools\RTXDI\Include\Rtxdi\RtxdiTypes.h">
+      <Filter>Tools\RTXDI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Tools\RTXDI\Include\Rtxdi\RtxdiUtils.h">
+      <Filter>Tools\RTXDI</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="SandBox.ico">
-      <Filter>PC\Fichiers de ressources</Filter>
+      <Filter>Engine\PC\Fichiers de ressources</Filter>
     </None>
     <None Include="small.ico">
-      <Filter>PC\Fichiers de ressources</Filter>
+      <Filter>Engine\PC\Fichiers de ressources</Filter>
     </None>
     <None Include="ReadMe.txt" />
-    <None Include="..\Shaders\shaders.compile.bat">
-      <Filter>Shaders</Filter>
-    </None>
     <None Include="packages.config" />
     <None Include="PropertySheets\Common.props" />
-    <None Include="..\Shaders\ImGui.hlsl">
-      <Filter>Shaders</Filter>
-    </None>
     <None Include="DeployDeps.bat">
-      <Filter>Common Platform</Filter>
+      <Filter>Engine</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="SandBox.rc">
-      <Filter>PC\Fichiers de ressources</Filter>
+      <Filter>Engine\PC\Fichiers de ressources</Filter>
     </ResourceCompile>
   </ItemGroup>
   <ItemGroup>
@@ -436,54 +448,7 @@
       <Filter>Assets</Filter>
     </Image>
     <Image Include="Assets\WideLogo.scale-100.png">
-      <Filter>PC\Fichiers de ressources</Filter>
+      <Filter>Engine\PC\Fichiers de ressources</Filter>
     </Image>
-  </ItemGroup>
-  <ItemGroup>
-    <Text Include="..\Shaders\ShaderRegs.h">
-      <Filter>Shaders</Filter>
-    </Text>
-    <Text Include="..\Shaders\sh_const.h">
-      <Filter>Shaders</Filter>
-    </Text>
-    <Text Include="..\Shaders\sh_math.h">
-      <Filter>Shaders</Filter>
-    </Text>
-    <Text Include="..\Shaders\sh_shadow.h">
-      <Filter>Shaders\Shadow Mapping</Filter>
-    </Text>
-    <Text Include="..\Shaders\ssao.psh">
-      <Filter>Shaders\Post Processing</Filter>
-    </Text>
-    <Text Include="..\Shaders\post_process.psh">
-      <Filter>Shaders\Post Processing</Filter>
-    </Text>
-    <Text Include="..\Shaders\fxaa2.h">
-      <Filter>Shaders\Post Processing</Filter>
-    </Text>
-    <Text Include="..\Shaders\fxaa.h">
-      <Filter>Shaders\Post Processing</Filter>
-    </Text>
-    <Text Include="..\Shaders\base.vsh">
-      <Filter>Shaders\Post Processing</Filter>
-    </Text>
-    <Text Include="..\Shaders\vertex_factory.vsh">
-      <Filter>Shaders\Forward Renderer</Filter>
-    </Text>
-    <Text Include="..\Shaders\pixel.psh">
-      <Filter>Shaders\Forward Renderer</Filter>
-    </Text>
-    <Text Include="..\Shaders\deferred_spotlight.psh">
-      <Filter>Shaders\Deferred</Filter>
-    </Text>
-    <Text Include="..\Shaders\deferred_shadows.psh">
-      <Filter>Shaders\Deferred</Filter>
-    </Text>
-    <Text Include="..\Shaders\deferred_dlight.psh">
-      <Filter>Shaders\Deferred</Filter>
-    </Text>
-    <Text Include="..\Shaders\compute_test.csh">
-      <Filter>Shaders\Compute</Filter>
-    </Text>
   </ItemGroup>
 </Project>

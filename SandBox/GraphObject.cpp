@@ -29,4 +29,6 @@ void GraphObject::Draw()
 
 void GraphObject::DrawGBuffer()
 {
+
+	double test = std::max(1.0, 2.0);
 }

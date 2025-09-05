@@ -8,6 +8,7 @@
       <AdditionalIncludeDirectories>
 		  $(SolutionDir)\Tools\imgui;
 		  $(SolutionDir)\Tools\assimp\include\;
+		  $(SolutionDir)\Tools\RTXDI\include\;
 		  %(AdditionalIncludeDirectories)
 	  </AdditionalIncludeDirectories>
     </ClCompile>

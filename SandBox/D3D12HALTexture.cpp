@@ -189,10 +189,10 @@ static void GetSurfaceInfo(UINT width, UINT height, DXGI_FORMAT fmt, UINT* pNumB
 	{
 		int numBlocksWide = 0;
 		if (width > 0)
-			numBlocksWide = max(1, width / 4);
+			numBlocksWide = std::max<int>(1, width / 4);
 		int numBlocksHigh = 0;
 		if (height > 0)
-			numBlocksHigh = max(1, height / 4);
+			numBlocksHigh = std::max<int>(1, height / 4);
 		rowBytes = numBlocksWide * bcnumBytesPerBlock;
 		numRows = numBlocksHigh;
 	}

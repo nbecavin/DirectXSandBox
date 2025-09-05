@@ -40,8 +40,6 @@ void Mesh::Draw()
 		gData.Rdr->PushStreamSource(0,pMesh->VB,pMesh->VertexStart,pMesh->Stride);
 		gData.Rdr->PushIndices(pMesh->IB,pMesh->IndexType);
 
-		//gData.Rdr->PushDrawIndexed(pMesh->PrimType,0,0,pMesh->VertexCount,pMesh->IndexStart,pMesh->IndexCount/3);
-
 		gData.Rdr->SetPrimitiveTopology(pMesh->PrimType);
 		gData.Rdr->DrawIndexed(pMesh->IndexCount, pMesh->IndexStart, pMesh->VertexStart);
 	}

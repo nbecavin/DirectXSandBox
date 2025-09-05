@@ -121,6 +121,12 @@
     <ClCompile Include="..\Tools\imgui\imgui_draw.cpp" />
     <ClCompile Include="..\Tools\imgui\imgui_tables.cpp" />
     <ClCompile Include="..\Tools\imgui\imgui_widgets.cpp" />
+    <ClCompile Include="..\Tools\RTXDI\Source\ImportanceSamplingContext.cpp" />
+    <ClCompile Include="..\Tools\RTXDI\Source\ReGIR.cpp" />
+    <ClCompile Include="..\Tools\RTXDI\Source\ReSTIRDI.cpp" />
+    <ClCompile Include="..\Tools\RTXDI\Source\ReSTIRGI.cpp" />
+    <ClCompile Include="..\Tools\RTXDI\Source\RISBufferSegmentAllocator.cpp" />
+    <ClCompile Include="..\Tools\RTXDI\Source\RtxdiUtils.cpp" />
     <ClCompile Include="AssetCache.cpp" />
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="CameraFree.cpp" />
@@ -172,15 +178,16 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <Text Include="..\Shaders\fxaa.h" />
-    <Text Include="..\Shaders\fxaa2.h" />
-    <Text Include="..\Shaders\sh_shadow.h" />
     <ClInclude Include="..\Tools\imgui\imconfig.h" />
     <ClInclude Include="..\Tools\imgui\imgui.h" />
     <ClInclude Include="..\Tools\imgui\imgui_internal.h" />
     <ClInclude Include="..\Tools\imgui\imstb_rectpack.h" />
     <ClInclude Include="..\Tools\imgui\imstb_textedit.h" />
     <ClInclude Include="..\Tools\imgui\imstb_truetype.h" />
+    <ClInclude Include="..\Tools\RTXDI\Include\Rtxdi\ImportanceSamplingContext.h" />
+    <ClInclude Include="..\Tools\RTXDI\Include\Rtxdi\RtxdiParameters.h" />
+    <ClInclude Include="..\Tools\RTXDI\Include\Rtxdi\RtxdiTypes.h" />
+    <ClInclude Include="..\Tools\RTXDI\Include\Rtxdi\RtxdiUtils.h" />
     <ClInclude Include="Includes\AssetCache.h" />
     <ClInclude Include="Includes\Camera.h" />
     <ClInclude Include="Includes\CameraFree.h" />
@@ -221,9 +228,6 @@
     <ClInclude Include="Includes\BitmapFlags.h" />
     <ClInclude Include="Includes\Material.h" />
     <ClInclude Include="Includes\InputManager.h" />
-    <Text Include="..\Shaders\sh_const.h" />
-    <Text Include="..\Shaders\sh_math.h" />
-    <Text Include="..\Shaders\ShaderRegs.h" />
     <ClInclude Include="Includes\DXRenderer.h" />
     <ClInclude Include="targetver.h" />
     <ClInclude Include="Includes\WinMain.h" />
@@ -231,34 +235,6 @@
     <ClInclude Include="stdafx.h" />
   </ItemGroup>
   <ItemGroup>
-    <Text Include="..\Shaders\base.vsh">
-      <FileType>Document</FileType>
-    </Text>
-    <Text Include="..\Shaders\compute_test.csh">
-      <FileType>Document</FileType>
-    </Text>
-    <Text Include="..\Shaders\deferred_dlight.psh">
-      <FileType>Document</FileType>
-    </Text>
-    <Text Include="..\Shaders\deferred_shadows.psh">
-      <FileType>Document</FileType>
-    </Text>
-    <Text Include="..\Shaders\deferred_spotlight.psh">
-      <FileType>Document</FileType>
-    </Text>
-    <Text Include="..\Shaders\pixel.psh">
-      <FileType>Document</FileType>
-    </Text>
-    <Text Include="..\Shaders\post_process.psh">
-      <FileType>Document</FileType>
-    </Text>
-    <None Include="..\Shaders\shaders.compile.bat" />
-    <Text Include="..\Shaders\ssao.psh">
-      <FileType>Document</FileType>
-    </Text>
-    <Text Include="..\Shaders\vertex_factory.vsh">
-      <FileType>Document</FileType>
-    </Text>
     <None Include="DeployDeps.bat" />
     <None Include="packages.config" />
     <None Include="PropertySheets\Common.props" />
@@ -282,11 +258,6 @@
     <Image Include="Assets\WideLogo.scale-100.png">
       <DeploymentContent>true</DeploymentContent>
     </Image>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="..\Shaders\ImGui.hlsl">
-      <FileType>Document</FileType>
-    </None>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
