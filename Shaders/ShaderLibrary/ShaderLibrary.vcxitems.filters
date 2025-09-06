@@ -33,11 +33,11 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="$(MSBuildThisFileDirectory)..\ImGui.hlsl" />
-    <None Include="$(MSBuildThisFileDirectory)rtxdi_integration.hlsli">
-      <Filter>RTXDI-Integration</Filter>
-    </None>
-    <None Include="$(MSBuildThisFileDirectory)material_common.hlsli">
+    <None Include="$(MSBuildThisFileDirectory)..\material_common.hlsli">
       <Filter>Material</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)..\rtxdi_integration.hlsli">
+      <Filter>RTXDI-Integration</Filter>
     </None>
   </ItemGroup>
 </Project>
