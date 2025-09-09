@@ -246,6 +246,9 @@
     <ClCompile Include="..\Tools\RTXDI\Source\ImportanceSamplingContext.cpp">
       <Filter>Tools\RTXDI</Filter>
     </ClCompile>
+    <ClCompile Include="D3D12HALRaytracing.cpp">
+      <Filter>Engine\PC\D3D12</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="SandBox.h">

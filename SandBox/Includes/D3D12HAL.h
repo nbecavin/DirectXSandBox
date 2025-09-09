@@ -51,7 +51,7 @@ public:
 	D3D12DescriptorHeap& GetSrvHeap() { return m_SrvHeap; }
 	D3D12DescriptorHeap& GetSamplerHeap() { return m_SamplerHeap; }
 	ID3D12Device* GetDevice() { return m_Device.Get(); }
-	ID3D12GraphicsCommandList* GetCommandList() { return m_CommandList.Get(); }
+	ID3D12GraphicsCommandList5* GetCommandList() { return m_CommandList.Get(); }
 	D3D12_GRAPHICS_PIPELINE_STATE_DESC& GetPipelineState() { return m_CurrentPSO; }
 
 	// Graphics command list
@@ -65,6 +65,9 @@ public:
 	void DrawIndexed(UINT IndexCount, UINT StartIndexLocation, INT BaseVertexLocation);
 	void SetViewports(D3D12_VIEWPORT& Viewport);
 
+	// Raytracing
+	void BuildAccelerationStructure();
+
 	D3D12_CPU_DESCRIPTOR_HANDLE& GetCurrentBackBufferView() {
 		return m_RenderTargetsView[m_FrameIndex];
 	}
@@ -76,7 +79,7 @@ private:
 	ComPtr<ID3D12CommandAllocator>		m_CommandAllocator;
 	ComPtr<ID3D12CommandQueue>			m_CommandQueue;
 	ComPtr<ID3D12RootSignature>			m_RootSignature;
-	ComPtr<ID3D12GraphicsCommandList>	m_CommandList;
+	ComPtr<ID3D12GraphicsCommandList5>	m_CommandList;
 	ComPtr<ID3D12Fence>					m_SyncFence;
 
 	UINT								m_FrameIndex = 0;

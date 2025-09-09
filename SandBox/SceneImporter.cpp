@@ -294,4 +294,6 @@ void Mesh::LoadFromAiMesh(std::filesystem::path directory, aiMesh* importMesh, a
 			LoadBitmapFromPath(std::string("..\\GameDB\\assets\\models\\sponza\\spnza_bricks_a_diff.dds"), MTL_STAGE_ROUGHNESS);
 		}
 	}
+
+	//gData.Rdr->BuildAccelerationStructure(SubSetsDA);
 }

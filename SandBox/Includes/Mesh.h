@@ -22,6 +22,7 @@ public:
 	void LoadFromAiMesh(std::filesystem::path directory, aiMesh* importMesh, aiMaterial* importMaterial);
 
 	struct MeshSubSet {
+		Bitmap*			AS;
 		VertexBuffer *	VB;
 		IndexBuffer *	IB;
 		U32				MtlId;

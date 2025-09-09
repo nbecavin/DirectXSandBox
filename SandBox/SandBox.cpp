@@ -76,7 +76,7 @@ void sys::MainLoop()
 	MESSAGE("Load some assets");
 
 	SceneImporter imp;
-	//imp.LoadScene("assets\\Bistro_v5_2\\BistroInterior.fbx");
+	imp.LoadScene("assets\\Bistro_v5_2\\BistroInterior.fbx");
 	//imp.LoadScene("assets\\Bistro_v5_2\\BistroExterior.fbx");
 	imp.LoadScene("assets\\bistro\\bistro.gltf");
 	cam->SetWorldPosition(Vec4f(-22.787, 2.395, 10.013, 1));

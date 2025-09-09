@@ -134,6 +134,7 @@
     <ClCompile Include="D3D12HALConstantBuffer.cpp" />
     <ClCompile Include="D3D12HALDescriptorHeaps.cpp" />
     <ClCompile Include="D3D12HALPipelineState.cpp" />
+    <ClCompile Include="D3D12HALRaytracing.cpp" />
     <ClCompile Include="D3D12HALSamplerState.cpp" />
     <ClCompile Include="D3D12HALShaders.cpp" />
     <ClCompile Include="D3D12HALSwapChain.cpp" />
