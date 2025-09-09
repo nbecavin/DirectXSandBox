@@ -90,16 +90,16 @@ void Renderer::DrawImGUI()
 	ImDrawData* drawData = ImGui::GetDrawData();
 
 	//// Create and grow vertex/index buffers if needed
-	if (!m_ImGuiVB || (m_ImGuiVB->GetSize() / sizeof(ImDrawVert)) < drawData->TotalVtxCount)
+	if (!m_ImGuiVB || ((m_ImGuiVB->GetSize() / sizeof(ImDrawVert)) < drawData->TotalVtxCount))
 	{
 		//if (m_ImGuiVB) DeleteVertexBuffer(m_ImGuiVB);
 		U32 byteWidth = (drawData->TotalVtxCount + 5000) * sizeof(ImDrawVert);
 		m_ImGuiVB = CreateVertexBuffer(byteWidth, 0, nullptr);
 	}
-	if (!m_ImGuiIB || (m_ImGuiIB->GetSize() / 2) < drawData->TotalIdxCount)
+	if (!m_ImGuiIB || ((m_ImGuiIB->GetSize() / 2) < drawData->TotalIdxCount))
 	{
 		//if (m_ImGuiIB) DeleteIndexBuffer(m_ImGuiIB);
-		U32 byteWidth = (drawData->TotalIdxCount + 10000) * 2;
+		U32 byteWidth = (drawData->TotalIdxCount + 10000) * sizeof(U16);
 		m_ImGuiIB = CreateIndexBuffer(byteWidth, 0, FMT_IDX_16, nullptr);
 	}
 
@@ -180,7 +180,8 @@ void Renderer::DrawImGUI()
 	// Render command lists
 	int vtx_offset = 0;
 	int idx_offset = 0;
-	ImVec2 pos = drawData->DisplayPos;
+	ImVec2 clip_off = drawData->DisplayPos;
+	ImVec2 clip_scale = drawData->FramebufferScale;
 	for (int n = 0; n < drawData->CmdListsCount; n++)
 	{
 		const ImDrawList* cmd_list = drawData->CmdLists[n];
@@ -194,9 +195,15 @@ void Renderer::DrawImGUI()
 			}
 			else
 			{
+				// Project scissor/clipping rectangles into framebuffer space
+				ImVec2 clip_min((pcmd->ClipRect.x - clip_off.x)* clip_scale.x, (pcmd->ClipRect.y - clip_off.y)* clip_scale.y);
+				ImVec2 clip_max((pcmd->ClipRect.z - clip_off.x)* clip_scale.x, (pcmd->ClipRect.w - clip_off.y)* clip_scale.y);
+				if (clip_max.x <= clip_min.x || clip_max.y <= clip_min.y)
+					continue;
+
 				// Apply scissor/clipping rectangle
-				const D3D12_RECT r = { (LONG)(pcmd->ClipRect.x - pos.x), (LONG)(pcmd->ClipRect.y - pos.y), (LONG)(pcmd->ClipRect.z - pos.x), (LONG)(pcmd->ClipRect.w - pos.y) };
-				//ctx->RSSetScissorRects(1, &r);
+				const D3D12_RECT r = { (LONG)clip_min.x, (LONG)clip_min.y, (LONG)clip_max.x, (LONG)clip_max.y };
+				SetScissorRect(r.left, r.right, r.top, r.bottom);
 
 				// Bind texture, Draw
 				Bitmap* bmap = reinterpret_cast<Bitmap*>(pcmd->GetTexID());

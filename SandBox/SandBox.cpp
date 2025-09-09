@@ -9,9 +9,9 @@
 #include <InputManager.h>
 #include <Sky.h>
 #include <Terrain.h>
-#include <Proc.h>
 #include <Mesh.h>
 #include <CameraFree.h>
+#include <Bitmap.h>
 
 #include <SceneImporter.h>
 
@@ -70,26 +70,31 @@ void sys::MainLoop()
 
 	RegisterGraphObject(new Sky());
 	//RegisterGraphObject(new Terrain());
-	//RegisterGraphObject(new Proc(sphere));
-	//RegisterGraphObject(new Proc(torus));
 
 	MESSAGE("Load some assets");
 
 	SceneImporter imp;
-	imp.LoadScene("assets\\Bistro_v5_2\\BistroInterior.fbx");
-	//imp.LoadScene("assets\\Bistro_v5_2\\BistroExterior.fbx");
-	imp.LoadScene("assets\\bistro\\bistro.gltf");
-	cam->SetWorldPosition(Vec4f(-22.787, 2.395, 10.013, 1));
-	cam->SetWorldTarget(Vec4f(-21.788, 2.368, 10.051, 1));
-	imp.LoadScene("assets\\breakfast_room\\BreakfastRoom.gltf");
-//	imp.LoadScene("assets\\bistro\\bistro.gltf");
-//	imp.LoadScene("assets\\sponza\\sponza.gltf");
-//	imp.LoadScene("assets\\\sponza.FBX");
-//	imp.LoadScene("assets\\models\\sponza\\SponzaNoFlag.sdkmesh");
-//	imp.LoadScene("assets\\models\\powerplant.sdkmesh");
-//	imp.LoadScene("assets\\models\\MicroscopeCity\\scanner.sdkmesh");
-//	imp.LoadScene("assets\\models\\MicroscopeCity\\column.sdkmesh");
-//	imp.LoadScene("assets\\models\\Dwarf\\dwarf.sdkmesh");
+
+	if(1)
+	{
+		// bistro
+		imp.LoadScene("assets\\bistro\\bistro.gltf");
+		cam->SetWorldPosition(Vec4f(-22.787, 2.395, 10.013, 1));
+		cam->SetWorldTarget(Vec4f(-21.788, 2.368, 10.051, 1));
+	}
+	else
+	{
+		imp.LoadScene("assets\\Bistro_v5_2\\BistroInterior.fbx");
+		imp.LoadScene("assets\\Bistro_v5_2\\BistroExterior.fbx");
+	//	imp.LoadScene("assets\\breakfast_room\\BreakfastRoom.gltf");
+	//	imp.LoadScene("assets\\sponza\\sponza.gltf");
+	//	imp.LoadScene("assets\\\sponza.FBX");
+	//	imp.LoadScene("assets\\models\\sponza\\SponzaNoFlag.sdkmesh");
+	//	imp.LoadScene("assets\\models\\powerplant.sdkmesh");
+	//	imp.LoadScene("assets\\models\\MicroscopeCity\\scanner.sdkmesh");
+	//	imp.LoadScene("assets\\models\\MicroscopeCity\\column.sdkmesh");
+	//	imp.LoadScene("assets\\models\\Dwarf\\dwarf.sdkmesh");
+	}
 
 	MESSAGE("Entering mainloop");
 
@@ -139,6 +144,11 @@ void sys::RegisterGraphObject(GraphObject * object)
 	gData.m_GraphObjectDA.Add(object);
 }
 
+void sys::RegisterMaterial(Material* material)
+{
+	gData.m_MaterialDA.Add(material);
+}
+
 void sys::RegisterScriptObject(ScriptObject * object)
 {
 	gData.m_ScriptObjectDA.Add(object);
@@ -171,9 +181,8 @@ void sys::UpdateEditorMenu()
 		ImGui::EndMainMenuBar();
 	}
 
-
-
 	// show hierarchy
+	if(0)
 	{
 		if (ImGui::Begin("Hierarchy"))
 		{
@@ -193,4 +202,34 @@ void sys::UpdateEditorMenu()
 		}
 		ImGui::End();
 	}
+
+	// Show Materials
+	if (ImGui::Begin("Materials"))
+	{
+		DynArray<const char*, 8> NameRef;
+		NameRef.SetSize(gData.m_MaterialDA.GetSize());
+		for (int i = 0; i < gData.m_MaterialDA.GetSize(); i++)
+		{
+			NameRef[i] = gData.m_MaterialDA[i]->GetName().c_str();
+		}
+
+		static int current = -1;
+		ImGui::ListBox("##mat", &current, NameRef.GetArrayPtr(), NameRef.GetSize());
+
+		if (current != -1)
+		{
+			Material* pMat = gData.m_MaterialDA[current];
+			ImGui::Text("Selected material");
+			ImGui::Text(pMat->GetName().c_str());
+			ImGui::InputFloat3("Diffuse", (float*)&pMat->GetDiffuse());
+			float r = pMat->GetRoughness();
+			ImGui::InputFloat("Roughness", &r);
+
+			ImTextureRef ref1(pMat->GetBitmap(MTL_STAGE_ALBEDO));
+			ImGui::Image(ref1, ImVec2(200, 200));
+			ImTextureRef ref2(pMat->GetBitmap(MTL_STAGE_NORMAL));
+			ImGui::SameLine(); ImGui::Image(ref2, ImVec2(200, 200));
+		}
+	}
+	ImGui::End();
 }

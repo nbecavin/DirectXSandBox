@@ -58,9 +58,13 @@ void SceneImporter::LoadScene(std::string& filepath)
 
 		if (pScene)
 		{
-			/*for (int i = 0; i < pScene->mNumMaterials; i++)
+			for (int i = 0; i < pScene->mNumMaterials; i++)
 			{
 				aiMaterial* pAiMaterial = pScene->mMaterials[i];
+				MESSAGE(pAiMaterial->GetName().C_Str());
+
+
+				/*
 				for (int t = 0; t < pAiMaterial->GetTextureCount(aiTextureType_DIFFUSE); t++)
 				{
 					aiString tex;
@@ -75,7 +79,8 @@ void SceneImporter::LoadScene(std::string& filepath)
 						OutputDebugString("\n");
 					}
 				}
-			}*/
+				*/
+			}
 
 			for (int i = 0; i < pScene->mNumMeshes; i++)
 			{
@@ -230,7 +235,9 @@ void Mesh::LoadFromAiMesh(std::filesystem::path directory, aiMesh* importMesh, a
 	{
 		const std::string aliaspath = "..\\GameDB";
 		Material* pMat = MtlDA.Add();
+		pMat->LoadFromAiMaterial(directory, importMaterial);
 
+#if 0
 		std::string albedo, normal;
 		Bitmap* bm;
 
@@ -297,7 +304,83 @@ void Mesh::LoadFromAiMesh(std::filesystem::path directory, aiMesh* importMesh, a
 		{
 			LoadBitmapFromPath(std::string("..\\GameDB\\assets\\models\\sponza\\spnza_bricks_a_diff.dds"), MTL_STAGE_ROUGHNESS);
 		}
+#endif
 	}
 
 	//gData.Rdr->BuildAccelerationStructure(SubSetsDA);
+}
+
+void Material::LoadFromAiMaterial(std::filesystem::path directory, aiMaterial* importMaterial)
+{
+	const std::string aliaspath = "..\\GameDB";
+	SetName(std::string(importMaterial->GetName().C_Str()));
+	
+	sys::RegisterMaterial(this);
+
+	std::string albedo, normal;
+	Bitmap* bm;
+
+	auto LoadBitmap = [&](MaterialStage stage)
+		{
+			std::string tex;
+
+			aiTextureType type = aiTextureType_NONE;
+			switch (stage)
+			{
+			case MTL_STAGE_ALBEDO:		type = aiTextureType_DIFFUSE; break;
+			case MTL_STAGE_NORMAL:		type = aiTextureType_NORMALS; break;
+			case MTL_STAGE_ROUGHNESS:	type = aiTextureType_SPECULAR; break;
+			default:
+				return;
+			};
+
+			aiString aitex;
+			importMaterial->GetTexture(type, 0, &aitex, nullptr, nullptr, nullptr, nullptr, nullptr);
+
+			std::filesystem::path path(directory);
+			path.append(aitex.C_Str());
+			path.replace_extension(std::string("dds"));
+
+			Bitmap* bm = nullptr;
+			asset::Cache& asset = asset::Cache::GetInstance();
+			tex = path.string();
+			Bool bNew = asset.LoadAsset(asset::Type::BITMAP, tex.c_str(), (GraphObject**)&bm);
+			if (bNew)
+			{
+				if (bm->LoadDDS(tex.c_str()))
+				{
+					gData.Rdr->CreateTexture(bm);
+					SetBitmap(bm, stage);
+				}
+			}
+		};
+
+	LoadBitmap(MTL_STAGE_ALBEDO);
+	LoadBitmap(MTL_STAGE_NORMAL);
+	LoadBitmap(MTL_STAGE_ROUGHNESS);
+
+	auto LoadBitmapFromPath = [&](std::string& tex, MaterialStage stage)
+		{
+			Bitmap* bm = nullptr;
+			asset::Cache& asset = asset::Cache::GetInstance();
+			Bool bNew = asset.LoadAsset(asset::Type::BITMAP, tex.c_str(), (GraphObject**)&bm);
+			if (bNew)
+			{
+				if (bm->LoadDDS(tex.c_str()))
+				{
+					gData.Rdr->CreateTexture(bm);
+					SetBitmap(bm, stage);
+				}
+			}
+		};
+
+	// dummy texture
+	if (!GetBitmap(MTL_STAGE_ALBEDO))
+	{
+		LoadBitmapFromPath(std::string("..\\GameDB\\assets\\models\\sponza\\spnza_bricks_a_diff.dds"), MTL_STAGE_ALBEDO);
+	}
+	if (!GetBitmap(MTL_STAGE_ROUGHNESS))
+	{
+		LoadBitmapFromPath(std::string("..\\GameDB\\assets\\models\\sponza\\spnza_bricks_a_diff.dds"), MTL_STAGE_ROUGHNESS);
+	}
 }

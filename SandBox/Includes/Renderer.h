@@ -61,6 +61,8 @@ namespace sys {
 		virtual void				CreateTexture(Bitmap * _Bmap) = 0;
 		virtual ConstantBuffer *	CreateConstantBuffer(U32 _Size) = 0;
 
+		virtual void SetScissorRect(U32 left, U32 right, U32 top, U32 bottom) = 0;
+
 		virtual GlobalConstant* GetGlobalConstantData() { return &m_GlobalConstantData; }
 		virtual void	PushWorldMatrix(Mat4x4* _m);
 

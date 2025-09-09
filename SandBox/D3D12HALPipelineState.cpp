@@ -221,6 +221,16 @@ void D3D12HAL::SetViewports(D3D12_VIEWPORT& Vp)
 	m_CommandList->RSSetScissorRects(1, &rect);
 }
 
+void D3D12HAL::SetScissorRect(U32 left, U32 right, U32 top, U32 bottom)
+{
+	D3D12_RECT rect;
+	rect.left = left;
+	rect.top = top;
+	rect.right = right;
+	rect.bottom = bottom;
+	m_CommandList->RSSetScissorRects(1, &rect);
+}
+
 void D3D12HAL::DrawIndexed(UINT IndexCount, UINT StartIndexLocation, INT BaseVertexLocation)
 {
 	// Update descriptor table

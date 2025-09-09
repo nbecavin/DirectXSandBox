@@ -65,6 +65,13 @@ public:
 		{
 			// Realloc
 			Realloc(NewSize);
+			Size = NewSize;
+			Reserve = 0;
+		}
+		else
+		{
+			Reserve = Size - NewSize;
+			Size = NewSize;
 		}
 	}
 

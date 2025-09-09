@@ -2,6 +2,7 @@
 
 #include <ScriptObject.h>
 #include <GraphObject.h>
+#include <Material.h>
 #include <AssetCache.h>
 
 namespace sys
@@ -18,6 +19,7 @@ namespace sys
 
 	void Shut();
 
+	void RegisterMaterial(Material* material);
 	void RegisterGraphObject(GraphObject * object);
 	void RegisterScriptObject(ScriptObject * object);
 
@@ -30,6 +32,7 @@ namespace sys
 
 		ScriptObjectDA	m_ScriptObjectDA;
 		GraphObjectDA	m_GraphObjectDA;
+		MaterialDA		m_MaterialDA;
 
 		float			DeltaTime;
 

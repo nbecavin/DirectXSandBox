@@ -5,7 +5,7 @@
 								AssertFonc(#_cond_);
 
 void AssertFonc(char * condition);
-void MessageFonc(char * fmt,...);
+void MessageFonc(const char * fmt,...);
 
 #define MESSAGE(...)	MessageFonc(__VA_ARGS__)
 

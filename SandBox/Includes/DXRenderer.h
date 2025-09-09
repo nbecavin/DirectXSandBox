@@ -65,6 +65,11 @@ namespace sys {
 			return GetHAL().CreateConstantBuffer(_Size);
 		}
 
+		virtual void SetScissorRect(U32 left, U32 right, U32 top, U32 bottom)
+		{
+			return GetHAL().SetScissorRect(left, right, top, bottom);
+		}
+
 		virtual void	PushShader(U32 _ShaderUID);
 		virtual void	PushVertexDeclaration(VertexDeclaration* Decl);
 		virtual void	PushStreamSource(U32 StreamNumber, VertexBuffer* Buffer, U32 Offset, U32 Stride);

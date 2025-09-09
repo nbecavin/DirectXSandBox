@@ -30,6 +30,7 @@ public:
 	ConstantBuffer* CreateConstantBuffer(U32 _Size);
 
 	void InitShaders();
+	void SetScissorRect(U32 left, U32 right, U32 top, U32 bottom);
 	void SetPrimitiveTopology(PrimitiveType Topology);
 	void SetVertexDeclaration(VertexDeclaration* Decl);
 	void SetIndices(IndexBuffer* Buffer, U32 _Fmt);

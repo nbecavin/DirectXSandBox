@@ -10,7 +10,7 @@ void AssertFonc(char * condition)
 #endif
 }
 
-void MessageFonc(char * fmt,...)
+void MessageFonc(const char * fmt,...)
 {
 	if(!fmt)
 		return;

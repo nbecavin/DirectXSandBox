@@ -32,9 +32,6 @@
     <Filter Include="Engine\Scenery Objects\Sky">
       <UniqueIdentifier>{b08840bd-4e72-49b6-a2b6-1a1d07aa3baa}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Engine\Scenery Objects\Proc">
-      <UniqueIdentifier>{e0935776-b633-4a4b-b969-426b3a9b92e8}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Engine\Scenery Objects\Mesh">
       <UniqueIdentifier>{af324ce9-25cf-4f44-9352-ae66edfc16ad}</UniqueIdentifier>
     </Filter>
@@ -97,9 +94,6 @@
     </ClCompile>
     <ClCompile Include="Sky.cpp">
       <Filter>Engine\Scenery Objects\Sky</Filter>
-    </ClCompile>
-    <ClCompile Include="Proc.cpp">
-      <Filter>Engine\Scenery Objects\Proc</Filter>
     </ClCompile>
     <ClCompile Include="Mesh.cpp">
       <Filter>Engine\Scenery Objects\Mesh</Filter>
@@ -262,9 +256,6 @@
     </ClInclude>
     <ClInclude Include="Includes\Sky.h">
       <Filter>Engine\Scenery Objects\Sky</Filter>
-    </ClInclude>
-    <ClInclude Include="Includes\Proc.h">
-      <Filter>Engine\Scenery Objects\Proc</Filter>
     </ClInclude>
     <ClInclude Include="Includes\Mesh.h">
       <Filter>Engine\Scenery Objects\Mesh</Filter>

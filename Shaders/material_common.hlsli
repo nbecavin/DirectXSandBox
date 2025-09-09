@@ -83,7 +83,7 @@ MaterialPBR SampleMaterial(in VS_Output i)
 	float3 emissive = 0; //g_EmissiveTex.Sample(LinearSampler, IN.uv).rgb;
 
     // Normal mapping
-	float3 normal = sNormal.Sample(sSampler, i.uv).xyz;// * 2 - 1;
+	float3 normal = sNormal.Sample(sSampler, i.uv).xyz * 2 - 1;
 	normal = normalize(mul(i.tbn, normal)); //tangent space to local space
 
 	mat.albedo = albedo_and_opacity.xyz;
