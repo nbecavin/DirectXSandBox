@@ -11,7 +11,7 @@ enum MaterialStage
 	MTL_STAGE_METAL,
 };
 
-class Material
+class Material : public GraphObject
 {
 protected:
 	Bitmap * m_BitmapStage[16];

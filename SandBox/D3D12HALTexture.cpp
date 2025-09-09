@@ -7,6 +7,10 @@ static inline DXGI_FORMAT GetDXFormat(BitmapFormat Format, Bool sRGB = TRUE)
 	switch (Format) {
 	case BM_BC1_UNORM:
 		return sRGB ? DXGI_FORMAT_BC1_UNORM_SRGB : DXGI_FORMAT_BC1_UNORM;
+	case BM_BC3_UNORM:
+		return sRGB ? DXGI_FORMAT_BC3_UNORM_SRGB : DXGI_FORMAT_BC3_UNORM;
+	case BM_BC5_UNORM:
+		return DXGI_FORMAT_BC5_UNORM;
 	case BM_BC7_UNORM:
 		return sRGB ? DXGI_FORMAT_BC7_UNORM_SRGB : DXGI_FORMAT_BC7_UNORM;
 	case BM_R32_FLOAT:
@@ -242,7 +246,7 @@ void D3D12HAL::CreateTexture(Bitmap * _Bm)
 		0
 	);
 
-	if (_Bm->GetType()&BM_TYPE_RT)
+	if (_Bm->GetUsage() & BM_USAGE_RTV)
 	{
 		desc.Flags |= D3D12_RESOURCE_FLAG_ALLOW_RENDER_TARGET;
 	}
@@ -255,7 +259,7 @@ void D3D12HAL::CreateTexture(Bitmap * _Bm)
 
 	_Bm->BinHwResId((U64)tex);
 
-	if (_Bm->GetType()&BM_TYPE_2D)
+	if (_Bm->GetType() == BM_TYPE_2D)
 	{
 		HRESULT hr = Device->CreateCommittedResource(
 			&CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_DEFAULT),
@@ -370,6 +374,10 @@ void D3D12HAL::CreateTexture(Bitmap * _Bm)
 			}
 		}
 	}
+	else
+	{
+		MESSAGE("Other resource type");
+	}
 
 	m_CommandList->ResourceBarrier(1, &CD3DX12_RESOURCE_BARRIER::Transition(tex->Resource12, D3D12_RESOURCE_STATE_COPY_DEST, D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE));
 
@@ -388,7 +396,7 @@ void D3D12HAL::CreateTexture(Bitmap * _Bm)
 	}
 
 	/*
-	if (_Bm->GetType()&BM_TYPE_RT)
+	if (_Bm->GetUsage() & BM_USAGE_RTV)
 	{ // Create the render target view
 		D3D12_RENDER_TARGET_VIEW_DESC DescRT;
 		DescRT.Format = desc.Format;

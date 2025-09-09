@@ -47,23 +47,7 @@ void Mesh::Load(const char * fname)
 	_splitpath(name,NULL,dir,NULL,NULL);
 
     // Open the file
-#if WINAPI_FAMILY_ONE_PARTITION( WINAPI_FAMILY, WINAPI_PARTITION_APP )
-	Windows::Storage::StorageFolder ^ localFolder = Windows::Storage::ApplicationData::Current->LocalFolder;
-	Platform::String ^ localPath = localFolder->Path;
-
-	WCHAR wstr[2049];
-	wcscpy(wstr,localPath->Data());
-
-	WCHAR wfname[2049];
-	MultiByteToWideChar(CP_ACP,0,fname,-1,wfname,2048);
-	
-	wcscat(wstr,L"\\");
-	wcscat(wstr,wfname);
-	
-	HANDLE m_hFile = CreateFile2( wstr, FILE_READ_DATA, FILE_SHARE_READ, OPEN_EXISTING, NULL );
-#else
 	HANDLE m_hFile = CreateFileA( name, FILE_READ_DATA, FILE_SHARE_READ, NULL, OPEN_EXISTING, FILE_FLAG_SEQUENTIAL_SCAN, NULL );
-#endif
     if( INVALID_HANDLE_VALUE == m_hFile )
 	{
 		MESSAGE("failed to load mesh : %s", name);

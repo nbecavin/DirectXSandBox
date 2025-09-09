@@ -96,6 +96,10 @@ void SceneImporter::LoadScene(std::string& filepath)
 				{
 					auto pCamera = pScene->mCameras[i];
 					MESSAGE("Camera %d %s", i, pCamera->mName.C_Str());
+
+					Camera* cam = gData.Rdr->GetCamera();
+					cam->SetWorldPosition(Vec4f(pCamera->mPosition.x, pCamera->mPosition.y, pCamera->mPosition.z, 1.f));
+					cam->SetWorldTarget(Vec4f(pCamera->mLookAt.x, pCamera->mLookAt.y, pCamera->mLookAt.z, 1.f));
 				}
 			}
 

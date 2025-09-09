@@ -22,7 +22,7 @@ namespace sys {
 		virtual void MainLoop() = 0;
 		virtual void InitShaders();
 		virtual void SetSize(U32 _SizeX,U32 _SizeY) { SizeX=_SizeX; SizeY=_SizeY; }
-		virtual Vec2f GetSize() { return Vec2f(SizeX, SizeY); }
+		virtual Vec2f GetSize() { return Vec2f((float)SizeX, (float)SizeY); }
 		virtual U32 GetSizeX() { return SizeX; }
 		virtual U32 GetSizeY() { return SizeY; }
 

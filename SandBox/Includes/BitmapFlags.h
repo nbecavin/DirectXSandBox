@@ -72,22 +72,21 @@ enum BitmapFormat {
 					/* CAREFUL, THESE ENUMS ARE SAVED INTO CVT, IN CASE YOU ADD ONE : DO IT AT THE END, OR INCREMENT CVT VERSION*/
 };
 
-enum {
-	BM_TYPE_2D			= (1 << 0),
-	BM_TYPE_3D			= (1 << 1),
-	BM_TYPE_CUBE		= (1 << 2),
-	BM_TYPE_BUFFER		= (1 << 3),
-
-	BM_TYPE_RT		= (1<<16)
+enum BitmapType {
+	BM_TYPE_2D,
+	BM_TYPE_3D,
+	BM_TYPE_CUBE,
+	BM_TYPE_BUFFER,
 };
 
-enum {
-	BM_MSAA_NONE,
-	BM_MSAA_2X,
-	BM_MSAA_4X,
-	BM_MSAA_8X,
-	BM_MSAA_16X
+enum BitmapUsage {
+	BM_USAGE_SRV = (1 << 0),
+	BM_USAGE_RTV = (1 << 1),
+	BM_USAGE_DSV = (1 << 2),
+	BM_USAGE_UAV = (1 << 3),
+	BM_USAGE_ACCELERATION_STRUCTURE = (1 << 4)
 };
+DECLARE_INLINE_ENUM_FLAG_OPERATORS_Z(BitmapUsage);
 
 #define BM_SRGB		(1<<0)
 
