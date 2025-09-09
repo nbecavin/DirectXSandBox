@@ -133,17 +133,28 @@ bool Bitmap::LoadDDS(const char* filename)
 	case tinyddsloader::DDSFile::DXGIFormat::BC1_UNorm_SRGB:
 		Format = BM_BC1_UNORM;
 		break;
+	case tinyddsloader::DDSFile::DXGIFormat::BC3_Typeless:
+	case tinyddsloader::DDSFile::DXGIFormat::BC3_UNorm:
+	case tinyddsloader::DDSFile::DXGIFormat::BC3_UNorm_SRGB:
+		Format = BM_BC3_UNORM;
+		break;
+	case tinyddsloader::DDSFile::DXGIFormat::BC5_Typeless:
+	case tinyddsloader::DDSFile::DXGIFormat::BC5_UNorm:
+	case tinyddsloader::DDSFile::DXGIFormat::BC5_SNorm:
+		Format = BM_BC5_UNORM;
+		break;
 	case tinyddsloader::DDSFile::DXGIFormat::BC7_Typeless:
 	case tinyddsloader::DDSFile::DXGIFormat::BC7_UNorm:
 	case tinyddsloader::DDSFile::DXGIFormat::BC7_UNorm_SRGB:
 		Format = BM_BC7_UNORM;
 		break;
+	//BC6H_Typeless = 94,
+	//BC6H_UF16 = 95,
+	//BC6H_SF16 = 96,
+
 	//case DDS_RGBA:		Format = BM_FORMAT_ABGR8888; break;
 	//case DDS_RGB:
 	//	Format = BM_FORMAT_ABGR8888; break;
-	//case DDS_DXT1:		Format = BM_FORMAT_DXT1; break;
-	//	//case DDS_DXT3:		Format = BM_DXT3; break;
-	//case DDS_DXT5:		Format = BM_FORMAT_DXT5; break;
 		//case DDS_R16F:		Format = BM_R16F; Bm->EnableFlag(FL_BITMAP_CONVERTED); break;
 		//case DDS_R32F:		Format = BM_R32F; Bm->EnableFlag(FL_BITMAP_CONVERTED); break;
 		//case DDS_G16R16F:	Format = BM_R16G16F; Bm->EnableFlag(FL_BITMAP_CONVERTED); break;

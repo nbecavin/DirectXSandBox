@@ -75,12 +75,14 @@ void sys::MainLoop()
 
 	MESSAGE("Load some assets");
 
-	SceneImporter imp;
-	//imp.LoadScene("assets\\Bistro_v5_2\\BistroInterior.fbx");
-	//imp.LoadScene("assets\\Bistro_v5_2\\BistroExterior.fbx");
-	imp.LoadScene("assets\\bistro\\bistro.gltf");
 	cam->SetWorldPosition(Vec4f(-22.787, 2.395, 10.013, 1));
 	cam->SetWorldTarget(Vec4f(-21.788, 2.368, 10.051, 1));
+
+	SceneImporter imp;
+//	imp.LoadScene("assets\\Bistro_v5_2\\BistroInterior.fbx");
+//	imp.LoadScene("assets\\Bistro_v5_2\\BistroExterior.fbx");
+	imp.LoadScene("assets\\breakfast_room\\BreakfastRoom.gltf");
+//	imp.LoadScene("assets\\bistro\\bistro.gltf");
 //	imp.LoadScene("assets\\sponza\\sponza.gltf");
 //	imp.LoadScene("assets\\\sponza.FBX");
 //	imp.LoadScene("assets\\models\\sponza\\SponzaNoFlag.sdkmesh");

@@ -18,18 +18,20 @@ float4 ForwardMain(const in VS_Output i) : SV_TARGET
 
     mat.roughness = 0.25; //force
 
-	// Basic directional lighting
+	// Basic directional sun lighting
 	float3 DLIGHT_DIR = normalize( float3(0,1,0.55) );
 	float3 DLIGHT_COLOR = 4 * float3( 1.0, 1, 1.0 );
-	float3 DLIGHT_AMBIENT = float3( 0.1,0.1,0.2 );
 
-    // Evaluate BRDF for sun
+	float3 STATIC_AMBIENT = float3( 0.1, 0.1, 0.15 );
+
 #if 1
-	float3 radiance = EvaluateBRDF(mat, DLIGHT_COLOR, DLIGHT_DIR, mat.normal, V);// +DLIGHT_AMBIENT;
+	// Evaluate BRDF for sun
+	float3 radiance = EvaluateBRDF(mat, DLIGHT_COLOR, DLIGHT_DIR, mat.normal, V);
+	radiance += STATIC_AMBIENT * mat.albedo; //should be GI instead... or skyligh
 #else
 	// Diffuse term
 	float NoL = saturate( dot( DLIGHT_DIR, mat.normal ) );
-	float light = NoL * DLIGHT_COLOR + DLIGHT_AMBIENT;
+	float light = NoL * DLIGHT_COLOR + STATIC_AMBIENT;
 
 	// Specular term
 	float3 ref = reflect( -normalize(i.eyevec), mat.normal );
