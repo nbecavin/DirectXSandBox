@@ -158,7 +158,7 @@ void Renderer::DrawImGUI()
 	fontSampler.desc.Filter = D3D12_FILTER_MIN_MAG_MIP_LINEAR;
 	fontSampler.desc.AddressU = fontSampler.desc.AddressV = fontSampler.desc.AddressW = D3D12_TEXTURE_ADDRESS_MODE_WRAP;
 	fontSampler.desc.MaxAnisotropy = 1;
-	fontSampler.desc.ComparisonFunc = D3D12_COMPARISON_FUNC_ALWAYS;
+	fontSampler.desc.ComparisonFunc = D3D12_COMPARISON_FUNC_NONE;
 	fontSampler.desc.MaxLOD = D3D12_FLOAT32_MAX;
 	SetSampler(0, SHADER_TYPE_PIXEL, fontSampler);
 

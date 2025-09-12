@@ -34,6 +34,28 @@
     </Text>
   </ItemGroup>
   <ItemGroup>
+    <None Include="$(MSBuildThisFileDirectory)..\..\Tools\RTXDI\Include\Rtxdi\DI\BoilingFilter.hlsli" />
+    <None Include="$(MSBuildThisFileDirectory)..\..\Tools\RTXDI\Include\Rtxdi\DI\InitialSampling.hlsli" />
+    <None Include="$(MSBuildThisFileDirectory)..\..\Tools\RTXDI\Include\Rtxdi\DI\PairwiseStreaming.hlsli" />
+    <None Include="$(MSBuildThisFileDirectory)..\..\Tools\RTXDI\Include\Rtxdi\DI\Reservoir.hlsli" />
+    <None Include="$(MSBuildThisFileDirectory)..\..\Tools\RTXDI\Include\Rtxdi\DI\SpatialResampling.hlsli" />
+    <None Include="$(MSBuildThisFileDirectory)..\..\Tools\RTXDI\Include\Rtxdi\DI\SpatioTemporalResampling.hlsli" />
+    <None Include="$(MSBuildThisFileDirectory)..\..\Tools\RTXDI\Include\Rtxdi\DI\TemporalResampling.hlsli" />
+    <None Include="$(MSBuildThisFileDirectory)..\..\Tools\RTXDI\Include\Rtxdi\GI\BoilingFilter.hlsli" />
+    <None Include="$(MSBuildThisFileDirectory)..\..\Tools\RTXDI\Include\Rtxdi\GI\JacobianMath.hlsli" />
+    <None Include="$(MSBuildThisFileDirectory)..\..\Tools\RTXDI\Include\Rtxdi\GI\Reservoir.hlsli" />
+    <None Include="$(MSBuildThisFileDirectory)..\..\Tools\RTXDI\Include\Rtxdi\GI\SpatialResampling.hlsli" />
+    <None Include="$(MSBuildThisFileDirectory)..\..\Tools\RTXDI\Include\Rtxdi\GI\SpatioTemporalResampling.hlsli" />
+    <None Include="$(MSBuildThisFileDirectory)..\..\Tools\RTXDI\Include\Rtxdi\GI\TemporalResampling.hlsli" />
+    <None Include="$(MSBuildThisFileDirectory)..\..\Tools\RTXDI\Include\Rtxdi\LightSampling\LocalLightSelection.hlsli" />
+    <None Include="$(MSBuildThisFileDirectory)..\..\Tools\RTXDI\Include\Rtxdi\LightSampling\PresamplingFunctions.hlsli" />
+    <None Include="$(MSBuildThisFileDirectory)..\..\Tools\RTXDI\Include\Rtxdi\LightSampling\RISBuffer.hlsli" />
+    <None Include="$(MSBuildThisFileDirectory)..\..\Tools\RTXDI\Include\Rtxdi\LightSampling\UniformSampling.hlsli" />
+    <None Include="$(MSBuildThisFileDirectory)..\..\Tools\RTXDI\Include\Rtxdi\ReGIR\ReGIRSampling.hlsli" />
+    <None Include="$(MSBuildThisFileDirectory)..\..\Tools\RTXDI\Include\Rtxdi\Utils\BoilingFilter.hlsli" />
+    <None Include="$(MSBuildThisFileDirectory)..\..\Tools\RTXDI\Include\Rtxdi\Utils\Checkerboard.hlsli" />
+    <None Include="$(MSBuildThisFileDirectory)..\..\Tools\RTXDI\Include\Rtxdi\Utils\Math.hlsli" />
+    <None Include="$(MSBuildThisFileDirectory)..\..\Tools\RTXDI\Include\Rtxdi\Utils\ReservoirAddressing.hlsli" />
     <None Include="$(MSBuildThisFileDirectory)..\ImGui.hlsl">
       <FileType>Document</FileType>
     </None>
@@ -48,5 +70,15 @@
   </ItemGroup>
   <ItemGroup>
     <Text Include="$(MSBuildThisFileDirectory)..\ShaderRegs.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\Tools\RTXDI\Include\Rtxdi\DI\ReSTIRDI.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\Tools\RTXDI\Include\Rtxdi\DI\ReSTIRDIParameters.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\Tools\RTXDI\Include\Rtxdi\GI\ReSTIRGI.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\Tools\RTXDI\Include\Rtxdi\GI\ReSTIRGIParameters.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\Tools\RTXDI\Include\Rtxdi\LightSampling\RISBufferSegmentAllocator.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\Tools\RTXDI\Include\Rtxdi\LightSampling\RISBufferSegmentParameters.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\Tools\RTXDI\Include\Rtxdi\ReGIR\ReGIR.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\Tools\RTXDI\Include\Rtxdi\ReGIR\ReGIRParameters.h" />
   </ItemGroup>
 </Project>

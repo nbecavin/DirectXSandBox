@@ -113,6 +113,7 @@ namespace sys {
 		arguments.push_back(L"-T");
 		arguments.push_back(ToWSTR(GetShaderProfile(Type)));
 		arguments.push_back(L"-I ../Shaders");
+		arguments.push_back(L"-I ../Tools/rtxdi/include");
 
 		WCHAR wpath[2049];
 		MultiByteToWideChar(CP_ACP,0,path,-1,wpath,2048);

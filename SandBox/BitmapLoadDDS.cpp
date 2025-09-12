@@ -140,7 +140,11 @@ bool Bitmap::LoadDDS(const char* filename)
 		break;
 	case tinyddsloader::DDSFile::DXGIFormat::BC5_Typeless:
 	case tinyddsloader::DDSFile::DXGIFormat::BC5_UNorm:
+		MESSAGE("UNORM");
+		Format = BM_BC5_UNORM;
+		break;
 	case tinyddsloader::DDSFile::DXGIFormat::BC5_SNorm:
+		MESSAGE("SNORM");
 		Format = BM_BC5_UNORM;
 		break;
 	case tinyddsloader::DDSFile::DXGIFormat::BC7_Typeless:
