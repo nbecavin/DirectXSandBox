@@ -190,7 +190,7 @@ loadmesh:
 					pDecl++; pElt++;
 				}
 				pElt[0].END();
-				pItem->Decl = gData.Rdr->CreateVertexDecl( DeclDesc, SHADER_VS_BASE_MESH );
+				pItem->Decl = gData.Rdr->CreateVertexDecl( DeclDesc);
 				pItem->Stride = _mesh.m_pVertexBufferArray[pMesh->VertexBuffers[0]].StrideBytes;
 				pItem->MtlId = pSubSet->MaterialID;
 			}

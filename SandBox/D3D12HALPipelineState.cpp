@@ -44,15 +44,15 @@ struct PipelineDescHash {
 
 		// Shaders (contenu, pas pointeur)
 		if (desc.VS.pShaderBytecode)
-			hash_combine(seed, hash_memory(desc.VS.pShaderBytecode, desc.VS.BytecodeLength));
+			hash_combine(seed, std::hash<const void*>{}(desc.VS.pShaderBytecode)); //hash_memory(desc.VS.pShaderBytecode, desc.VS.BytecodeLength));
 		if (desc.PS.pShaderBytecode)
-			hash_combine(seed, hash_memory(desc.PS.pShaderBytecode, desc.PS.BytecodeLength));
+			hash_combine(seed, std::hash<const void*>{}(desc.PS.pShaderBytecode)); //hash_memory(desc.PS.pShaderBytecode, desc.PS.BytecodeLength));
 		if (desc.DS.pShaderBytecode)
-			hash_combine(seed, hash_memory(desc.DS.pShaderBytecode, desc.DS.BytecodeLength));
+			hash_combine(seed, std::hash<const void*>{}(desc.DS.pShaderBytecode)); //hash_memory(desc.DS.pShaderBytecode, desc.DS.BytecodeLength));
 		if (desc.HS.pShaderBytecode)
-			hash_combine(seed, hash_memory(desc.HS.pShaderBytecode, desc.HS.BytecodeLength));
+			hash_combine(seed, std::hash<const void*>{}(desc.HS.pShaderBytecode)); //hash_memory(desc.HS.pShaderBytecode, desc.HS.BytecodeLength));
 		if (desc.GS.pShaderBytecode)
-			hash_combine(seed, hash_memory(desc.GS.pShaderBytecode, desc.GS.BytecodeLength));
+			hash_combine(seed, std::hash<const void*>{}(desc.GS.pShaderBytecode)); //hash_memory(desc.GS.pShaderBytecode, desc.GS.BytecodeLength));
 
 		// Fixed function state
 		hash_combine(seed, hash_struct(desc.BlendState));
@@ -89,10 +89,15 @@ struct PipelineDescEqual {
 		if (a.pRootSignature != b.pRootSignature) return false;
 
 		// Shaders
-		auto cmp_shader = [](auto& A, auto& B) {
+		/*auto cmp_shader = [](auto& A, auto& B) {
 			if (A.BytecodeLength != B.BytecodeLength) return false;
 			if (A.BytecodeLength == 0) return true;
 			return std::memcmp(A.pShaderBytecode, B.pShaderBytecode, A.BytecodeLength) == 0;
+			};*/
+		auto cmp_shader = [](auto& A, auto& B) {
+			if (A.BytecodeLength != B.BytecodeLength) return false;
+			if (A.BytecodeLength == 0) return true;
+			return A.pShaderBytecode == B.pShaderBytecode;
 			};
 		if (!cmp_shader(a.VS, b.VS)) return false;
 		if (!cmp_shader(a.PS, b.PS)) return false;
@@ -158,12 +163,12 @@ ID3D12PipelineState* GetOrCreatePipeline(ID3D12Device* device,
 
 void D3D12HAL::SetDepthStencilState(DepthStencilDesc& Desc)
 {
-	m_CurrentPSO.DepthStencilState = Desc.desc;
+	m_CurrentGraphicsPSO.DepthStencilState = Desc.desc;
 }
 
 void D3D12HAL::SetRasterizerState(RasterizerDesc& Desc)
 {
-	m_CurrentPSO.RasterizerState = Desc.desc;
+	m_CurrentGraphicsPSO.RasterizerState = Desc.desc;
 }
 
 void D3D12HAL::SetShaderResource(U32 Slot, EShaderType Type, sys::TextureLink* View)
@@ -206,8 +211,8 @@ void D3D12HAL::SetSampler(U32 Slot, EShaderType Type, SamplerDesc& Sampler)
 
 void D3D12HAL::SetBlendState(BlendDesc& Blend)
 {
-	m_CurrentPSO.BlendState = Blend.desc;
-	m_CurrentPSO.SampleMask = 0xffffffff;
+	m_CurrentGraphicsPSO.BlendState = Blend.desc;
+	m_CurrentGraphicsPSO.SampleMask = 0xffffffff;
 }
 
 void D3D12HAL::SetViewports(D3D12_VIEWPORT& Vp)
@@ -330,10 +335,10 @@ void D3D12HAL::DrawIndexed(UINT IndexCount, UINT StartIndexLocation, INT BaseVer
 		m_CommandList->SetGraphicsRootDescriptorTable(5, m_SamplerDynamicHeap.GetGPUSlotHandle(offset)); //Vertex Samplers		
 	}
 
-	m_CurrentPSO.pRootSignature = m_RootSignature.Get();
+	m_CurrentGraphicsPSO.pRootSignature = m_RootSignature.Get();
 
 	ComPtr<ID3D12PipelineState> PSO;
-	PSO = GetOrCreatePipeline(GetDevice(), m_CurrentPSO);
+	PSO = GetOrCreatePipeline(GetDevice(), m_CurrentGraphicsPSO);
 	m_CommandList->SetPipelineState(PSO.Get());
 	m_CommandList->DrawIndexedInstanced(IndexCount, 1, StartIndexLocation, BaseVertexLocation, 0);
 }

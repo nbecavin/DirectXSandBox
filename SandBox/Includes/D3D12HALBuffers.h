@@ -48,7 +48,7 @@ private:
 public:
 	D3D12VertexDeclaration() {}
 	D3D12_INPUT_LAYOUT_DESC * GetRes() { return &res; }
-	virtual void Create(VertexElement* Decl, U32 _ShaderUID);
+	virtual void Create(VertexElement* Decl);
 };
 
 typedef DynArray<D3D12VertexDeclaration*, 8192>	D3D12VertexDeclarationDA;

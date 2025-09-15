@@ -14,6 +14,7 @@ namespace asset
 	public:
 		
 		bool LoadAsset(Type _type,const char * path,GraphObject ** oAsset);
+		void DeleteAsset(GraphObject* oAsset);
 		bool Exist(char * path);
 
 		static Cache& GetInstance() {

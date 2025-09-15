@@ -87,7 +87,7 @@ void D3D12HAL::Init(int sizeX, int sizeY, sys::Renderer* owner)
 	int cy = (int)(rcWindow.bottom - rcWindow.top);
 	SetWindowPos(sys::pc::hWnd, 0, 0, 0, cx, cy, SWP_NOZORDER | SWP_NOMOVE);
 
-#if 1 //defined(_DEBUG)
+#if 0 //defined(_DEBUG)
 	// Enable the D3D12 debug layer.
 	{
 		ComPtr<ID3D12Debug> debugController;
@@ -260,7 +260,8 @@ void D3D12HAL::Init(int sizeX, int sizeY, sys::Renderer* owner)
 	barrier.Transition.StateAfter = D3D12_RESOURCE_STATE_RENDER_TARGET;
 	m_CommandList->ResourceBarrier(1, &barrier);
 
-	memset(&m_CurrentPSO, 0, sizeof(m_CurrentPSO));
+	memset(&m_CurrentGraphicsPSO, 0, sizeof(m_CurrentGraphicsPSO));
+	memset(&m_CurrentComputePSO, 0, sizeof(m_CurrentComputePSO));
 
 	D3D12_RASTERIZER_DESC rs;
 	rs.AntialiasedLineEnable = FALSE;
@@ -274,7 +275,7 @@ void D3D12HAL::Init(int sizeX, int sizeY, sys::Renderer* owner)
 	rs.SlopeScaledDepthBias = 0.f;
 	rs.ForcedSampleCount = 1;
 	rs.ConservativeRaster = D3D12_CONSERVATIVE_RASTERIZATION_MODE_OFF;
-	m_CurrentPSO.RasterizerState = rs;
+	m_CurrentGraphicsPSO.RasterizerState = rs;
 
 	// Create an empty root signature.
 	{
@@ -367,10 +368,10 @@ void D3D12HAL::Shut()
 
 void D3D12HAL::SetAndClearRenderTarget()
 {
-	m_CurrentPSO.NumRenderTargets = 1;
-	m_CurrentPSO.RTVFormats[0] = DXGI_FORMAT_R8G8B8A8_UNORM;
-	m_CurrentPSO.SampleDesc.Count = 1;
-	m_CurrentPSO.DSVFormat = DXGI_FORMAT_D32_FLOAT;
+	m_CurrentGraphicsPSO.NumRenderTargets = 1;
+	m_CurrentGraphicsPSO.RTVFormats[0] = DXGI_FORMAT_R8G8B8A8_UNORM;
+	m_CurrentGraphicsPSO.SampleDesc.Count = 1;
+	m_CurrentGraphicsPSO.DSVFormat = DXGI_FORMAT_D32_FLOAT;
 	//m_CommandList->SetGra
 	//GetCommandList()->OMSetRenderTargets(1, &m_BackBuffer, m_DepthBuffer);
 

@@ -32,10 +32,8 @@ void Mesh::Draw()
 		m_Constant->Unlock();
 	}
 
-	gData.Rdr->PushShader( SHADER_VS_BASE_MESH );
-	gData.Rdr->PushShader( SHADER_PS_PIXEL_LIT );
+	gData.Rdr->BindGraphicPipelineState(ShaderMap::BaseMeshVS, ShaderMap::BasePassPS);
 	gData.Rdr->SetConstantBuffer(1, SHADER_TYPE_VERTEX, m_Constant);
-	//gData.Rdr->SetGlobalConstant(SHADER_TYPE_VERTEX);
 
 	U32 SubSetCount = SubSetsDA.GetSize();
 	for(int i=0;i<SubSetCount;i++)
@@ -59,8 +57,7 @@ void Mesh::DrawGBuffer()
 {
 	gData.Rdr->PushWorldMatrix(&m_Node);
 
-	gData.Rdr->PushShader( SHADER_VS_BASE_MESH );
-	gData.Rdr->PushShader( SHADER_PS_PIXEL_GBUFFER );
+	gData.Rdr->BindGraphicPipelineState(ShaderMap::BaseMeshVS, ShaderMap::GBufferPassPS);
 
 	U32 SubSetCount = SubSetsDA.GetSize();
 	for(int i=0;i<SubSetCount;i++)

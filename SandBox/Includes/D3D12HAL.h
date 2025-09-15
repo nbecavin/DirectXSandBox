@@ -1,11 +1,12 @@
 #pragma once
 
+using namespace Microsoft::WRL;
+
 #include <D3D12HALBuffers.h>
 #include <D3D12HALConstantBuffer.h>
 #include <D3D12HALDescriptorHeaps.h>
 #include <D3D12HALSamplerState.h>
-
-using namespace Microsoft::WRL;
+#include <D3D12HALShaders.h>
 
 #define MAX_SRVS 48
 #define MAX_CBS 16
@@ -22,8 +23,8 @@ public:
 
 	void PresentFrame();
 
-	VertexDeclaration *	CreateVertexDecl(VertexElement* Decl, U32 _ShaderUID);
-	void CreateShaderResource(ID3DBlob * pCode, UINT Type, UINT SID);
+	VertexDeclaration *	CreateVertexDecl(VertexElement* Decl);
+	ShaderKernel* CreateShaderResource(ID3DBlob * pCode);
 	void CreateTexture(Bitmap * _Bm);
 	VertexBuffer* CreateVertexBuffer(U32 _Size, U32 _Usage, void* _Datas);
 	IndexBuffer* CreateIndexBuffer(U32 _Size, U32 _Usage, U32 _Fmt, void* _Datas);
@@ -35,25 +36,14 @@ public:
 	void SetVertexDeclaration(VertexDeclaration* Decl);
 	void SetIndices(IndexBuffer* Buffer, U32 _Fmt);
 	void SetStreamSource(U32 StreamNumber, VertexBuffer* Buffer, U32 Offset, U32 Stride);
-	void SetShaders(UINT Type, UINT SID);
-	ID3DBlob * GetShaderBlob(UINT Type, UINT SID)
-	{
-		if (Type == SHADER_TYPE_VERTEX)
-		{
-			return m_VSDABlob[SID];
-		}
-		if (Type == SHADER_TYPE_PIXEL)
-		{
-			return m_PSDABlob[SID];
-		}
-		return NULL;
-	}
+	void BindGraphicPipelineState(ShaderKernel* VS, ShaderKernel* PS);
+	void BindComputePipelineState(ShaderKernel* CS);
 
 	D3D12DescriptorHeap& GetSrvHeap() { return m_SrvHeap; }
 	D3D12DescriptorHeap& GetSamplerHeap() { return m_SamplerHeap; }
 	ID3D12Device* GetDevice() { return m_Device.Get(); }
 	ID3D12GraphicsCommandList5* GetCommandList() { return m_CommandList.Get(); }
-	D3D12_GRAPHICS_PIPELINE_STATE_DESC& GetPipelineState() { return m_CurrentPSO; }
+	D3D12_GRAPHICS_PIPELINE_STATE_DESC& GetPipelineState() { return m_CurrentGraphicsPSO; }
 
 	// Graphics command list
 	void SetAndClearRenderTarget();
@@ -105,22 +95,13 @@ private:
 	D3D12_CPU_DESCRIPTOR_HANDLE			m_DepthStencilView;
 
 	// Current PSO
-	D3D12_GRAPHICS_PIPELINE_STATE_DESC	m_CurrentPSO;
+	D3D12_GRAPHICS_PIPELINE_STATE_DESC	m_CurrentGraphicsPSO;
+	D3D12_COMPUTE_PIPELINE_STATE_DESC	m_CurrentComputePSO;
+
 	D3D12_CPU_DESCRIPTOR_HANDLE			m_CurrentSRV[8][MAX_SRVS];
 	D3D12_CPU_DESCRIPTOR_HANDLE			m_CurrentCBV[8][MAX_CBS];
 	D3D12_CPU_DESCRIPTOR_HANDLE			m_CurrentSampler[8][MAX_SAMPLERS];
 	D3D12SamplerStateCache				m_SamplerStateCache;
-
-	//
-	D3D12_SHADER_BYTECODE			m_VSDA[SHADER_VS_COUNT];
-	D3D12_SHADER_BYTECODE			m_PSDA[SHADER_PS_COUNT];
-	D3D12_SHADER_BYTECODE			m_CSDA[SHADER_CS_COUNT];
-	ID3DBlob *						m_VSDABlob[SHADER_VS_COUNT];
-	ID3DBlob *						m_PSDABlob[SHADER_PS_COUNT];
-	ID3DBlob *						m_CSDABlob[SHADER_CS_COUNT];
-	ID3D12ShaderReflection *		m_VSDAReflection[SHADER_VS_COUNT];
-	ID3D12ShaderReflection *		m_PSDAReflection[SHADER_PS_COUNT];
-	ID3D12ShaderReflection *		m_CSDAReflection[SHADER_CS_COUNT];
 
 	D3D12VertexDeclarationDA		m_InputLayoutDA;
 };

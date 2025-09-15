@@ -37,6 +37,20 @@ namespace asset
 		return true;
 	}
 
+	void Cache::DeleteAsset(GraphObject* oAsset)
+	{
+		for (U32 i = 0; i < m_AssetDA.GetSize(); i++)
+		{
+			Entry& anEntry = m_AssetDA[i];
+			if (anEntry.ptr == oAsset)
+			{
+				delete oAsset;
+				return;
+			}
+		}
+	}
+
+
 	bool Cache::Exist(char * path)
 	{
 		FILE * fp = fopen(path,"r");

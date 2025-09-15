@@ -308,7 +308,7 @@ void Mesh::LoadFromAiMesh(std::filesystem::path directory, aiMesh* importMesh, a
 		//
 		pElt[0].END();
 
-		pItem->Decl = gData.Rdr->CreateVertexDecl(DeclDesc, SHADER_VS_BASE_MESH);
+		pItem->Decl = gData.Rdr->CreateVertexDecl(DeclDesc);
 		pItem->Stride = vertexStride;
 		pItem->MtlId = 0;// pSubSet->MaterialID;
 	}
@@ -344,14 +344,10 @@ void Material::LoadFromAiMaterial(std::filesystem::path directory, aiMaterial* i
 				}
 				else
 				{
-					MESSAGE("Failed to load");
+					asset.DeleteAsset(bm);
 					bm = nullptr;
 					return;
 				}
-			}
-			else
-			{
-				MESSAGE("Reuse");
 			}
 
 			SetBitmap(bm, stage);

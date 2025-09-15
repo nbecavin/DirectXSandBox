@@ -77,7 +77,7 @@ void Renderer::InitImGUI()
 		DECL_END()
 	};
 
-	m_ImGuiVertexDeclaration = gData.Rdr->CreateVertexDecl(DeclDesc, SHADER_VS_IMGUI);
+	m_ImGuiVertexDeclaration = gData.Rdr->CreateVertexDecl(DeclDesc);
 }
 
 void Renderer::DrawImGUI()
@@ -149,8 +149,7 @@ void Renderer::DrawImGUI()
 	//ctx->IASetIndexBuffer(g_pIB, sizeof(ImDrawIdx) == 2 ? DXGI_FORMAT_R16_UINT : DXGI_FORMAT_R32_UINT, 0);
 
 	SetPrimitiveTopology(PRIM_TRIANGLELIST);
-	PushShader(SHADER_VS_IMGUI);
-	PushShader(SHADER_PS_IMGUI);
+	BindGraphicPipelineState(ShaderMap::ImGuiVS, ShaderMap::ImGuiPS);
 
 	//ctx->VSSetConstantBuffers(0, 1, &g_pVertexConstantBuffer);
 	//ctx->PSSetSamplers(0, 1, &g_pFontSampler);

@@ -277,11 +277,13 @@ namespace sys {
 		MESSAGE("DXRenderer::PushDrawIndexed Fait pas grand chose");
 	}
 
-	void DXRenderer::PushShader(U32 _ShaderUID)
+	void DXRenderer::BindGraphicPipelineState(ShaderKernel* VS, ShaderKernel* PS)
 	{
-		U32 Type = (_ShaderUID&SHADER_TYPE_MASK)>>SHADER_TYPE_BITS;
-		U32 SID = (_ShaderUID&(~SHADER_TYPE_MASK));
-		GetHAL().SetShaders(Type, SID);
+		GetHAL().BindGraphicPipelineState(VS, PS);
+	}
+	void DXRenderer::BindComputePipelineState(ShaderKernel* CS)
+	{
+		GetHAL().BindComputePipelineState(CS);
 	}
 
 	void DXRenderer::PushMaterial(Material* Mat)

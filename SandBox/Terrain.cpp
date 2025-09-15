@@ -49,7 +49,7 @@ void Terrain::Update(F32 dTime)
 			DECL_END()
 		};
 
-		m_VertexDecl = gData.Rdr->CreateVertexDecl( DeclDesc, SHADER_VS_BASE_MESH );
+		m_VertexDecl = gData.Rdr->CreateVertexDecl( DeclDesc);
 
 		int num_vertex = (lodx+1)*(lody+1);
 		int num_index = (lodx)*(lody)*6;
@@ -178,8 +178,7 @@ MESSAGE("CREATE VBIB for TERRAIN");
 
 void Terrain::Draw()
 {
-	gData.Rdr->PushShader( SHADER_VS_BASE_MESH );
-	gData.Rdr->PushShader( SHADER_PS_PIXEL_LIT );
+	gData.Rdr->BindGraphicPipelineState(ShaderMap::BaseMeshVS, ShaderMap::GBufferPassPS);
 	gData.Rdr->PushVertexDeclaration(m_VertexDecl);
 	gData.Rdr->PushStreamSource(0,m_VB,0,VERTEX_TERRAIN_SIZE);
 	gData.Rdr->PushIndices(m_IB);
@@ -215,8 +214,7 @@ void Terrain::Draw()
 
 void Terrain::DrawGBuffer()
 {
-	gData.Rdr->PushShader( SHADER_VS_BASE_MESH );
-	gData.Rdr->PushShader( SHADER_PS_PIXEL_GBUFFER );
+	gData.Rdr->BindGraphicPipelineState(ShaderMap::BaseMeshVS, ShaderMap::GBufferPassPS);
 	gData.Rdr->PushVertexDeclaration(m_VertexDecl);
 	gData.Rdr->PushStreamSource(0,m_VB,0,VERTEX_TERRAIN_SIZE);
 	gData.Rdr->PushIndices(m_IB);

@@ -57,7 +57,7 @@ namespace sys {
 		// Vertex/Index buffers
 		virtual VertexBuffer *		CreateVertexBuffer(U32 _Size,U32 _Usage,void * _Datas);
 		virtual IndexBuffer *		CreateIndexBuffer(U32 _Size,U32 _Usage,U32 _Fmt,void * _Datas);
-		virtual VertexDeclaration *	CreateVertexDecl(VertexElement* Decl,U32 _ShaderUID);
+		virtual VertexDeclaration *	CreateVertexDecl(VertexElement* Decl);
 		virtual void				CreateTexture(Bitmap * _Bmap) = 0;
 		virtual ConstantBuffer *	CreateConstantBuffer(U32 _Size) = 0;
 
@@ -66,13 +66,15 @@ namespace sys {
 		virtual GlobalConstant* GetGlobalConstantData() { return &m_GlobalConstantData; }
 		virtual void	PushWorldMatrix(Mat4x4* _m);
 
-		virtual void	PushShader( U32 _ShaderUID );
 		virtual void	PushVertexDeclaration(VertexDeclaration* Decl) {}
 		virtual void	PushStreamSource(U32 StreamNumber,VertexBuffer* Buffer,U32 Offset,U32 Stride) {}
 		virtual void	PushIndices(IndexBuffer* Buffer,U32 _Fmt=FMT_IDX_16) {}
 		virtual void	PushDrawIndexed(PrimitiveType Type,U32 BaseVertexIndex,U32 MinVertexIndex,U32 NumVertices,U32 StartIndex,U32 PrimCount) {}
 		virtual void	PushMaterial(Material* Mat) {}
-		virtual void	RegisterShaderFromSourceFile(U32 _SUID,const char* src,const char* epoint) = 0;
+
+		virtual ShaderKernel* CreateKernel(const char* src, const char* epoint, EShaderType type) = 0;
+		virtual void BindGraphicPipelineState(ShaderKernel* VS, ShaderKernel* PS) = 0;
+		virtual void BindComputePipelineState(ShaderKernel* CS) = 0;
 
 		// Graphics command list
 		virtual void SetBlendState(BlendDesc& desc) = 0;

@@ -55,9 +55,9 @@ namespace sys {
 
 		virtual VertexBuffer* CreateVertexBuffer(U32 _Size, U32 _Usage, void* _Datas);
 		virtual IndexBuffer* CreateIndexBuffer(U32 _Size, U32 _Usage, U32 _Fmt, void* _Datas);
-		virtual VertexDeclaration* CreateVertexDecl(VertexElement* Decl, U32 _ShaderUID)
+		virtual VertexDeclaration* CreateVertexDecl(VertexElement* Decl)
 		{
-			return GetHAL().CreateVertexDecl(Decl, _ShaderUID);
+			return GetHAL().CreateVertexDecl(Decl);
 		}
 		virtual void				CreateTexture(Bitmap* _Bmap);
 		virtual ConstantBuffer* CreateConstantBuffer(U32 _Size)
@@ -70,11 +70,13 @@ namespace sys {
 			return GetHAL().SetScissorRect(left, right, top, bottom);
 		}
 
-		virtual void	PushShader(U32 _ShaderUID);
-		virtual void	PushVertexDeclaration(VertexDeclaration* Decl);
-		virtual void	PushStreamSource(U32 StreamNumber, VertexBuffer* Buffer, U32 Offset, U32 Stride);
-		virtual void	PushIndices(IndexBuffer* Buffer, U32 _Fmt);
-		virtual void	PushMaterial(Material* Mat);
+		virtual void BindGraphicPipelineState(ShaderKernel* VS, ShaderKernel* PS);
+		virtual void BindComputePipelineState(ShaderKernel* CS);
+
+		virtual void PushVertexDeclaration(VertexDeclaration* Decl);
+		virtual void PushStreamSource(U32 StreamNumber, VertexBuffer* Buffer, U32 Offset, U32 Stride);
+		virtual void PushIndices(IndexBuffer* Buffer, U32 _Fmt);
+		virtual void PushMaterial(Material* Mat);
 
 		virtual void SetConstantBuffer(U32 Slot, EShaderType Type, ConstantBuffer* CBV)
 		{
@@ -105,7 +107,7 @@ namespace sys {
 
 		virtual void PushDrawIndexed(PrimitiveType Type, U32 BaseVertexIndex, U32 MinVertexIndex, U32 NumVertices, U32 StartIndex, U32 PrimCount);
 
-		virtual void	RegisterShaderFromSourceFile(U32 _SUID, const char* src, const char* epoint);
+		virtual ShaderKernel* CreateKernel(const char* src, const char* epoint, EShaderType type);
 
 		virtual void InitShaders();
 		void InitSurface();
@@ -113,8 +115,6 @@ namespace sys {
 		void FullScreenQuad(Vec2f scale, Vec2f offset);
 
 		void PostProcess();
-
-		ID3DBlob* GetShaderBlob(U32 _ShaderUID);
 
 		D3D12HAL				m_D3D12HAL;
 		D3D12HAL& GetD3D12HAL() { return m_D3D12HAL; }

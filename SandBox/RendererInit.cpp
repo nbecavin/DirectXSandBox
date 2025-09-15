@@ -40,7 +40,7 @@ namespace sys {
 				DECL_END()
 			};
 
-			m_ScreenVertexDecl = gData.Rdr->CreateVertexDecl( DeclDesc, SHADER_VS_BASE_SCREENVERTEX );
+			m_ScreenVertexDecl = gData.Rdr->CreateVertexDecl(DeclDesc);
 		}
 
 		// Render targets

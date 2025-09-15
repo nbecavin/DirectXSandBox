@@ -197,6 +197,7 @@
     <ClInclude Include="Includes\D3D12HALConstantBuffer.h" />
     <ClInclude Include="Includes\D3D12HALDescriptorHeaps.h" />
     <ClInclude Include="Includes\D3D12HALSamplerState.h" />
+    <ClInclude Include="Includes\D3D12HALShaders.h" />
     <ClInclude Include="Includes\d3dx12.h" />
     <ClInclude Include="Includes\Model.h" />
     <ClInclude Include="Includes\RendererPipelineState.h" />

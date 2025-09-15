@@ -19,7 +19,7 @@ namespace sys {
 		return NULL;
 	}
 
-	VertexDeclaration*	Renderer::CreateVertexDecl(VertexElement * _Decl,U32 _ShaderUID)
+	VertexDeclaration*	Renderer::CreateVertexDecl(VertexElement * _Decl)
 	{
 		return NULL;
 	}

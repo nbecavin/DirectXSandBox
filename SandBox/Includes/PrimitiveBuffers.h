@@ -84,22 +84,11 @@ enum {
 
 class VertexDeclaration {
 public:
-	virtual void Create(VertexElement* Decl,U32 _ShaderUID) = 0;
+	virtual void Create(VertexElement* Decl) = 0;
 };
 
 class Shader {
-};
-
-class VertexShader : public Shader
-{
-};
-
-class PixelShader : public Shader
-{
-};
-
-class GeometryShader : public Shader
-{
+public:
 };
 
 #endif //__PRIMITIVE_BUFFERS_HH__

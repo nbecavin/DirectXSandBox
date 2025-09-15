@@ -158,7 +158,7 @@ void D3D12IndexBuffer::Unlock()
 		_PTR_[_ID].Usage = _Usage; \
 		_PTR_[_ID].UsageIndex = _UsageIndex;
 
-void D3D12VertexDeclaration::Create(VertexElement *Decl, U32 _ShaderUID)
+void D3D12VertexDeclaration::Create(VertexElement *Decl)
 {
 	ID3D12Device * Device = GET_RDR_INSTANCE()->GetD3D12HAL().GetDevice();
 

@@ -6,33 +6,17 @@
 void D3D12HAL::InitShaders()
 {
 	HRESULT hr;
-	memset(m_VSDABlob, 0, sizeof(m_VSDABlob));
-	memset(m_PSDABlob, 0, sizeof(m_PSDABlob));
 }
 
-void D3D12HAL::CreateShaderResource(ID3DBlob * pCode, UINT Type, UINT SID)
+ShaderKernel* D3D12HAL::CreateShaderResource(ID3DBlob * pCode)
 {
-	if (Type == SHADER_TYPE_VERTEX)
-	{
-		m_VSDABlob[SID] = pCode;
-
-		m_VSDA[SID].pShaderBytecode = pCode->GetBufferPointer();
-		m_VSDA[SID].BytecodeLength = pCode->GetBufferSize();
-	}
-	if (Type == SHADER_TYPE_PIXEL)
-	{
-		m_PSDABlob[SID] = pCode;
-
-		m_PSDA[SID].pShaderBytecode = pCode->GetBufferPointer();
-		m_PSDA[SID].BytecodeLength = pCode->GetBufferSize();
-	}
-	if (Type == SHADER_TYPE_COMPUTE)
-	{
-		m_CSDABlob[SID] = pCode;
-
-		m_CSDA[SID].pShaderBytecode = pCode->GetBufferPointer();
-		m_CSDA[SID].BytecodeLength = pCode->GetBufferSize();
-	}
+	ShaderKernel* aKernel = new ShaderKernel();
+	D3D12Shader* aShader = new D3D12Shader();
+	aKernel->m_ShaderBlob = aShader;	
+	aShader->m_Blob = pCode;
+	aShader->m_ByteCode.pShaderBytecode = pCode->GetBufferPointer();
+	aShader->m_ByteCode.BytecodeLength = pCode->GetBufferSize();
+	return aKernel;
 }
 
 void D3D12HAL::SetIndices(IndexBuffer* Buffer, U32 _Fmt)
@@ -55,7 +39,7 @@ void D3D12HAL::SetPrimitiveTopology(PrimitiveType Topology)
 		_primType = D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
 		break;
 	}
-	m_CurrentPSO.PrimitiveTopologyType = D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE;
+	m_CurrentGraphicsPSO.PrimitiveTopologyType = D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE;
 	m_CommandList->IASetPrimitiveTopology(_primType);
 }
 
@@ -71,11 +55,11 @@ void D3D12HAL::SetStreamSource(U32 StreamNumber, VertexBuffer* Buffer, U32 Offse
 	//m_StateCache.VB = dxbuffer;
 }
 
-VertexDeclaration* D3D12HAL::CreateVertexDecl(VertexElement *Decl, U32 _ShaderUID)
+VertexDeclaration* D3D12HAL::CreateVertexDecl(VertexElement *Decl)
 {
 	D3D12VertexDeclaration * buffer = new D3D12VertexDeclaration();
 	m_InputLayoutDA.Add(buffer); //store it
-	buffer->Create(Decl, _ShaderUID);
+	buffer->Create(Decl);
 	//return (buffer->IsInited()) ? buffer : NULL;
 	return buffer;
 }
@@ -83,18 +67,17 @@ VertexDeclaration* D3D12HAL::CreateVertexDecl(VertexElement *Decl, U32 _ShaderUI
 void D3D12HAL::SetVertexDeclaration(VertexDeclaration* Decl)
 {
 	D3D12VertexDeclaration* dxbuffer = reinterpret_cast<D3D12VertexDeclaration*>(Decl);
-	m_CurrentPSO.InputLayout = *dxbuffer->GetRes();
+	m_CurrentGraphicsPSO.InputLayout = *dxbuffer->GetRes();
 	//m_ImmediateDeviceContext->IASetInputLayout(dxbuffer->GetRes());
 }
 
-void D3D12HAL::SetShaders(UINT Type, UINT SID)
+void D3D12HAL::BindGraphicPipelineState(ShaderKernel* VS, ShaderKernel* PS)
 {
-	if (Type == SHADER_TYPE_VERTEX)
-	{
-		m_CurrentPSO.VS = m_VSDA[SID];
-	}
-	if (Type == SHADER_TYPE_PIXEL)
-	{
-		m_CurrentPSO.PS = m_PSDA[SID];
-	}
+	m_CurrentGraphicsPSO.VS = ((D3D12Shader*)VS->m_ShaderBlob)->m_ByteCode;
+	m_CurrentGraphicsPSO.PS = ((D3D12Shader*)PS->m_ShaderBlob)->m_ByteCode;
+}
+
+void D3D12HAL::BindComputePipelineState(ShaderKernel* CS)
+{
+	m_CurrentComputePSO.CS = ((D3D12Shader*)CS->m_ShaderBlob)->m_ByteCode;
 }

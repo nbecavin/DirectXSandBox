@@ -57,7 +57,7 @@ namespace sys {
 		{
 			//sprintf(path, "..\\Shaders\\%s", src);
 			ComPtr<IDxcBlobEncoding> pEncoding;
-			std::wstring path = std::wstring(L"..//Shaders").append(pFilename);
+			std::wstring path(pFilename);
 			if (IncludedFiles.find(path) != IncludedFiles.end())
 			{
 				// Return empty string blob if this file has been included before
@@ -83,27 +83,23 @@ namespace sys {
 		std::unordered_set<std::wstring> IncludedFiles;
 	};
 
-	void DXRenderer::RegisterShaderFromSourceFile(U32 _ShaderUID,const char* src,const char* epoint)
+	ShaderKernel* DXRenderer::CreateKernel(const char* src, const char* epoint, EShaderType type)
 	{
+		ShaderKernel* aShader = nullptr;
+
 		HRESULT hr;
 
-		char profile[32]="";
 		char path[1024];
 		WCHAR wstr[256][256];
 		int wstr_id = 0;
 
-		auto ToWSTR = [&wstr,&wstr_id](const char* str) -> LPWSTR
+		auto ToWSTR = [&wstr, &wstr_id](const char* str) -> LPWSTR
 			{
 				MultiByteToWideChar(CP_ACP, 0, str, -1, wstr[wstr_id], 1024);
 				return wstr[wstr_id++];
 			};
 
-		sprintf(path,"..\\Shaders\\%s",src);
-	
-		U32 Type = (_ShaderUID&SHADER_TYPE_MASK)>>SHADER_TYPE_BITS;
-		U32 SID = (_ShaderUID&(~SHADER_TYPE_MASK));
-
-		strcpy(profile, GetShaderProfile(Type));
+		sprintf(path, "..\\%s", src);
 
 		std::vector<LPWSTR> arguments;
 
@@ -111,14 +107,14 @@ namespace sys {
 		arguments.push_back(L"-E");
 		arguments.push_back(ToWSTR(epoint));
 		arguments.push_back(L"-T");
-		arguments.push_back(ToWSTR(GetShaderProfile(Type)));
+		arguments.push_back(ToWSTR(GetShaderProfile(type)));
 		arguments.push_back(L"-I ../Shaders");
 		arguments.push_back(L"-I ../Tools/rtxdi/include");
 		arguments.push_back(L"/Zi");
 		arguments.push_back(L"-Qembed_debug");
 
 		WCHAR wpath[2049];
-		MultiByteToWideChar(CP_ACP,0,path,-1,wpath,2048);
+		MultiByteToWideChar(CP_ACP, 0, path, -1, wpath, 2048);
 
 		ComPtr<IDxcCompiler3> pCompiler;
 		DxcCreateInstance(CLSID_DxcCompiler, IID_PPV_ARGS(pCompiler.GetAddressOf()));
@@ -142,7 +138,9 @@ namespace sys {
 		pCompiler->Compile(&sourceBuffer, (LPCWSTR*)arguments.data(), arguments.size(), &includeHandler, IID_PPV_ARGS(&pResults));
 
 		ComPtr<IDxcBlobUtf8> pErrors;
+		ComPtr<IDxcBlob> pHash;
 		pResults->GetOutput(DXC_OUT_ERRORS, IID_PPV_ARGS(pErrors.GetAddressOf()), nullptr);
+		pResults->GetOutput(DXC_OUT_SHADER_HASH, IID_PPV_ARGS(pHash.GetAddressOf()), nullptr);
 		pResults->GetStatus(&hr);
 
 		ComPtr<ID3DBlob> pCode;
@@ -154,17 +152,20 @@ namespace sys {
 		}
 		else
 		{
+			DxcShaderHash* pHashBuf = (DxcShaderHash*)pHash->GetBufferPointer();
+
+			std::size_t hash = std::hash<void*>{}(pHashBuf->HashDigest);
+
+			// Shaders (contenu, pas pointeur)
+			//hash_memory(desc.VS.pShaderBytecode, desc.VS.BytecodeLength);
+
 			pResults->GetResult((IDxcBlob**)pCode.GetAddressOf());
-			GetHAL().CreateShaderResource(pCode.Get(), Type, SID);
+			aShader = GetHAL().CreateShaderResource(pCode.Get());
+			aShader->m_Type = type;
 			pCode.Detach(); //detach from resource (ouais ca leak)
 		}
-	}
 
-	ID3DBlob * DXRenderer::GetShaderBlob(U32 _ShaderUID)
-	{
-		U32 Type = (_ShaderUID&SHADER_TYPE_MASK)>>SHADER_TYPE_BITS;
-		U32 SID = (_ShaderUID&(~SHADER_TYPE_MASK));
-		return GetHAL().GetShaderBlob(Type, SID);
+		return aShader;
 	}
 
 	void DXRenderer::CreateTexture(Bitmap * _Bm)

@@ -13,20 +13,23 @@
     <Filter Include="Material">
       <UniqueIdentifier>{ea792786-2a87-447d-86c0-66cb89d2db40}</UniqueIdentifier>
     </Filter>
-    <Filter Include="RTXDI-Integration\DI">
-      <UniqueIdentifier>{f366589b-1316-499e-af57-7b30585851b1}</UniqueIdentifier>
+    <Filter Include="RTXDI-Integration\RTXDI-SDK">
+      <UniqueIdentifier>{4ad7fa7a-737d-499d-8abc-05f2d68c65e3}</UniqueIdentifier>
     </Filter>
-    <Filter Include="RTXDI-Integration\GI">
-      <UniqueIdentifier>{7c794278-5974-4e65-b5b2-4415d01aa637}</UniqueIdentifier>
+    <Filter Include="RTXDI-Integration\RTXDI-SDK\Utils">
+      <UniqueIdentifier>{a698ab01-33ac-4315-a015-9271f1ae2e92}</UniqueIdentifier>
     </Filter>
-    <Filter Include="RTXDI-Integration\LightSampling">
-      <UniqueIdentifier>{041180aa-e500-4328-9376-dff9441e598d}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="RTXDI-Integration\ReGIR">
+    <Filter Include="RTXDI-Integration\RTXDI-SDK\ReGIR">
       <UniqueIdentifier>{5125f63f-686b-4846-b210-7f7693cca237}</UniqueIdentifier>
     </Filter>
-    <Filter Include="RTXDI-Integration\Utils">
-      <UniqueIdentifier>{a698ab01-33ac-4315-a015-9271f1ae2e92}</UniqueIdentifier>
+    <Filter Include="RTXDI-Integration\RTXDI-SDK\LightSampling">
+      <UniqueIdentifier>{041180aa-e500-4328-9376-dff9441e598d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="RTXDI-Integration\RTXDI-SDK\GI">
+      <UniqueIdentifier>{7c794278-5974-4e65-b5b2-4415d01aa637}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="RTXDI-Integration\RTXDI-SDK\DI">
+      <UniqueIdentifier>{f366589b-1316-499e-af57-7b30585851b1}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -55,96 +58,101 @@
       <Filter>RTXDI-Integration</Filter>
     </None>
     <None Include="$(MSBuildThisFileDirectory)..\..\Tools\RTXDI\Include\Rtxdi\DI\BoilingFilter.hlsli">
-      <Filter>RTXDI-Integration\DI</Filter>
+      <Filter>RTXDI-Integration\RTXDI-SDK\DI</Filter>
     </None>
     <None Include="$(MSBuildThisFileDirectory)..\..\Tools\RTXDI\Include\Rtxdi\DI\InitialSampling.hlsli">
-      <Filter>RTXDI-Integration\DI</Filter>
+      <Filter>RTXDI-Integration\RTXDI-SDK\DI</Filter>
     </None>
     <None Include="$(MSBuildThisFileDirectory)..\..\Tools\RTXDI\Include\Rtxdi\DI\PairwiseStreaming.hlsli">
-      <Filter>RTXDI-Integration\DI</Filter>
+      <Filter>RTXDI-Integration\RTXDI-SDK\DI</Filter>
     </None>
     <None Include="$(MSBuildThisFileDirectory)..\..\Tools\RTXDI\Include\Rtxdi\DI\Reservoir.hlsli">
-      <Filter>RTXDI-Integration\DI</Filter>
+      <Filter>RTXDI-Integration\RTXDI-SDK\DI</Filter>
     </None>
     <None Include="$(MSBuildThisFileDirectory)..\..\Tools\RTXDI\Include\Rtxdi\DI\SpatialResampling.hlsli">
-      <Filter>RTXDI-Integration\DI</Filter>
+      <Filter>RTXDI-Integration\RTXDI-SDK\DI</Filter>
     </None>
     <None Include="$(MSBuildThisFileDirectory)..\..\Tools\RTXDI\Include\Rtxdi\DI\SpatioTemporalResampling.hlsli">
-      <Filter>RTXDI-Integration\DI</Filter>
+      <Filter>RTXDI-Integration\RTXDI-SDK\DI</Filter>
     </None>
     <None Include="$(MSBuildThisFileDirectory)..\..\Tools\RTXDI\Include\Rtxdi\DI\TemporalResampling.hlsli">
-      <Filter>RTXDI-Integration\DI</Filter>
+      <Filter>RTXDI-Integration\RTXDI-SDK\DI</Filter>
     </None>
     <None Include="$(MSBuildThisFileDirectory)..\..\Tools\RTXDI\Include\Rtxdi\GI\BoilingFilter.hlsli">
-      <Filter>RTXDI-Integration\GI</Filter>
+      <Filter>RTXDI-Integration\RTXDI-SDK\GI</Filter>
     </None>
     <None Include="$(MSBuildThisFileDirectory)..\..\Tools\RTXDI\Include\Rtxdi\GI\JacobianMath.hlsli">
-      <Filter>RTXDI-Integration\GI</Filter>
+      <Filter>RTXDI-Integration\RTXDI-SDK\GI</Filter>
     </None>
     <None Include="$(MSBuildThisFileDirectory)..\..\Tools\RTXDI\Include\Rtxdi\GI\Reservoir.hlsli">
-      <Filter>RTXDI-Integration\GI</Filter>
+      <Filter>RTXDI-Integration\RTXDI-SDK\GI</Filter>
     </None>
     <None Include="$(MSBuildThisFileDirectory)..\..\Tools\RTXDI\Include\Rtxdi\GI\SpatialResampling.hlsli">
-      <Filter>RTXDI-Integration\GI</Filter>
+      <Filter>RTXDI-Integration\RTXDI-SDK\GI</Filter>
     </None>
     <None Include="$(MSBuildThisFileDirectory)..\..\Tools\RTXDI\Include\Rtxdi\GI\SpatioTemporalResampling.hlsli">
-      <Filter>RTXDI-Integration\GI</Filter>
+      <Filter>RTXDI-Integration\RTXDI-SDK\GI</Filter>
     </None>
     <None Include="$(MSBuildThisFileDirectory)..\..\Tools\RTXDI\Include\Rtxdi\GI\TemporalResampling.hlsli">
-      <Filter>RTXDI-Integration\GI</Filter>
+      <Filter>RTXDI-Integration\RTXDI-SDK\GI</Filter>
     </None>
     <None Include="$(MSBuildThisFileDirectory)..\..\Tools\RTXDI\Include\Rtxdi\LightSampling\LocalLightSelection.hlsli">
-      <Filter>RTXDI-Integration\LightSampling</Filter>
+      <Filter>RTXDI-Integration\RTXDI-SDK\LightSampling</Filter>
     </None>
     <None Include="$(MSBuildThisFileDirectory)..\..\Tools\RTXDI\Include\Rtxdi\LightSampling\PresamplingFunctions.hlsli">
-      <Filter>RTXDI-Integration\LightSampling</Filter>
+      <Filter>RTXDI-Integration\RTXDI-SDK\LightSampling</Filter>
     </None>
     <None Include="$(MSBuildThisFileDirectory)..\..\Tools\RTXDI\Include\Rtxdi\LightSampling\RISBuffer.hlsli">
-      <Filter>RTXDI-Integration\LightSampling</Filter>
+      <Filter>RTXDI-Integration\RTXDI-SDK\LightSampling</Filter>
     </None>
     <None Include="$(MSBuildThisFileDirectory)..\..\Tools\RTXDI\Include\Rtxdi\LightSampling\UniformSampling.hlsli">
-      <Filter>RTXDI-Integration\LightSampling</Filter>
+      <Filter>RTXDI-Integration\RTXDI-SDK\LightSampling</Filter>
     </None>
     <None Include="$(MSBuildThisFileDirectory)..\..\Tools\RTXDI\Include\Rtxdi\Utils\BoilingFilter.hlsli">
-      <Filter>RTXDI-Integration\Utils</Filter>
+      <Filter>RTXDI-Integration\RTXDI-SDK\Utils</Filter>
     </None>
     <None Include="$(MSBuildThisFileDirectory)..\..\Tools\RTXDI\Include\Rtxdi\Utils\Checkerboard.hlsli">
-      <Filter>RTXDI-Integration\Utils</Filter>
+      <Filter>RTXDI-Integration\RTXDI-SDK\Utils</Filter>
     </None>
     <None Include="$(MSBuildThisFileDirectory)..\..\Tools\RTXDI\Include\Rtxdi\Utils\Math.hlsli">
-      <Filter>RTXDI-Integration\Utils</Filter>
+      <Filter>RTXDI-Integration\RTXDI-SDK\Utils</Filter>
     </None>
     <None Include="$(MSBuildThisFileDirectory)..\..\Tools\RTXDI\Include\Rtxdi\Utils\ReservoirAddressing.hlsli">
-      <Filter>RTXDI-Integration\Utils</Filter>
+      <Filter>RTXDI-Integration\RTXDI-SDK\Utils</Filter>
     </None>
     <None Include="$(MSBuildThisFileDirectory)..\..\Tools\RTXDI\Include\Rtxdi\ReGIR\ReGIRSampling.hlsli">
-      <Filter>RTXDI-Integration\ReGIR</Filter>
+      <Filter>RTXDI-Integration\RTXDI-SDK\ReGIR</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="$(MSBuildThisFileDirectory)..\..\Tools\RTXDI\Include\Rtxdi\DI\ReSTIRDI.h">
-      <Filter>RTXDI-Integration\DI</Filter>
+      <Filter>RTXDI-Integration\RTXDI-SDK\DI</Filter>
     </ClInclude>
     <ClInclude Include="$(MSBuildThisFileDirectory)..\..\Tools\RTXDI\Include\Rtxdi\DI\ReSTIRDIParameters.h">
-      <Filter>RTXDI-Integration\DI</Filter>
+      <Filter>RTXDI-Integration\RTXDI-SDK\DI</Filter>
     </ClInclude>
     <ClInclude Include="$(MSBuildThisFileDirectory)..\..\Tools\RTXDI\Include\Rtxdi\GI\ReSTIRGI.h">
-      <Filter>RTXDI-Integration\GI</Filter>
+      <Filter>RTXDI-Integration\RTXDI-SDK\GI</Filter>
     </ClInclude>
     <ClInclude Include="$(MSBuildThisFileDirectory)..\..\Tools\RTXDI\Include\Rtxdi\GI\ReSTIRGIParameters.h">
-      <Filter>RTXDI-Integration\GI</Filter>
+      <Filter>RTXDI-Integration\RTXDI-SDK\GI</Filter>
     </ClInclude>
     <ClInclude Include="$(MSBuildThisFileDirectory)..\..\Tools\RTXDI\Include\Rtxdi\LightSampling\RISBufferSegmentAllocator.h">
-      <Filter>RTXDI-Integration\LightSampling</Filter>
+      <Filter>RTXDI-Integration\RTXDI-SDK\LightSampling</Filter>
     </ClInclude>
     <ClInclude Include="$(MSBuildThisFileDirectory)..\..\Tools\RTXDI\Include\Rtxdi\LightSampling\RISBufferSegmentParameters.h">
-      <Filter>RTXDI-Integration\LightSampling</Filter>
+      <Filter>RTXDI-Integration\RTXDI-SDK\LightSampling</Filter>
     </ClInclude>
     <ClInclude Include="$(MSBuildThisFileDirectory)..\..\Tools\RTXDI\Include\Rtxdi\ReGIR\ReGIR.h">
-      <Filter>RTXDI-Integration\ReGIR</Filter>
+      <Filter>RTXDI-Integration\RTXDI-SDK\ReGIR</Filter>
     </ClInclude>
     <ClInclude Include="$(MSBuildThisFileDirectory)..\..\Tools\RTXDI\Include\Rtxdi\ReGIR\ReGIRParameters.h">
-      <Filter>RTXDI-Integration\ReGIR</Filter>
+      <Filter>RTXDI-Integration\RTXDI-SDK\ReGIR</Filter>
     </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <FxCompile Include="$(MSBuildThisFileDirectory)..\RTXDI-Integration\LightingPasses\Presampling\PresampleReGIR.hlsl">
+      <Filter>RTXDI-Integration</Filter>
+    </FxCompile>
   </ItemGroup>
 </Project>

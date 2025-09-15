@@ -13,39 +13,24 @@ enum EShaderType
 	SHADER_TYPE_MASK = (0xf0000000)
 };
 
-enum
+class ShaderKernel
 {
-	// Vertex shaders
-	SHADER_VS_NULL			= (SHADER_TYPE_VERTEX<<SHADER_TYPE_BITS),
-	SHADER_VS_BASE_SCREENVERTEX,
-	SHADER_VS_BASE_2D		,
-	SHADER_VS_BASE_MESH		,
-	SHADER_VS_IMGUI			,
-	SHADER_VS_LAST			,
-	SHADER_VS_COUNT			= SHADER_VS_LAST&(~SHADER_TYPE_MASK)
+public:
+	Shader* m_ShaderBlob = nullptr;
+	EShaderType m_Type;
 };
 
-enum
-{	
-	// Pixel shaders
-	SHADER_PS_NULL			= (SHADER_TYPE_PIXEL<<SHADER_TYPE_BITS),
-	SHADER_PS_PIXEL_LIT					,
-	SHADER_PS_PIXEL_GBUFFER				,
-	SHADER_PS_POSTPROC_COLORGRADING		,
-	SHADER_PS_POSTPROC_PASSTHROUGH		,
-	SHADER_PS_IMGUI,
-	SHADER_PS_LAST						,
-	SHADER_PS_COUNT			= SHADER_PS_LAST&(~SHADER_TYPE_MASK)
-};
-
-enum
+struct ShaderMap
 {
-	// Compute shaders
-	SHADER_CS_NULL			= (SHADER_TYPE_COMPUTE<<SHADER_TYPE_BITS),
-	SHADER_CS_TEST						,
-	SHADER_CS_COLORGRADING				,
-	SHADER_CS_LAST						,
-	SHADER_CS_COUNT			= SHADER_CS_LAST&(~SHADER_TYPE_MASK)
+	static ShaderKernel* BasePassPS;
+	static ShaderKernel* GBufferPassPS;
+	static ShaderKernel* BaseMeshVS;
+	static ShaderKernel* SimpleVertexFactoryVS;
+	static ShaderKernel* ScreenVertexVS;
+	static ShaderKernel* ColorGradingPS;
+	static ShaderKernel* PassThroughPS;
+	static ShaderKernel* ImGuiVS;
+	static ShaderKernel* ImGuiPS;
 };
 
 #endif //__RENDERER_SHADER_HH__

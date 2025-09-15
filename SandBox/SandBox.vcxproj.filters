@@ -408,6 +408,9 @@
     <ClInclude Include="..\Tools\RTXDI\Include\Rtxdi\RtxdiUtils.h">
       <Filter>Tools\RTXDI</Filter>
     </ClInclude>
+    <ClInclude Include="Includes\D3D12HALShaders.h">
+      <Filter>Engine\PC\D3D12</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="SandBox.ico">

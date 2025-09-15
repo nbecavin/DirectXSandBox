@@ -75,7 +75,7 @@ void sys::MainLoop()
 
 	SceneImporter imp;
 
-	if(0)
+	if(1)
 	{
 		// bistro
 		imp.LoadScene("assets\\bistro\\bistro.gltf");
@@ -84,7 +84,7 @@ void sys::MainLoop()
 	}
 	else
 	{
-		imp.LoadScene("assets\\Bistro_v5_2\\BistroInterior.fbx");
+//		imp.LoadScene("assets\\Bistro_v5_2\\BistroInterior.fbx");
 //		imp.LoadScene("assets\\Bistro_v5_2\\BistroExterior.fbx");
 //		imp.LoadScene("assets\\from_blender\\from_blender.gltf");
 //		imp.LoadScene("assets\\asobo_mansion\\mansion.gltf");
