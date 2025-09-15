@@ -84,12 +84,12 @@ void sys::MainLoop()
 	}
 	else
 	{
-	//	imp.LoadScene("assets\\Bistro_v5_2\\BistroInterior.fbx");
-	//	imp.LoadScene("assets\\Bistro_v5_2\\BistroExterior.fbx");
+		imp.LoadScene("assets\\Bistro_v5_2\\BistroInterior.fbx");
+//		imp.LoadScene("assets\\Bistro_v5_2\\BistroExterior.fbx");
 //		imp.LoadScene("assets\\from_blender\\from_blender.gltf");
-		imp.LoadScene("assets\\asobo_mansion\\mansion.gltf");
-	//	imp.LoadScene("assets\\breakfast_room\\BreakfastRoom.gltf");
-	//	imp.LoadScene("assets\\sponza\\sponza.gltf");
+//		imp.LoadScene("assets\\asobo_mansion\\mansion.gltf");
+//		imp.LoadScene("assets\\breakfast_room\\BreakfastRoom.gltf");
+//		imp.LoadScene("assets\\sponza\\sponza.gltf");
 	//	imp.LoadScene("assets\\\sponza.FBX");
 	//	imp.LoadScene("assets\\models\\sponza\\SponzaNoFlag.sdkmesh");
 	//	imp.LoadScene("assets\\models\\powerplant.sdkmesh");

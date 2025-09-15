@@ -19,6 +19,11 @@ void GraphObject::SetWorldPosition(float x,float y,float z)
 	m_Node.m[2][3] = z;
 }
 
+void GraphObject::SetMatrix(const Mat4x4& m)
+{
+	m_Node = m;
+}
+
 void GraphObject::Update(F32 dTime)
 {
 }

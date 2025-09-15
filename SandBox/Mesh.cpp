@@ -23,9 +23,19 @@ void Mesh::Draw()
 	gData.Rdr->PushWorldMatrix(&m_Node);
 	gData.Rdr->UpdateGlobalConstant();
 
+	if (m_Constant == nullptr)
+	{
+		m_Constant = gData.Rdr->CreateConstantBuffer(sizeof(GlobalConstant));
+		GlobalConstant* c;
+		m_Constant->Lock(0, 0, (void**)&c);
+		c->WorldMatrix = m_Node;
+		m_Constant->Unlock();
+	}
+
 	gData.Rdr->PushShader( SHADER_VS_BASE_MESH );
 	gData.Rdr->PushShader( SHADER_PS_PIXEL_LIT );
-	gData.Rdr->SetGlobalConstant(SHADER_TYPE_VERTEX);
+	gData.Rdr->SetConstantBuffer(1, SHADER_TYPE_VERTEX, m_Constant);
+	//gData.Rdr->SetGlobalConstant(SHADER_TYPE_VERTEX);
 
 	U32 SubSetCount = SubSetsDA.GetSize();
 	for(int i=0;i<SubSetCount;i++)

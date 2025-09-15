@@ -251,8 +251,9 @@ void D3D12VertexDeclaration::Create(VertexElement *Decl, U32 _ShaderUID)
 			break;
 		};
 		nCurElt++;
+		if (nCurElt >= _countof(pElts))
+			MESSAGE("Overflow!");
 	}
-	ID3DBlob * pCode = GET_RDR_INSTANCE()->GetShaderBlob(_ShaderUID);
 	res.pInputElementDescs = pElts;
 	res.NumElements = nCurElt;
 }

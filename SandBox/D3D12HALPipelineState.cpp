@@ -141,7 +141,7 @@ std::vector<ComPtr<ID3D12PipelineState>> m_PSOStore;
 
 PipelineCache m_GraphicPSOCache;
 
-ID3D12PipelineState* getOrCreatePipeline(ID3D12Device* device,
+ID3D12PipelineState* GetOrCreatePipeline(ID3D12Device* device,
 	const D3D12_GRAPHICS_PIPELINE_STATE_DESC& desc) {
 	auto it = m_GraphicPSOCache.find(desc);
 	if (it != m_GraphicPSOCache.end()) {
@@ -333,13 +333,7 @@ void D3D12HAL::DrawIndexed(UINT IndexCount, UINT StartIndexLocation, INT BaseVer
 	m_CurrentPSO.pRootSignature = m_RootSignature.Get();
 
 	ComPtr<ID3D12PipelineState> PSO;
-#if 1
-	PSO = getOrCreatePipeline(GetDevice(), m_CurrentPSO);
-#else
-	GetDevice()->CreateGraphicsPipelineState(&m_CurrentPSO, IID_PPV_ARGS(PSO.ReleaseAndGetAddressOf()));
-	PSO->SetName(L"GPSO");
-	PSO->AddRef();
-#endif
+	PSO = GetOrCreatePipeline(GetDevice(), m_CurrentPSO);
 	m_CommandList->SetPipelineState(PSO.Get());
 	m_CommandList->DrawIndexedInstanced(IndexCount, 1, StartIndexLocation, BaseVertexLocation, 0);
 }

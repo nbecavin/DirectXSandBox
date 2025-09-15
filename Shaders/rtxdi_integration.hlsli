@@ -4,5 +4,4 @@
 
 #include "RTXDI/GI/Resampling.hlsli"
 
-
 #endif //__RTXDI_INTEGRATION_HH__

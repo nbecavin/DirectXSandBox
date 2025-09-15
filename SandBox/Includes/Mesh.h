@@ -22,11 +22,10 @@ public:
 	void LoadFromAiMesh(std::filesystem::path directory, aiMesh* importMesh, aiMaterial* importMaterial);
 
 	struct MeshSubSet {
-		Bitmap*			AS;
-		VertexBuffer *	VB;
-		IndexBuffer *	IB;
+		Bitmap*			AS = nullptr;
+		VertexBuffer *	VB = nullptr;
+		IndexBuffer *	IB = nullptr;
 		U32				MtlId;
-		Mat4x4			Pos;
 		U32				Stride;
 
 		U32				IndexStart;
@@ -36,10 +35,12 @@ public:
 		U32				VertexCount;
 		PrimitiveType	PrimType;
 
-		VertexDeclaration * Decl;
+		VertexDeclaration * Decl = nullptr;
 	};
 	DynArray<MeshSubSet,8>	SubSetsDA;
 	DynArray<Material,8>	MtlDA;
+
+	ConstantBuffer* m_Constant = nullptr;
 };
 
 #endif //__MESH_HH__

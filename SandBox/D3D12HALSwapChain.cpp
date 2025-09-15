@@ -321,7 +321,7 @@ void D3D12HAL::Init(int sizeX, int sizeY, sys::Renderer* owner)
 
 		heapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV;
 		heapDesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_SHADER_VISIBLE;
-		heapDesc.NumDescriptors = 4000*(MAX_SRVS * 3 + MAX_CBS * 3);
+		heapDesc.NumDescriptors = 1000000; // 4000 * (MAX_SRVS * 3 + MAX_CBS * 3);
 		m_SRVDynamicHeap.Init(heapDesc, "Dynamic SRV Heap");
 
 		D3D12_DESCRIPTOR_HEAP_DESC heapDesc2 = {};

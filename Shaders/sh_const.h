@@ -3,19 +3,6 @@
 
 #include "ShaderRegs.h"
 
-const float4 c[256] : register(c0);
-
-// old fashion constants (default to b0)
-//const float4x4 gInvProjMatrix;
-
-float4x4 GetMat4x4(in const int cst)
-{
-	return float4x4( c[cst+0].x, c[cst+1].x, c[cst+2].x, c[cst+3].x,
-						c[cst+0].y, c[cst+1].y, c[cst+2].y, c[cst+3].y,
-						c[cst+0].z, c[cst+1].z, c[cst+2].z, c[cst+3].z,
-						c[cst+0].w, c[cst+1].w, c[cst+2].w, c[cst+3].w );
-}
-
 struct ScreenVertexVsInput
 {
 	float4	pos : POSITION;
@@ -27,7 +14,6 @@ struct ScreenVertexVsOutput
 	float4	pos : POSITION;
 	float2	tex : TEXCOORD0;
 };
-
 
 //
 // Mesh vertex
@@ -54,7 +40,6 @@ struct ObjectParameters
 	float4x4	worldMatrix;
 	float4x4	invWorldMatrix;
 };
-ConstantBuffer<ObjectParameters> Object;
 
 struct CameraParameters
 {
@@ -65,6 +50,10 @@ struct CameraParameters
 	float4 eyeWorld;
 	float4 dummy0, dummy1, dummy2;
 };
+
+// Fixed CBV mapping
+
+ConstantBuffer<ObjectParameters> Object : register(b1);
 ConstantBuffer<CameraParameters> Camera : register(b9);
 
 // Compatibility layer
@@ -72,7 +61,7 @@ ConstantBuffer<CameraParameters> Camera : register(b9);
 float texDepth2D ( Texture2D depthBuffer, SamplerState depthCompare, const in float2 uv )
 {
 	#ifdef INVERTED_ZBUFFER
-		return 1.0f - tex2D( depthBuffer, uv ).x;
+		return 1.0f - depthBuffer.Sample(depthCompare, uv ).x;
 	#else
 		return depthBuffer.Sample(depthCompare, uv).x;
 	#endif

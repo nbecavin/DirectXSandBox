@@ -28,8 +28,7 @@ namespace sys {
 	void Renderer::PushWorldMatrix(Mat4x4* _m)
 	{
 		GlobalConstant* c = GetGlobalConstantData();
-		Mat4x4 * _mat = (Mat4x4*)(c->v+8);
-		_mat[0] = *_m;
+		c->WorldMatrix = *_m;
 	}
 
 	void Renderer::UpdateGlobalConstant()

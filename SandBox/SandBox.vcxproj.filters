@@ -243,6 +243,9 @@
     <ClCompile Include="D3D12HALRaytracing.cpp">
       <Filter>Engine\PC\D3D12</Filter>
     </ClCompile>
+    <ClCompile Include="ImageImporter.cpp">
+      <Filter>Engine\Assets\Import</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="SandBox.h">

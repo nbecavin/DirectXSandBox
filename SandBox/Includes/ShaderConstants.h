@@ -5,13 +5,8 @@
 
 struct GlobalConstant
 {
-	static const int Size = 64;
-	Vec4f	v[Size];
-};
-
-struct MatConstant
-{
-	Mat4x4	m;
+	Mat4x4	WorldMatrix;
+	Mat4x4	InvWorldMatrix;
 };
 
 //

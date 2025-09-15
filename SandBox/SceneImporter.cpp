@@ -23,6 +23,30 @@ std::string str_toupper(std::string s)
 	return s;
 }
 
+// ------------------------------------------------------------------------------------------------
+// Flatten transfo -> Compute the absolute transformation matrices of each node
+void ComputeAbsoluteTransform(aiNode* pcNode)
+{
+	if (pcNode->mParent) {
+		pcNode->mTransformation = pcNode->mParent->mTransformation * pcNode->mTransformation;
+	}
+
+	for (unsigned int i = 0; i < pcNode->mNumChildren; ++i) {
+		ComputeAbsoluteTransform(pcNode->mChildren[i]);
+	}
+}
+
+template<typename FMesh>
+void VisitNode(aiNode* pNode, FMesh&& meshFunc)
+{
+	for (int i = 0; i < pNode->mNumChildren; i++)
+	{
+		aiNode* child = pNode->mChildren[i];
+		meshFunc(child);
+		VisitNode(child, meshFunc);
+	}
+}
+
 void SceneImporter::LoadScene(std::string& filepath)
 {
 	std::string with_alias = "..\\GameDB\\" + filepath;
@@ -52,8 +76,7 @@ void SceneImporter::LoadScene(std::string& filepath)
 			aiProcess_TransformUVCoords |
 			aiProcess_JoinIdenticalVertices |
 			aiProcess_Triangulate | aiProcess_SortByPType |
-			aiProcess_GenBoundingBoxes |
-			aiProcess_PreTransformVertices
+			aiProcess_GenBoundingBoxes //| aiProcess_PreTransformVertices
 		);
 
 		if (pScene)
@@ -82,17 +105,61 @@ void SceneImporter::LoadScene(std::string& filepath)
 				*/
 			}
 
-			for (int i = 0; i < pScene->mNumMeshes; i++)
-			{
-				aiMesh* pAiMesh = pScene->mMeshes[i];
-				aiMaterial* pAiMaterial = pScene->mMaterials[pAiMesh->mMaterialIndex];
+			auto Translate = [](const aiMatrix4x4& _in) -> Mat4x4
+				{
+					Mat4x4 _out;
+					_out.m[0][0] = _in.a1; _out.m[0][1] = _in.a2; _out.m[0][2] = _in.a3; _out.m[0][3] = _in.a4;
+					_out.m[1][0] = _in.b1; _out.m[1][1] = _in.b2; _out.m[1][2] = _in.b3; _out.m[1][3] = _in.b4;
+					_out.m[2][0] = _in.c1; _out.m[2][1] = _in.c2; _out.m[2][2] = _in.c3; _out.m[2][3] = _in.c4;
+					_out.m[3][0] = _in.d1; _out.m[3][1] = _in.d2; _out.m[3][2] = _in.d3; _out.m[3][3] = _in.d4;
+					return _out;
+				};
 
-				// Add mesh to the global scene
-				Mesh* pMesh = new Mesh();
-				pMesh->LoadFromAiMesh(directory, pAiMesh, pAiMaterial);
-				pMesh->SetWorldPosition(0, 0, 0);
-				sys::RegisterGraphObject(pMesh);
-			}
+			auto LoadMeshes = [&](aiNode* node)
+				{
+					for (int m = 0; m < node->mNumMeshes; m++)
+					{
+						aiMesh* pAiMesh = pScene->mMeshes[node->mMeshes[m]];
+						aiMaterial* pAiMaterial = pScene->mMaterials[pAiMesh->mMaterialIndex];
+						aiMatrix4x4 transform = node->mTransformation;
+
+						Mat4x4 node_transform = Translate(transform);
+
+						//	
+						//	aiMatrix4x4 transform = node->mTransformation;
+						//	//auto worldPosition = transform.Translation();
+
+						// Add mesh to the global scene
+						Mesh* pMesh = new Mesh();
+						pMesh->LoadFromAiMesh(directory, pAiMesh, pAiMaterial);
+						pMesh->SetMatrix(Translate(transform));
+						pMesh->SetWorldPosition(transform.a4, transform.b4, transform.c4);
+						sys::RegisterGraphObject(pMesh);
+					}
+				};
+
+			// Flatten hierarchy
+			ComputeAbsoluteTransform(pScene->mRootNode);
+
+			// Load all node
+			VisitNode(pScene->mRootNode, LoadMeshes);
+
+			//for (int i = 0; i < pScene->mNumMeshes; i++)
+			//{
+			//	aiMesh* pAiMesh = pScene->mMeshes[i];
+			//	aiMaterial* pAiMaterial = pScene->mMaterials[pAiMesh->mMaterialIndex];
+			//	aiNode* node = pScene->mRootNode->FindNode(pAiMesh->mName);
+
+			//	
+			//	aiMatrix4x4 transform = node->mTransformation;
+			//	//auto worldPosition = transform.Translation();
+
+			//	// Add mesh to the global scene
+			//	Mesh* pMesh = new Mesh();
+			//	pMesh->LoadFromAiMesh(directory, pAiMesh, pAiMaterial);
+			//	pMesh->SetWorldPosition(transform.a4, transform.b4, transform.c4);
+			//	sys::RegisterGraphObject(pMesh);
+			//}
 
 			if (pScene->HasCameras())
 			{
@@ -102,9 +169,24 @@ void SceneImporter::LoadScene(std::string& filepath)
 					auto pCamera = pScene->mCameras[i];
 					MESSAGE("Camera %d %s", i, pCamera->mName.C_Str());
 
+					aiNode* cameraNode = pScene->mRootNode->FindNode(pCamera->mName);
+					aiMatrix4x4 transform = cameraNode->mTransformation;
+					transform = aiMatrix4x4();
+					aiVector3D cameraPosition = transform * pCamera->mPosition;
+					aiVector3D cameraTarget = transform * pCamera->mLookAt;
+					cameraPosition = pCamera->mPosition;
+					cameraTarget = pCamera->mLookAt;
+
 					Camera* cam = gData.Rdr->GetCamera();
-					cam->SetWorldPosition(Vec4f(pCamera->mPosition.x, pCamera->mPosition.y, pCamera->mPosition.z, 1.f));
-					cam->SetWorldTarget(Vec4f(pCamera->mLookAt.x, pCamera->mLookAt.y, pCamera->mLookAt.z, 1.f));
+					cam->SetWorldPosition(Vec4f(cameraPosition.x, cameraPosition.y, cameraPosition.z, 1.f));
+					cam->SetWorldTarget(Vec4f(cameraTarget.x, cameraTarget.y, cameraTarget.z, 1.f));
+
+					////find the transformation matrix corresponding to the camera node
+					//aiNode* rootNode = pScene->mRootNode;
+					//aiNode* cameraNode = pScene->mRootNode->FindNode(pCamera->mName);
+					//aiMatrix4x4 cameraTransformationMatrix = cameraNode->mTransformation;					
+					//auto worldPosition = cameraTransformationMatrix * pCamera->mPosition;
+					//MESSAGE("kjlkj");
 				}
 			}
 
@@ -231,81 +313,10 @@ void Mesh::LoadFromAiMesh(std::filesystem::path directory, aiMesh* importMesh, a
 		pItem->MtlId = 0;// pSubSet->MaterialID;
 	}
 
-	// dummy material
-	{
-		const std::string aliaspath = "..\\GameDB";
-		Material* pMat = MtlDA.Add();
-		pMat->LoadFromAiMaterial(directory, importMaterial);
-
-#if 0
-		std::string albedo, normal;
-		Bitmap* bm;
-
-		auto LoadBitmap = [&](MaterialStage stage)
-			{
-				std::string tex;
-
-				aiTextureType type = aiTextureType_NONE;
-				switch (stage)
-				{
-				case MTL_STAGE_ALBEDO:		type = aiTextureType_DIFFUSE; break;
-				case MTL_STAGE_NORMAL:		type = aiTextureType_NORMALS; break;
-				case MTL_STAGE_ROUGHNESS:	type = aiTextureType_SPECULAR; break;
-				default:
-					return;
-				};
-
-				aiString aitex;
-				importMaterial->GetTexture(type, 0, &aitex, nullptr, nullptr, nullptr, nullptr, nullptr);
-
-				std::filesystem::path path(directory);
-				path.append(aitex.C_Str());
-				path.replace_extension(std::string("dds"));
-
-				Bitmap* bm = nullptr;
-				asset::Cache& asset = asset::Cache::GetInstance();
-				tex = path.string();
-				Bool bNew = asset.LoadAsset(asset::Type::BITMAP, tex.c_str(), (GraphObject**)&bm);
-				if (bNew)
-				{
-					if (bm->LoadDDS(tex.c_str()))
-					{
-						gData.Rdr->CreateTexture(bm);
-						pMat->SetBitmap(bm, stage);
-					}					
-				}				
-			};
-
-		LoadBitmap(MTL_STAGE_ALBEDO);
-		LoadBitmap(MTL_STAGE_NORMAL);
-		LoadBitmap(MTL_STAGE_ROUGHNESS);
-
-		auto LoadBitmapFromPath = [&](std::string& tex, MaterialStage stage)
-			{
-				Bitmap* bm = nullptr;
-				asset::Cache& asset = asset::Cache::GetInstance();
-				Bool bNew = asset.LoadAsset(asset::Type::BITMAP, tex.c_str(), (GraphObject**)&bm);
-				if (bNew)
-				{
-					if (bm->LoadDDS(tex.c_str()))
-					{
-						gData.Rdr->CreateTexture(bm);
-						pMat->SetBitmap(bm, stage);
-					}
-				}				
-			};
-
-		// dummy texture
-		if (!pMat->GetBitmap(MTL_STAGE_ALBEDO))
-		{
-			LoadBitmapFromPath(std::string("..\\GameDB\\assets\\models\\sponza\\spnza_bricks_a_diff.dds"), MTL_STAGE_ALBEDO);
-		}
-		if (!pMat->GetBitmap(MTL_STAGE_ROUGHNESS))
-		{
-			LoadBitmapFromPath(std::string("..\\GameDB\\assets\\models\\sponza\\spnza_bricks_a_diff.dds"), MTL_STAGE_ROUGHNESS);
-		}
-#endif
-	}
+	// Load material
+	const std::string aliaspath = "..\\GameDB";
+	Material* pMat = MtlDA.Add();
+	pMat->LoadFromAiMaterial(directory, importMaterial);
 
 	//gData.Rdr->BuildAccelerationStructure(SubSetsDA);
 }
@@ -319,6 +330,32 @@ void Material::LoadFromAiMaterial(std::filesystem::path directory, aiMaterial* i
 
 	std::string albedo, normal;
 	Bitmap* bm;
+
+	auto LoadBitmapFromPath = [&](std::string& tex, MaterialStage stage)
+		{
+			Bitmap* bm = nullptr;
+			asset::Cache& asset = asset::Cache::GetInstance();
+			Bool bNew = asset.LoadAsset(asset::Type::BITMAP, tex.c_str(), (GraphObject**)&bm);
+			if (bNew)
+			{
+				if (bm->LoadDDS(tex.c_str()))
+				{
+					gData.Rdr->CreateTexture(bm);
+				}
+				else
+				{
+					MESSAGE("Failed to load");
+					bm = nullptr;
+					return;
+				}
+			}
+			else
+			{
+				MESSAGE("Reuse");
+			}
+
+			SetBitmap(bm, stage);
+		};
 
 	auto LoadBitmap = [&](MaterialStage stage)
 		{
@@ -339,45 +376,29 @@ void Material::LoadFromAiMaterial(std::filesystem::path directory, aiMaterial* i
 
 			std::filesystem::path path(directory);
 			path.append(aitex.C_Str());
+
+			if (!path.extension().compare(".png"))
+			{
+				MESSAGE("PNG");
+			}
+
 			path.replace_extension(std::string("dds"));
 
-			Bitmap* bm = nullptr;
-			asset::Cache& asset = asset::Cache::GetInstance();
-			tex = path.string();
-			Bool bNew = asset.LoadAsset(asset::Type::BITMAP, tex.c_str(), (GraphObject**)&bm);
-			if (bNew)
-			{
-				if (bm->LoadDDS(tex.c_str()))
-				{
-					gData.Rdr->CreateTexture(bm);
-					SetBitmap(bm, stage);
-				}
-			}
+			LoadBitmapFromPath(path.string(), stage);
 		};
 
 	LoadBitmap(MTL_STAGE_ALBEDO);
 	LoadBitmap(MTL_STAGE_NORMAL);
 	LoadBitmap(MTL_STAGE_ROUGHNESS);
 
-	auto LoadBitmapFromPath = [&](std::string& tex, MaterialStage stage)
-		{
-			Bitmap* bm = nullptr;
-			asset::Cache& asset = asset::Cache::GetInstance();
-			Bool bNew = asset.LoadAsset(asset::Type::BITMAP, tex.c_str(), (GraphObject**)&bm);
-			if (bNew)
-			{
-				if (bm->LoadDDS(tex.c_str()))
-				{
-					gData.Rdr->CreateTexture(bm);
-					SetBitmap(bm, stage);
-				}
-			}
-		};
-
 	// dummy texture
 	if (!GetBitmap(MTL_STAGE_ALBEDO))
 	{
-		LoadBitmapFromPath(std::string("..\\GameDB\\assets\\models\\sponza\\spnza_bricks_a_diff.dds"), MTL_STAGE_ALBEDO);
+		LoadBitmapFromPath(std::string("..\\GameDB\\assets\\default_white.dds"), MTL_STAGE_ALBEDO);
+	}
+	if (!GetBitmap(MTL_STAGE_NORMAL))
+	{
+		LoadBitmapFromPath(std::string("..\\GameDB\\assets\\default_normal.dds"), MTL_STAGE_NORMAL);
 	}
 	if (!GetBitmap(MTL_STAGE_ROUGHNESS))
 	{

@@ -51,6 +51,6 @@ public:
 	virtual void Create(VertexElement* Decl, U32 _ShaderUID);
 };
 
-typedef DynArray<D3D12VertexDeclaration, 2048>	D3D12VertexDeclarationDA;
+typedef DynArray<D3D12VertexDeclaration*, 8192>	D3D12VertexDeclarationDA;
 
 #endif //__D3D12BUFFERS_HH__

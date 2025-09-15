@@ -61,6 +61,8 @@ int APIENTRY _tWinMain(HINSTANCE hInstance,
 	sys::pc::hInstance = hInstance;
 	sys::pc::nCmdShow = nCmdShow;
 
+	HRESULT hr = CoInitializeEx(nullptr, COINIT_MULTITHREADED);
+
 	sys::Init();
 	sys::MainLoop();
 	sys::Shut();

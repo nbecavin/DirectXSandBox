@@ -11,7 +11,7 @@ VS_Output MeshFactory(
 	VS_Output Out;
 		
 	float4 opos,wpos;
-	wpos = mul( pos, WORLD_MATRIX );
+	wpos = mul( pos, Object.worldMatrix );
 	opos = mul( wpos, Camera.viewMatrix );
 	opos = mul( opos, Camera.projMatrix );
 	Out.position = opos;
@@ -20,7 +20,7 @@ VS_Output MeshFactory(
 	lnormal.xy = normal.xy;
 	lnormal.z  = 1 - sqrt( normal.x*normal.x + normal.y*normal.y );
 
-	float3 n = lnormal;//mul( lnormal, WORLD_MATRIX );
+	float3 n = lnormal;//mul( lnormal, Object.worldMatrix );
 	//Out.normal = n;
 
 	Out.tbn = MakeTBN(tangent, binormal, normal);

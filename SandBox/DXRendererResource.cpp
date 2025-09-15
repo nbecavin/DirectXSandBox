@@ -114,6 +114,8 @@ namespace sys {
 		arguments.push_back(ToWSTR(GetShaderProfile(Type)));
 		arguments.push_back(L"-I ../Shaders");
 		arguments.push_back(L"-I ../Tools/rtxdi/include");
+		arguments.push_back(L"/Zi");
+		arguments.push_back(L"-Qembed_debug");
 
 		WCHAR wpath[2049];
 		MultiByteToWideChar(CP_ACP,0,path,-1,wpath,2048);

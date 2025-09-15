@@ -30,6 +30,7 @@ public:
 
 			void SetScale(float scale);
 			void SetWorldPosition(float x,float y,float z);
+			void SetMatrix(const Mat4x4& m);
 
 protected:
 	// Geometry space position

@@ -207,7 +207,8 @@ void Renderer::DrawImGUI()
 
 				// Bind texture, Draw
 				Bitmap* bmap = reinterpret_cast<Bitmap*>(pcmd->GetTexID());
-				SetShaderResource(0, SHADER_TYPE_PIXEL, bmap);
+				if(bmap)
+					SetShaderResource(0, SHADER_TYPE_PIXEL, bmap);
 				DrawIndexed(pcmd->ElemCount, idx_offset, vtx_offset);
 			}
 			idx_offset += pcmd->ElemCount;
