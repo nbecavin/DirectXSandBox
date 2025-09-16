@@ -145,23 +145,6 @@ void SceneImporter::LoadScene(std::string& filepath)
 			// Load all node
 			VisitNode(pScene->mRootNode, LoadMeshes);
 
-			//for (int i = 0; i < pScene->mNumMeshes; i++)
-			//{
-			//	aiMesh* pAiMesh = pScene->mMeshes[i];
-			//	aiMaterial* pAiMaterial = pScene->mMaterials[pAiMesh->mMaterialIndex];
-			//	aiNode* node = pScene->mRootNode->FindNode(pAiMesh->mName);
-
-			//	
-			//	aiMatrix4x4 transform = node->mTransformation;
-			//	//auto worldPosition = transform.Translation();
-
-			//	// Add mesh to the global scene
-			//	Mesh* pMesh = new Mesh();
-			//	pMesh->LoadFromAiMesh(directory, pAiMesh, pAiMaterial);
-			//	pMesh->SetWorldPosition(transform.a4, transform.b4, transform.c4);
-			//	sys::RegisterGraphObject(pMesh);
-			//}
-
 			if (pScene->HasCameras())
 			{
 				MESSAGE("Scene has %d cameras", pScene->mNumCameras);
@@ -332,15 +315,39 @@ void Material::LoadFromAiMaterial(std::filesystem::path directory, aiMaterial* i
 	std::string albedo, normal;
 	Bitmap* bm;
 
-	auto LoadBitmapFromPath = [&](std::string& tex, MaterialStage stage)
+	for(int m=0; m<importMaterial->mNumProperties; m++)
+	{
+		/** List of all material properties loaded. */
+		aiMaterialProperty* prop = importMaterial->mProperties[m];
+		MESSAGE("%s %d %s", prop->mKey.C_Str(), prop->mSemantic, prop->mData);
+	}
+
+	auto LoadBitmapFromPath = [&](std::filesystem::path& tex, MaterialStage stage)
 		{
 			Bitmap* bm = nullptr;
 			asset::Cache& asset = asset::Cache::GetInstance();
-			Bool bNew = asset.LoadAsset(asset::Type::BITMAP, tex.c_str(), (GraphObject**)&bm);
+			Bool bNew = asset.LoadAsset(asset::Type::BITMAP, tex.string().c_str(), (GraphObject**)&bm);
 			if (bNew)
 			{
 				ImageImporter imp;
-				if (imp.LoadFromDDS(tex, bm))
+				Bool bLoaded = false;
+
+				if (!tex.extension().compare(".png") || !tex.extension().compare(".PNG") )
+				{
+					bLoaded = imp.LoadFromWIC(tex, bm);
+
+					if (!bLoaded)
+					{
+						MESSAGE("%s not found -> fallback to DDS", tex.string().c_str());
+						tex.replace_extension(std::string("dds"));
+					}
+				}
+				if (!tex.extension().compare(".dds") || !tex.extension().compare(".DDS"))
+				{
+					bLoaded = imp.LoadFromDDS(tex, bm);
+				}
+
+				if (bLoaded)
 				{
 					gData.Rdr->CreateTexture(bm);
 				}
@@ -370,26 +377,13 @@ void Material::LoadFromAiMaterial(std::filesystem::path directory, aiMaterial* i
 			};
 
 			aiString aitex;
-			importMaterial->GetTexture(type, 0, &aitex, nullptr, nullptr, nullptr, nullptr, nullptr);
-
-			std::filesystem::path path(directory);
-			path.append(aitex.C_Str());
-
-			if (!path.extension().compare(".png"))
+			aiReturn ret = importMaterial->GetTexture(type, 0, &aitex, nullptr, nullptr, nullptr, nullptr, nullptr);
+			if (ret == aiReturn_SUCCESS)
 			{
-				ImageImporter imp;
-				if (imp.LoadFromWIC(path, nullptr))
-				{
-					// Succeeded
-					LoadBitmapFromPath(path.string(), stage);
-					return;
-				}
-				MESSAGE("%s not found -> fallback to DDS", path.string().c_str());
+				std::filesystem::path path(directory);
+				path.append(aitex.C_Str());
+				LoadBitmapFromPath(path, stage);
 			}
-
-			path.replace_extension(std::string("dds"));
-
-			LoadBitmapFromPath(path.string(), stage);
 		};
 
 	LoadBitmap(MTL_STAGE_ALBEDO);
@@ -399,14 +393,14 @@ void Material::LoadFromAiMaterial(std::filesystem::path directory, aiMaterial* i
 	// dummy texture
 	if (!GetBitmap(MTL_STAGE_ALBEDO))
 	{
-		LoadBitmapFromPath(std::string("..\\GameDB\\assets\\default_white.dds"), MTL_STAGE_ALBEDO);
+		LoadBitmapFromPath(std::filesystem::path("..\\GameDB\\assets\\default_white.dds"), MTL_STAGE_ALBEDO);
 	}
 	if (!GetBitmap(MTL_STAGE_NORMAL))
 	{
-		LoadBitmapFromPath(std::string("..\\GameDB\\assets\\default_normal.dds"), MTL_STAGE_NORMAL);
+		LoadBitmapFromPath(std::filesystem::path("..\\GameDB\\assets\\default_normal.dds"), MTL_STAGE_NORMAL);
 	}
 	if (!GetBitmap(MTL_STAGE_ROUGHNESS))
 	{
-		LoadBitmapFromPath(std::string("..\\GameDB\\assets\\models\\sponza\\spnza_bricks_a_diff.dds"), MTL_STAGE_ROUGHNESS);
+		LoadBitmapFromPath(std::filesystem::path("..\\GameDB\\assets\\models\\sponza\\spnza_bricks_a_diff.dds"), MTL_STAGE_ROUGHNESS);
 	}
 }

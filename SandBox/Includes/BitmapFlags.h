@@ -64,10 +64,6 @@ enum BitmapFormat {
 	BM_D32_FLOAT,
 	BM_D32_FLOAT_S8X24_UINT,
 
-	// Video		/* XONE ONLY */		// TODO : NV12 is only supported on XOne for the moment, add support for it on PC/PS4
-	BM_NV12_Y,		// NV12 Luminance SRV (use this for the bitmap containing the buffer)
-	BM_NV12_UV,		// NV12 Chrominance SRV (use this for the chrominance bitmap, it should refer to the luminance bitmap though mappedBitmap)
-
 	BM_COUNT		/* AFTER ADDING A NEW FORMAT, ADD A STRING IN BitmapDesc_Z::GetStringFormat (FILE BF_BITMAP_Z.CPP) */
 					/* CAREFUL, THESE ENUMS ARE SAVED INTO CVT, IN CASE YOU ADD ONE : DO IT AT THE END, OR INCREMENT CVT VERSION*/
 };

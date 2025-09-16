@@ -34,7 +34,48 @@ bool ImageImporter::LoadFromWIC(const std::filesystem::path& path, Bitmap* textu
 	//	((dds.GetTextureDimension() == tinyddsloader::DDSFile::TextureDimension::Texture2D) && (dds.GetArraySize() == 6)) ? BM_TYPE_CUBE : BM_TYPE_2D);
 	texture->SetType(BM_TYPE_2D);
 
-    return false;
+	// Allocate
+	U8* data = (U8*)malloc(image.GetPixelsSize());
+	texture->SetData(data, image.GetPixelsSize());
+
+	// Copy data
+	void* writePtr = data;
+	/*for (uint32_t arrayIdx = 0; arrayIdx < dds.GetArraySize(); arrayIdx++)
+	{
+		for (uint32_t mipIdx = 0; mipIdx < dds.GetMipCount(); mipIdx++)
+		{
+			const auto* imageData = dds.GetImageData(mipIdx, arrayIdx);
+			memcpy(writePtr, (U8*)imageData->m_mem, imageData->m_memSlicePitch);
+			writePtr = (char*)writePtr + imageData->m_memSlicePitch;
+		}
+	}*/
+	memcpy(data, image.GetPixels(), image.GetPixelsSize());
+
+	switch(metadata.format)
+	{
+	case DXGI_FORMAT_B8G8R8A8_UNORM:
+		texture->SetFormat(BM_B8G8R8A8_UNORM);
+		break;
+	case DXGI_FORMAT_R8G8B8A8_UNORM:
+	case DXGI_FORMAT_R8G8B8A8_UNORM_SRGB:
+		texture->SetFormat(BM_R8G8B8A8_UNORM);
+		break;
+	case DXGI_FORMAT_R8G8B8A8_UINT:
+		texture->SetFormat(BM_R8G8B8A8_UINT);
+		break;
+	case DXGI_FORMAT_R8G8B8A8_SNORM:
+		texture->SetFormat(BM_R8G8B8A8_SNORM);
+		break;
+	case DXGI_FORMAT_R8G8B8A8_SINT:
+		texture->SetFormat(BM_R8G8B8A8_SINT);
+		break;
+	default:
+		MESSAGE("ImageImporter::LoadFromDDS Unknown bitmap format(%d)\n%s", metadata.format, path.string().c_str());
+		texture->FreeData();
+		return false;
+	}
+
+    return true;
 }
 
 //
