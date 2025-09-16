@@ -1,5 +1,6 @@
 /* assimp include files. These three are usually needed. */
 #include <SceneImporter.h>
+#include <ImageImporter.h>
 #include <assimp/cimport.h>
 #include <assimp/scene.h>
 #include <assimp/postprocess.h>
@@ -338,13 +339,14 @@ void Material::LoadFromAiMaterial(std::filesystem::path directory, aiMaterial* i
 			Bool bNew = asset.LoadAsset(asset::Type::BITMAP, tex.c_str(), (GraphObject**)&bm);
 			if (bNew)
 			{
-				if (bm->LoadDDS(tex.c_str()))
+				ImageImporter imp;
+				if (imp.LoadFromDDS(tex, bm))
 				{
 					gData.Rdr->CreateTexture(bm);
 				}
 				else
 				{
-					asset.DeleteAsset(bm);
+					//asset.DeleteAsset(bm);
 					bm = nullptr;
 					return;
 				}
@@ -375,7 +377,14 @@ void Material::LoadFromAiMaterial(std::filesystem::path directory, aiMaterial* i
 
 			if (!path.extension().compare(".png"))
 			{
-				MESSAGE("PNG");
+				ImageImporter imp;
+				if (imp.LoadFromWIC(path, nullptr))
+				{
+					// Succeeded
+					LoadBitmapFromPath(path.string(), stage);
+					return;
+				}
+				MESSAGE("%s not found -> fallback to DDS", path.string().c_str());
 			}
 
 			path.replace_extension(std::string("dds"));

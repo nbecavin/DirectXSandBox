@@ -1,5 +1,6 @@
 #include <Mesh.h>
 #include <Bitmap.h>
+#include <ImageImporter.h>
 
 #if defined(_PC)
 #include <MeshSDKMesh.h>
@@ -234,7 +235,8 @@ loadmesh:
 				Bool bNew = asset.LoadAsset(asset::Type::BITMAP,tex,(GraphObject**)&bm);
 				if (bNew)
 				{
-					bm->LoadDDS(tex);
+					ImageImporter imp;
+					imp.LoadFromDDS(tex, bm);
 					if (bm->GetSx() && bm->GetSy())
 					{
 						gData.Rdr->CreateTexture(bm);
@@ -290,7 +292,8 @@ loadmesh:
 				Bool bNew = asset.LoadAsset(asset::Type::BITMAP,tex,(GraphObject**)&bm);
 				if(bNew)
 				{
-					bm->LoadDDS(tex);
+					ImageImporter imp;
+					imp.LoadFromDDS(tex, bm);
 					gData.Rdr->CreateTexture(bm);
 				}
 				pMat->SetBitmap(bm,MTL_STAGE_NORMAL);
@@ -303,7 +306,8 @@ loadmesh:
 				Bool bNew = asset.LoadAsset(asset::Type::BITMAP,tex,(GraphObject**)&bm);
 				if(bNew)
 				{
-					bm->LoadDDS(tex);
+					ImageImporter imp;
+					imp.LoadFromDDS(tex, bm);
 					gData.Rdr->CreateTexture(bm);
 				}
 				pMat->SetBitmap(bm, MTL_STAGE_ROUGHNESS);

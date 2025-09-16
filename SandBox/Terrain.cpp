@@ -1,5 +1,6 @@
 #include <Terrain.h>
 #include <Bitmap.h>
+#include <ImageImporter.h>
 
 struct VertexTerrain
 {
@@ -37,7 +38,8 @@ void Terrain::Update(F32 dTime)
 	if(!m_VB)
 	{
 		Bitmap * bm = new Bitmap();
-		bm->LoadDDS("assets\\textures\\test_dxt1.dds");
+		ImageImporter imp;
+		imp.LoadFromDDS("assets\\textures\\test_dxt1.dds", bm);
 		gData.Rdr->CreateTexture(bm);
 		m_Mat.SetBitmap(bm);
 

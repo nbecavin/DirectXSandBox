@@ -8,7 +8,8 @@ namespace fs {
 
 	enum FileError {
 		ERROR_NONE = 0,
-		ERROR_OPEN = 1
+		ERROR_OPEN = 1,
+		ERROR_READ = 1
 	};
 	
 	enum FileFlags {
@@ -36,8 +37,31 @@ namespace fs {
 		virtual void		SetPos(FileSeek _seek);
 		virtual U32			GetPos();
 		virtual U32			GetSize();
+
+		struct Blob
+		{
+			U8* ptr = nullptr;
+			size_t size = 0;
+
+			void Alloc(size_t _size)
+			{
+				ptr = (U8*)malloc(_size);
+				size = _size;
+			}
+			void Release()
+			{
+				if(ptr) free(ptr);
+				size = 0;
+				ptr = nullptr;
+			}
+		};
+
+		virtual FileError	OpenInMemory(const char* _filename, FileFlags _flags);
+		virtual Blob		GetBlob() { return m_Blob; }
+
 	protected:
 		FileHandler * m_Hdl;
+		Blob m_Blob;
 	};
 
 	class FileHandler {

@@ -2,8 +2,8 @@
 <Project DefaultTargets="Build" ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <Import Project="..\packages\Microsoft.Direct3D.D3D12.1.717.1-preview\build\native\Microsoft.Direct3D.D3D12.props" Condition="Exists('..\packages\Microsoft.Direct3D.D3D12.1.717.1-preview\build\native\Microsoft.Direct3D.D3D12.props')" />
   <ItemGroup Label="ProjectConfigurations">
-    <ProjectConfiguration Include="Debug DX12|x64">
-      <Configuration>Debug DX12</Configuration>
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
       <Platform>x64</Platform>
     </ProjectConfiguration>
     <ProjectConfiguration Include="Release|x64">
@@ -25,7 +25,7 @@
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <PlatformToolset>v143</PlatformToolset>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug DX12|x64'" Label="Configuration">
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <CharacterSet>MultiByte</CharacterSet>
     <PlatformToolset>v143</PlatformToolset>
@@ -37,26 +37,26 @@
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="PropertySheets">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
-  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug DX12|x64'" Label="PropertySheets">
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="PropertySheets">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup>
     <_ProjectFileVersion>10.0.30319.1</_ProjectFileVersion>
-    <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug DX12|x64'">$(SolutionDir)_Objs\$(ProjectName)\$(Configuration)\$(Platform)\</IntDir>
-    <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Debug DX12|x64'">true</LinkIncremental>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(SolutionDir)_Objs\$(ProjectName)\$(Configuration)\$(Platform)\</IntDir>
+    <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</LinkIncremental>
     <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</LinkIncremental>
-    <TargetName Condition="'$(Configuration)|$(Platform)'=='Debug DX12|x64'">SandBox_DX12D_x64</TargetName>
+    <TargetName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">SandBox_DX12D_x64</TargetName>
     <TargetName Condition="'$(Configuration)|$(Platform)'=='Release|x64'">SandBox_Release</TargetName>
     <PackageCertificateThumbprint>769D10A0B77AB558A2FA929E2F6AF8AB61AB5AD9</PackageCertificateThumbprint>
     <PackageCertificateKeyFile>SandBox_TemporaryKey.pfx</PackageCertificateKeyFile>
     <DefaultLanguage>fr</DefaultLanguage>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug DX12|x64'">
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <OutDir>$(SolutionDir)Game\</OutDir>
     <CustomBuildAfterTargets>PostBuildEvent</CustomBuildAfterTargets>
   </PropertyGroup>
-  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug DX12|x64'">
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
       <Optimization>Disabled</Optimization>
       <AdditionalIncludeDirectories>Includes;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
@@ -142,10 +142,10 @@
     <ClCompile Include="GraphObject.cpp" />
     <ClCompile Include="ImageImporter.cpp" />
     <ClCompile Include="Model.cpp">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug DX12|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
     </ClCompile>
     <ClCompile Include="ModelH3D.cpp">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug DX12|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
     </ClCompile>
     <ClCompile Include="RendererImGui.cpp" />
     <ClCompile Include="SandBox.cpp" />
@@ -164,7 +164,6 @@
     <ClCompile Include="SandBoxMemory.cpp" />
     <ClCompile Include="Bitmap.cpp" />
     <ClCompile Include="Material.cpp" />
-    <ClCompile Include="BitmapLoadDDS.cpp" />
     <ClCompile Include="InputManager.cpp" />
     <ClCompile Include="DXRenderer.cpp" />
     <ClCompile Include="DXRendererInit.cpp" />
@@ -174,7 +173,7 @@
     <ClCompile Include="WinMain.cpp" />
     <ClCompile Include="WinTimer.cpp" />
     <ClCompile Include="stdafx.cpp">
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug DX12|x64'">Create</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
   </ItemGroup>
@@ -199,6 +198,7 @@
     <ClInclude Include="Includes\D3D12HALSamplerState.h" />
     <ClInclude Include="Includes\D3D12HALShaders.h" />
     <ClInclude Include="Includes\d3dx12.h" />
+    <ClInclude Include="Includes\ImageImporter.h" />
     <ClInclude Include="Includes\Model.h" />
     <ClInclude Include="Includes\RendererPipelineState.h" />
     <ClInclude Include="Includes\SandBoxFile.h" />

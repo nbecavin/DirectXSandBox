@@ -56,9 +56,6 @@
     <Filter Include="Engine\Assets\Materials">
       <UniqueIdentifier>{d13b3f79-978f-4742-b26c-ca474335a170}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Engine\Assets\Materials\Load">
-      <UniqueIdentifier>{9c2ea980-4a81-4c9e-9885-b908baf951d9}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Engine\Assets\Import">
       <UniqueIdentifier>{c9ed1d51-1f6b-44c8-8188-7a93b2028f0a}</UniqueIdentifier>
     </Filter>
@@ -124,9 +121,6 @@
     </ClCompile>
     <ClCompile Include="Material.cpp">
       <Filter>Engine\Assets\Materials</Filter>
-    </ClCompile>
-    <ClCompile Include="BitmapLoadDDS.cpp">
-      <Filter>Engine\Assets\Materials\Load</Filter>
     </ClCompile>
     <ClCompile Include="InputManager.cpp">
       <Filter>Engine\InputManager</Filter>
@@ -393,9 +387,6 @@
     <ClInclude Include="Includes\SceneImporter.h">
       <Filter>Engine\Assets\Import</Filter>
     </ClInclude>
-    <ClInclude Include="Includes\tinyddsloader.h">
-      <Filter>Engine\Assets\Materials\Load</Filter>
-    </ClInclude>
     <ClInclude Include="..\Tools\RTXDI\Include\Rtxdi\ImportanceSamplingContext.h">
       <Filter>Tools\RTXDI</Filter>
     </ClInclude>
@@ -410,6 +401,12 @@
     </ClInclude>
     <ClInclude Include="Includes\D3D12HALShaders.h">
       <Filter>Engine\PC\D3D12</Filter>
+    </ClInclude>
+    <ClInclude Include="Includes\ImageImporter.h">
+      <Filter>Engine\Assets\Import</Filter>
+    </ClInclude>
+    <ClInclude Include="Includes\tinyddsloader.h">
+      <Filter>Engine\Assets\Import</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

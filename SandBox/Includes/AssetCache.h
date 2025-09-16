@@ -26,7 +26,7 @@ namespace asset
 		Cache() {}
 
 		struct Entry {
-			char			name[1024];
+			char			name[2048];
 			Type			type;
 			GraphObject *	ptr;
 		}; // This is a cache entry
