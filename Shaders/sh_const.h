@@ -1,6 +1,14 @@
 #ifndef __SH_CONST_HH__
 #define __SH_CONST_HH__
 
+// C++ interop
+typedef float2 Vec2f;
+typedef float3 Vec3f;
+typedef float4 Vec4f;
+typedef float3x3 Mat3x3;
+typedef float4x4 Mat4x4;
+typedef uint U32;
+
 #include "ShaderRegs.h"
 
 struct ScreenVertexVsInput
@@ -29,13 +37,14 @@ struct VS_Output
 
 //
 // Lighting context
+
 cbuffer	cb_dlight
 {
 	float4	color;
 	float3	dir;
 };
 
-struct ObjectParameters
+struct InstanceParameters
 {
 	float4x4	worldMatrix;
 	float4x4	invWorldMatrix;
@@ -53,8 +62,10 @@ struct CameraParameters
 
 // Fixed CBV mapping
 
-ConstantBuffer<ObjectParameters> Object : register(b1);
+ConstantBuffer<GlobalParameters> Global : register(b0);
+ConstantBuffer<InstanceParameters> Object : register(b1);
 ConstantBuffer<CameraParameters> Camera : register(b9);
+
 
 // Compatibility layer
 

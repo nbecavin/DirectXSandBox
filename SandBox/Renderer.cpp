@@ -5,6 +5,8 @@ namespace sys {
 
 	int Renderer::Init()
 	{
+		m_GlobalParams = {};
+		m_GlobalParams.Visualize = EVIZ_LIT;
 		m_FrameIndex = 0;
 		return 0;
 	}
@@ -22,26 +24,6 @@ namespace sys {
 	VertexDeclaration*	Renderer::CreateVertexDecl(VertexElement * _Decl)
 	{
 		return NULL;
-	}
-
-	//
-	void Renderer::PushWorldMatrix(Mat4x4* _m)
-	{
-		GlobalConstant* c = GetGlobalConstantData();
-		c->WorldMatrix = *_m;
-	}
-
-	void Renderer::UpdateGlobalConstant()
-	{
-		GlobalConstant * c;
-		m_GlobalConstant->Lock(0, 0, (void**)&c);
-		c[0] = m_GlobalConstantData;
-		m_GlobalConstant->Unlock();
-	}
-
-	void Renderer::SetGlobalConstant(EShaderType Type)
-	{
-		SetConstantBuffer(0, Type, m_GlobalConstant);
 	}
 
 	void Renderer::BeginFrame(float dTime)

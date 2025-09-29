@@ -3,7 +3,7 @@
 
 #include <VectorLib.h>
 
-struct GlobalConstant
+struct InstanceConstant
 {
 	Mat4x4	WorldMatrix;
 	Mat4x4	InvWorldMatrix;

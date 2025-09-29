@@ -8,6 +8,7 @@
 #include <Camera.h>
 #include <imgui.h>
 #include <ShaderConstants.h>
+#include <..\..\Shaders\ShaderRegs.h>
 
 namespace sys {
 
@@ -25,6 +26,11 @@ namespace sys {
 		virtual Vec2f GetSize() { return Vec2f((float)SizeX, (float)SizeY); }
 		virtual U32 GetSizeX() { return SizeX; }
 		virtual U32 GetSizeY() { return SizeY; }
+
+		virtual GlobalParameters GetGlobalParameters() const { return m_GlobalParams; }
+		virtual void SetGlobalParameters(GlobalParameters p) {
+			m_GlobalParams = p;
+		}
 
 		virtual void ProfileBeginEvent(U32 _ColorRGBA, const char* _Message) = 0;
 		virtual void ProfileBeginEventArgs(U32 _ColorRGBA, const char* _Format, ...)
@@ -50,10 +56,6 @@ namespace sys {
 		inline	Camera* GetCamera() const { return m_Camera; }
 		
 		//
-		virtual void UpdateGlobalConstant();
-		virtual void SetGlobalConstant(EShaderType Type);
-
-		//
 		// Vertex/Index buffers
 		virtual VertexBuffer *		CreateVertexBuffer(U32 _Size,U32 _Usage,void * _Datas);
 		virtual IndexBuffer *		CreateIndexBuffer(U32 _Size,U32 _Usage,U32 _Fmt,void * _Datas);
@@ -62,9 +64,6 @@ namespace sys {
 		virtual ConstantBuffer *	CreateConstantBuffer(U32 _Size) = 0;
 
 		virtual void SetScissorRect(U32 left, U32 right, U32 top, U32 bottom) = 0;
-
-		virtual GlobalConstant* GetGlobalConstantData() { return &m_GlobalConstantData; }
-		virtual void	PushWorldMatrix(Mat4x4* _m);
 
 		virtual void	PushVertexDeclaration(VertexDeclaration* Decl) {}
 		virtual void	PushStreamSource(U32 StreamNumber,VertexBuffer* Buffer,U32 Offset,U32 Stride) {}
@@ -113,9 +112,10 @@ namespace sys {
 		IndexBuffer* m_ImGuiIB = nullptr;
 
 		// Some global buffers... yeah it's bad
-		GlobalConstant			m_GlobalConstantData;
 		ConstantBuffer*			m_GlobalConstant;
 		ConstantBuffer*			m_CameraConstant;
+
+		GlobalParameters		m_GlobalParams;
 	};
 
 };

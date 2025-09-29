@@ -203,7 +203,7 @@ void Terrain::Draw()
 			*reinterpret_cast<XMMATRIX*>(&m) = XMMatrixMultiply((CXMMATRIX)m_Node,(CXMMATRIX)m);
 #endif
 
-			gData.Rdr->PushWorldMatrix(&m);
+//			gData.Rdr->PushWorldMatrix(&m);
 
 			// Draw cell
 			int lodx = LODX;
@@ -239,7 +239,7 @@ void Terrain::DrawGBuffer()
 			*reinterpret_cast<XMMATRIX*>(&m) = XMMatrixMultiply((CXMMATRIX)m_Node,(CXMMATRIX)m);
 #endif
 
-			gData.Rdr->PushWorldMatrix(&m);
+			//gData.Rdr->PushWorldMatrix(&m);
 
 			// Draw cell
 			int lodx = LODX;

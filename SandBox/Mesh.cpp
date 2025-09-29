@@ -20,13 +20,10 @@ void Mesh::Update(F32 dTime)
 
 void Mesh::Draw()
 {
-	gData.Rdr->PushWorldMatrix(&m_Node);
-	gData.Rdr->UpdateGlobalConstant();
-
 	if (m_Constant == nullptr)
 	{
-		m_Constant = gData.Rdr->CreateConstantBuffer(sizeof(GlobalConstant));
-		GlobalConstant* c;
+		m_Constant = gData.Rdr->CreateConstantBuffer(sizeof(InstanceConstant));
+		InstanceConstant* c;
 		m_Constant->Lock(0, 0, (void**)&c);
 		c->WorldMatrix = m_Node;
 		m_Constant->Unlock();
@@ -55,8 +52,6 @@ void Mesh::Draw()
 
 void Mesh::DrawGBuffer()
 {
-	gData.Rdr->PushWorldMatrix(&m_Node);
-
 	gData.Rdr->BindGraphicPipelineState(ShaderMap::BaseMeshVS, ShaderMap::GBufferPassPS);
 
 	U32 SubSetCount = SubSetsDA.GetSize();

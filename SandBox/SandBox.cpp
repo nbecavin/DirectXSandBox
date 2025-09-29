@@ -170,6 +170,19 @@ void sys::UpdateEditorMenu()
 			//ShowExampleMenuFile();
 			ImGui::EndMenu();
 		}
+		if (ImGui::BeginMenu("Visualize"))
+		{
+			GlobalParameters p = gData.Rdr->GetGlobalParameters();
+			if (ImGui::MenuItem("Lit", nullptr, p.Visualize == EVIZ_LIT))
+				p.Visualize = EVIZ_LIT;
+			if(ImGui::MenuItem("Show Normals", nullptr, p.Visualize == EVIZ_SHOW_NORMAL))
+				p.Visualize = EVIZ_SHOW_NORMAL;
+			gData.Rdr->SetGlobalParameters(p);
+
+			//ShowExampleMenuFile();
+			ImGui::EndMenu();
+		}
+		/* 
 		if (ImGui::BeginMenu("Edit"))
 		{
 			if (ImGui::MenuItem("Undo", "CTRL+Z")) {}
@@ -179,7 +192,7 @@ void sys::UpdateEditorMenu()
 			if (ImGui::MenuItem("Copy", "CTRL+C")) {}
 			if (ImGui::MenuItem("Paste", "CTRL+V")) {}
 			ImGui::EndMenu();
-		}
+		}*/
 		ImGui::EndMainMenuBar();
 	}
 

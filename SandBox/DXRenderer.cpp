@@ -80,12 +80,18 @@ namespace sys {
 		camCst->InvProjMatrix = XMMatrixTranspose(XMMatrixInverse(&det, proj));
 		m_CameraConstant->Unlock();
 
+		GlobalParameters* globalParam;
+		m_GlobalConstant->Lock(0, 0, (void**)&globalParam);
+		globalParam[0] = m_GlobalParams;
+		m_GlobalConstant->Unlock();
+
 		// No geometry shader
 
 		//GetCommandList()->PSSetSamplers(0, 1, &m_DefaultSS);
 		//GetCommandList()->PSSetSamplers(1, 1, &m_DefaultSS);
 		//GetCommandList()->PSSetSamplers(2, 1, &m_DefaultSS);
-
+		SetConstantBuffer(0, SHADER_TYPE_VERTEX, m_GlobalConstant);
+		SetConstantBuffer(0, SHADER_TYPE_PIXEL, m_GlobalConstant);
 		SetConstantBuffer(9, SHADER_TYPE_VERTEX, m_CameraConstant);
 		SetConstantBuffer(9, SHADER_TYPE_PIXEL, m_CameraConstant);
 

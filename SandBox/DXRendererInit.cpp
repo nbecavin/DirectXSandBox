@@ -208,7 +208,7 @@ namespace sys
 		}
 
 		m_CameraConstant = CreateConstantBuffer(sizeof(CameraConstant));
-		m_GlobalConstant = CreateConstantBuffer(sizeof(GlobalConstant));
+		m_GlobalConstant = CreateConstantBuffer(sizeof(GlobalParameters));
 
 		return TRUE;
 	}

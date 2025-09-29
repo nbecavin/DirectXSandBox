@@ -45,6 +45,9 @@ float4 ForwardMain(const in VS_Output i) : SV_TARGET
 
 	//radiance = mat.normal;
 
+	if(Global.Visualize == EVIZ_SHOW_NORMAL)
+		return float4(mat.normal, mat.opacity);
+
 	return float4(LinearToSRGB(radiance, false), mat.opacity);
 }
 	
