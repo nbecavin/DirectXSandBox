@@ -23,7 +23,12 @@ VS_Output MeshFactory(
 	float3 n = lnormal;//mul( lnormal, Object.worldMatrix );
 	//Out.normal = n;
 
-	Out.tbn = MakeTBN(tangent, binormal, normal);
+	float3x3 rot;
+	rot[0] = Object.worldMatrix[0].xyz;
+	rot[1] = Object.worldMatrix[1].xyz;
+	rot[2] = Object.worldMatrix[2].xyz;
+
+	Out.tbn = mul(rot, MakeTBN(tangent, binormal, normal));
 
 	Out.color.xyz = 1;
 	Out.color.w = 1;

@@ -84,6 +84,7 @@ MaterialPBR SampleMaterial(in VS_Output i)
 
     // Normal mapping
 	float3 normal = sNormal.Sample(sSampler, i.uv).xyz;// * 2 - 1;
+	//normal = float3(0, 0, 1);
 	normal = normalize(mul(i.tbn, normal)); //tangent space to local space
 
 	mat.albedo = albedo_and_opacity.xyz;

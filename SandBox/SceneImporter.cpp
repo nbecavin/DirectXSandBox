@@ -397,7 +397,7 @@ void Material::LoadFromAiMaterial(std::filesystem::path directory, aiMaterial* i
 	}
 	if (!GetBitmap(MTL_STAGE_NORMAL))
 	{
-		LoadBitmapFromPath(std::filesystem::path("..\\GameDB\\assets\\default_normal.dds"), MTL_STAGE_NORMAL);
+		LoadBitmapFromPath(std::filesystem::path("..\\GameDB\\assets\\default_normal.png"), MTL_STAGE_NORMAL);
 	}
 	if (!GetBitmap(MTL_STAGE_ROUGHNESS))
 	{
