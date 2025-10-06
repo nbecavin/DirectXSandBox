@@ -31,6 +31,7 @@ struct ShaderMap
 	static ShaderKernel* PassThroughPS;
 	static ShaderKernel* ImGuiVS;
 	static ShaderKernel* ImGuiPS;
+	static ShaderKernel* ComputeHistogramCS;
 };
 
 #endif //__RENDERER_SHADER_HH__

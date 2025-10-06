@@ -82,6 +82,7 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)..\..\Tools\RTXDI\Include\Rtxdi\ReGIR\ReGIRParameters.h" />
   </ItemGroup>
   <ItemGroup>
+    <FxCompile Include="$(MSBuildThisFileDirectory)..\auto_exposure.cs.hlsl" />
     <FxCompile Include="$(MSBuildThisFileDirectory)..\RTXDI-Integration\LightingPasses\Presampling\PresampleReGIR.hlsl" />
   </ItemGroup>
 </Project>

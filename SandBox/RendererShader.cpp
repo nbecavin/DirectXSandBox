@@ -10,6 +10,8 @@ ShaderKernel* ShaderMap::PassThroughPS = nullptr;
 ShaderKernel* ShaderMap::ImGuiVS = nullptr;
 ShaderKernel* ShaderMap::ImGuiPS = nullptr;
 
+ShaderKernel* ShaderMap::ComputeHistogramCS = nullptr;
+
 namespace sys {
 
 	ShaderKernel* textRTXDI;
@@ -32,9 +34,10 @@ namespace sys {
 		ShaderMap::ImGuiVS = CreateKernel("shaders/ImGui.hlsl", "VsMain", SHADER_TYPE_VERTEX);
 		ShaderMap::ImGuiPS = CreateKernel("shaders/ImGui.hlsl", "PsMain", SHADER_TYPE_PIXEL);
 
+		// Post process
+		ShaderMap::ComputeHistogramCS = CreateKernel("shaders/auto_exposure.cs.hlsl", "ComputeHistogram", SHADER_TYPE_COMPUTE);
+
 		//textRTXDI = CreateKernel("Shaders/RTXDI-Integration/LightingPasses/Presampling/PresampleReGIR.hlsl", "main", SHADER_TYPE_COMPUTE);
-		// Register compute shaders
-		//RegisterShaderFromSourceFile( SHADER_CS_TEST, "compute_test.csh","ch_main");
 	}
 
 };

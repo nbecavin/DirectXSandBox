@@ -154,5 +154,8 @@
     <FxCompile Include="$(MSBuildThisFileDirectory)..\RTXDI-Integration\LightingPasses\Presampling\PresampleReGIR.hlsl">
       <Filter>RTXDI-Integration</Filter>
     </FxCompile>
+    <FxCompile Include="$(MSBuildThisFileDirectory)..\auto_exposure.cs.hlsl">
+      <Filter>Post Processing</Filter>
+    </FxCompile>
   </ItemGroup>
 </Project>
