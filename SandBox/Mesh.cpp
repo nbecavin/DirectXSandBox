@@ -46,7 +46,7 @@ void Mesh::Draw()
 		gData.Rdr->PushIndices(pMesh->IB,pMesh->IndexType);
 
 		gData.Rdr->SetPrimitiveTopology(pMesh->PrimType);
-		gData.Rdr->DrawIndexed(pMesh->IndexCount, pMesh->IndexStart, pMesh->VertexStart);
+		gData.Rdr->DrawIndexedInstanced(pMesh->IndexCount, 1, pMesh->IndexStart, pMesh->VertexStart);
 	}
 }
 

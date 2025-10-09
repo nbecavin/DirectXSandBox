@@ -13,9 +13,9 @@ namespace sys
 		union {
 			ID3D12Resource* Resource12;
 		};
-		D3D12_RENDER_TARGET_VIEW_DESC* m_D3D12RTV;
-		D3D12_CPU_DESCRIPTOR_HANDLE m_D3D12SRVcpu;
-		D3D12_GPU_DESCRIPTOR_HANDLE m_D3D12SRVgpu;
+		D3D12_CPU_DESCRIPTOR_HANDLE m_RTV;
+		D3D12_CPU_DESCRIPTOR_HANDLE m_SRV;
+		D3D12_CPU_DESCRIPTOR_HANDLE m_UAV;
 	};
 };
 
@@ -83,6 +83,7 @@ namespace sys {
 			GetHAL().SetConstantBuffer(Slot, Type, CBV);
 		}
 		virtual void SetShaderResource(U32 Slot, EShaderType Type, Bitmap* Texture);
+		virtual void SetUAV(U32 Slot, Bitmap* Texture);
 		virtual void SetDepthStencilState(DepthStencilDesc& Desc)
 		{
 			GetHAL().SetDepthStencilState(Desc);
@@ -92,10 +93,23 @@ namespace sys {
 			GetHAL().SetRasterizerState(Desc);
 		}
 		virtual void SetPrimitiveTopology(PrimitiveType Topology);
-		void DrawIndexed(UINT IndexCount, UINT StartIndexLocation, INT BaseVertexLocation)
+		void DrawInstanced(UINT VertexCountPerInstance, UINT InstanceCount, UINT StartVertexLocation, UINT StartInstanceLocation)
 		{
-			GetHAL().DrawIndexed(IndexCount, StartIndexLocation, BaseVertexLocation);
+			GetHAL().DrawInstanced(VertexCountPerInstance, InstanceCount, StartVertexLocation, StartInstanceLocation);
 		}
+		void DrawIndexedInstanced(UINT IndexCount, UINT InstanceCount, UINT StartIndexLocation, INT BaseVertexLocation)
+		{
+			GetHAL().DrawIndexedInstanced(IndexCount, InstanceCount, StartIndexLocation, BaseVertexLocation);
+		}
+		void Dispatch(UINT ThreadGroupCountX, UINT ThreadGroupCountY, UINT ThreadGroupCountZ)
+		{
+			GetHAL().Dispatch(ThreadGroupCountX, ThreadGroupCountY, ThreadGroupCountZ);
+		}
+		void DispatchRays(UINT DispatchRaysX, UINT DispatchRaysY, UINT DispatchRaysZ)
+		{
+			GetHAL().DispatchRays(DispatchRaysX, DispatchRaysY, DispatchRaysZ);
+		}
+
 		void SetSampler(U32 Slot, EShaderType Type, SamplerDesc& Sampler)
 		{
 			GetHAL().SetSampler(Slot, Type, Sampler);

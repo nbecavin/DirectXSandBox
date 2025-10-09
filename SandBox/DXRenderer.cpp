@@ -45,6 +45,10 @@ namespace sys {
 
 		GetHAL().SetAndClearRenderTarget();
 
+		TextureLink* hdrtex = reinterpret_cast<TextureLink*>(m_HdrRenderTarget->GetBinHwResId());
+		GetHAL().GetCommandList()->OMSetRenderTargets(1, &hdrtex->m_RTV, true, &GetHAL().GetDSV());
+		GetHAL().GetCommandList()->ResourceBarrier(1, &CD3DX12_RESOURCE_BARRIER::Transition(hdrtex->Resource12, D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE | D3D12_RESOURCE_STATE_NON_PIXEL_SHADER_RESOURCE, D3D12_RESOURCE_STATE_RENDER_TARGET));
+
 		// Setup the viewport
 		D3D12_VIEWPORT vp;
 		vp.Width = (FLOAT)SizeX;
@@ -126,65 +130,26 @@ namespace sys {
 			ProfileEndEvent();
 		}
 
-#if 0
-//		D3DPERF_BeginEvent(0,L"PostProcess");
-
-		//TextureLink * tex = reinterpret_cast<TextureLink*>(m_lightBuffer->GetBinHwResId());
-		TextureLink * hdrtex = reinterpret_cast<TextureLink*>(m_HdrRenderTarget->GetBinHwResId());
-		TextureLink * rtex = reinterpret_cast<TextureLink*>(m_RenderTarget->GetBinHwResId());
-
-		GetCommandList()->OMSetRenderTargets(1, &rtex->Surface, m_DepthBuffer);
-		GetCommandList()->PSSetShaderResources(0, 1, &hdrtex->ShaderView);
-		PushShader(SHADER_VS_BASE_SCREENVERTEX);
-		PushShader(SHADER_PS_POSTPROC_COLORGRADING);
-		FullScreenQuad(Vec2f(1.f, 1.f), Vec2f(0.f, 0.f));
-
-		// Setup the viewport
-		D3D12_VIEWPORT vp;
-		vp.Width = (FLOAT)SizeX;
-		vp.Height = (FLOAT)SizeY;
-		vp.MinDepth = 0.0f;
-		vp.MaxDepth = 1.0f;
-		vp.TopLeftX = 0;
-		vp.TopLeftY = 0;
-
-		GetCommandList()->RSSetViewports(1, &vp);
-		GetCommandList()->OMSetRenderTargets(1, &m_BackBuffer, m_DepthBuffer);
-		GetCommandList()->PSSetShaderResources(0, 1, &rtex->ShaderView);
-
-		PushShader(SHADER_VS_BASE_SCREENVERTEX);
-		PushShader(SHADER_PS_POSTPROC_FXAA);
-
-//		FullScreenQuad(Vec2f(1.f, 1.f), Vec2f(0.f, 0.f));
-
-		//		D3DPERF_EndEvent();
-
-				// Draw debug stuff
 		{
-			/*
-			TextureLink * tex = reinterpret_cast<TextureLink*>(m_gBuffer[0]->GetBinHwResId());
-			DeviceContext->PSSetShaderResources(0,1,&tex->ShaderView);
-			PushShader(SHADER_VS_BASE_SCREENVERTEX);
-			PushShader(SHADER_PS_POSTPROC_PASSTHROUGH);
-			FullScreenQuad(Vec2f(0.33f,0.33f),Vec2f(-0.65f,+0.65f));
+			ProfileBeginEvent(0, "Post Process");
+			GetHAL().GetCommandList()->ResourceBarrier(1, &CD3DX12_RESOURCE_BARRIER::Transition(hdrtex->Resource12, D3D12_RESOURCE_STATE_RENDER_TARGET, D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE | D3D12_RESOURCE_STATE_NON_PIXEL_SHADER_RESOURCE));
 
-			tex = reinterpret_cast<TextureLink*>(m_lightBuffer->GetBinHwResId());
-			DeviceContext->PSSetShaderResources(0,1,&tex->ShaderView);
-			PushShader(SHADER_VS_BASE_SCREENVERTEX);
-			PushShader(SHADER_PS_POSTPROC_PASSTHROUGH);
-			FullScreenQuad(Vec2f(0.33f,0.33f),Vec2f(-0.65f,-0.05f));
+			{
+				SetShaderResource(0, SHADER_TYPE_COMPUTE, m_HdrRenderTarget);
+				SetUAV(0, m_RenderTarget);
+				BindComputePipelineState(ShaderMap::ComputeHistogramCS);
+				Dispatch(1, 1, 1);
+			}
 
-			tex = reinterpret_cast<TextureLink*>(m_ssaoBuffer->GetBinHwResId());
-			DeviceContext->PSSetShaderResources(0,1,&tex->ShaderView);
-			PushShader(SHADER_VS_BASE_SCREENVERTEX);
-			PushShader(SHADER_PS_POSTPROC_PASSTHROUGH);
-			FullScreenQuad(Vec2f(0.33f,0.33f),Vec2f(0.65f,+0.65f));
-			*/
+			D3D12_CPU_DESCRIPTOR_HANDLE rtv = GetHAL().GetCurrentBackBufferView();
+			GetHAL().GetCommandList()->OMSetRenderTargets(1, &rtv, false, &GetHAL().GetDSV());
+
+			SetShaderResource(0, SHADER_TYPE_PIXEL, m_HdrRenderTarget);
+			BindGraphicPipelineState(ShaderMap::ScreenVertexVS, ShaderMap::TonemappingPS);
+			FullScreenQuad(Vec2f(1.f, 1.f), Vec2f(0.f, 0.f));
+
+			ProfileEndEvent();
 		}
-
-		ID3D11ShaderResourceView* ppSRVNULL[1] = { NULL };
-		GetCommandList()->PSSetShaderResources(0, 1, ppSRVNULL);
-#endif
 
 		DrawImGUI();
 
@@ -200,6 +165,15 @@ namespace sys {
 		if ((U64)tex != BM_INVALIDHWRESID)
 		{
 			GetHAL().SetShaderResource(Slot, Type, tex);
+		}
+	}
+
+	void DXRenderer::SetUAV(U32 Slot, Bitmap* Texture)
+	{
+		TextureLink* tex = reinterpret_cast<TextureLink*>(Texture->GetBinHwResId());
+		if ((U64)tex != BM_INVALIDHWRESID)
+		{
+			GetHAL().SetUAV(Slot, tex);
 		}
 	}
 
@@ -221,32 +195,17 @@ namespace sys {
 
 	void DXRenderer::FullScreenQuad(Vec2f scale,Vec2f offset)
 	{
-		MESSAGE("DXRenderer::FullScreenQuad Fait pas grand chose");
-#if 0
 		PushVertexDeclaration(m_ScreenVertexDecl);
 		PushStreamSource(0,m_FullscreenQuadVB,0,32);
 
+		/*
 		XMVECTOR * _vec = (XMVECTOR*)(m_VSConstantCache);
 		_vec[USER_CST+0] = XMVectorSet(scale.x,scale.y,offset.x,offset.y);
-
 		UpdateVSConstants();
+		*/
 
-#ifdef _PCDX12
-		ID3D12PipelineState* PSO;
-		GetDevice()->CreateGraphicsPipelineState(&GetHAL().GetPipelineState(), IID_PPV_ARGS(&PSO));
-
-		PSO->SetName(L"test");
-
-		GetCommandList()->SetPipelineState(PSO);
-#endif
-
-		GetCommandList()->IASetPrimitiveTopology(D3D12_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP);
-		GetCommandList()->DrawInstanced(4,1,0,0);
-
-#ifdef _PCDX12
-		PSO->Release();
-#endif
-#endif
+		SetPrimitiveTopology(PRIM_TRIANGLESTRIP);
+		DrawInstanced(4,1,0,0);
 	}
 
 	void DXRenderer::PostProcess()

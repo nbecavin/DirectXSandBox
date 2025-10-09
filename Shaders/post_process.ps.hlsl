@@ -1,19 +1,15 @@
 #include "sh_const.h"
+#include "sh_math.h"
 
 Texture2D t0 : register(t0);
 SamplerState s0 : register(s0);
-	
-half4 ph_colorgrading(ScreenVertexVsOutput i) : SV_Target
+
+float4 Tonemapping(ScreenVertexVsOutput i) : SV_Target
 {
-	half3 vSample = t0.Sample(s0, i.tex);
+	float3 vSample = t0.Sample(s0, i.tex).rgb;
 	
 	// Gamma correction : Linear -> sRGB
-	vSample.rgb = pow(vSample.rgb,1.f/2.2f);
+	vSample.rgb = LinearToSRGB(vSample, false);
 
-	return half4(vSample,1);
-}
-
-half4 ph_passthrough(ScreenVertexVsOutput i) : SV_Target
-{
-	return t0.Sample(s0, i.tex);
+	return float4(vSample,1);
 }

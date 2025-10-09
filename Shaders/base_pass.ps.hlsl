@@ -48,7 +48,7 @@ float4 ForwardMain(const in VS_Output i) : SV_TARGET
 	if(Global.Visualize == EVIZ_SHOW_NORMAL)
 		return float4(mat.normal, mat.opacity);
 
-	return float4(LinearToSRGB(radiance, false), mat.opacity);
+	return float4(radiance, mat.opacity);
 }
 	
 float4 GbufferMain( const in VS_Output i ) : SV_TARGET

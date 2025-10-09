@@ -48,42 +48,47 @@ namespace sys {
 		m_RenderTarget->SetSize(SizeX,SizeY);
 		m_RenderTarget->SetFormat(BM_R8G8B8A8_UNORM);
 		m_RenderTarget->SetType(BM_TYPE_2D);
-		m_RenderTarget->SetUsage(BM_USAGE_SRV | BM_USAGE_RTV);
+		m_RenderTarget->DisableFlags(BM_SRGB);
+		m_RenderTarget->SetUsage(BM_USAGE_SRV | BM_USAGE_RTV | BM_USAGE_UAV);
 		CreateTexture(m_RenderTarget);
 
 		m_HdrRenderTarget = new Bitmap();
 		m_HdrRenderTarget->SetSize(SizeX,SizeY);
-		m_HdrRenderTarget->SetFormat(BM_R8G8B8A8_UNORM);
+		m_HdrRenderTarget->SetFormat(BM_R16G16B16A16_FLOAT);
 		m_HdrRenderTarget->SetType(BM_TYPE_2D);
-		m_RenderTarget->SetUsage(BM_USAGE_SRV | BM_USAGE_RTV);
+		m_HdrRenderTarget->DisableFlags(BM_SRGB);
+		m_HdrRenderTarget->SetUsage(BM_USAGE_SRV | BM_USAGE_RTV | BM_USAGE_UAV);
 		CreateTexture(m_HdrRenderTarget);
 
 		m_gBuffer[0] = new Bitmap();
 		m_gBuffer[0]->SetSize(SizeX,SizeY);
 		m_gBuffer[0]->SetFormat(BM_R8G8B8A8_UNORM);
 		m_gBuffer[0]->SetType(BM_TYPE_2D);
-		m_RenderTarget->SetUsage(BM_USAGE_SRV | BM_USAGE_RTV);
+		m_gBuffer[0]->DisableFlags(BM_SRGB);
+		m_gBuffer[0]->SetUsage(BM_USAGE_SRV | BM_USAGE_RTV | BM_USAGE_UAV);
 		CreateTexture(m_gBuffer[0]);
 
 		m_lightBuffer = new Bitmap();
 		m_lightBuffer->SetSize(SizeX,SizeY);
 		m_lightBuffer->SetFormat(BM_R8G8B8A8_UNORM);
 		m_lightBuffer->SetType(BM_TYPE_2D);
-		m_RenderTarget->SetUsage(BM_USAGE_SRV | BM_USAGE_RTV);
+		m_lightBuffer->DisableFlags(BM_SRGB);
+		m_lightBuffer->SetUsage(BM_USAGE_SRV | BM_USAGE_RTV | BM_USAGE_UAV);
 		CreateTexture(m_lightBuffer);
 
 		m_linearZBuffer = new Bitmap();
 		m_linearZBuffer->SetSize(SizeX,SizeY);
 		m_linearZBuffer->SetFormat(BM_R32_FLOAT);
 		m_linearZBuffer->SetType(BM_TYPE_2D);
-		m_RenderTarget->SetUsage(BM_USAGE_SRV | BM_USAGE_RTV);
+		m_linearZBuffer->SetUsage(BM_USAGE_SRV | BM_USAGE_RTV | BM_USAGE_UAV);
 		CreateTexture(m_linearZBuffer);
 
 		m_ssaoBuffer = new Bitmap();
 		m_ssaoBuffer->SetSize(SizeX,SizeY);
 		m_ssaoBuffer->SetFormat(BM_R8G8B8A8_UNORM);
 		m_ssaoBuffer->SetType(BM_TYPE_2D);
-		m_RenderTarget->SetUsage(BM_USAGE_SRV | BM_USAGE_RTV);
+		m_ssaoBuffer->DisableFlags(BM_SRGB);
+		m_ssaoBuffer->SetUsage(BM_USAGE_SRV | BM_USAGE_RTV);
 		CreateTexture(m_ssaoBuffer);
 
 		return TRUE;

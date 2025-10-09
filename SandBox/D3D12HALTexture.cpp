@@ -252,6 +252,10 @@ void D3D12HAL::CreateTexture(Bitmap * _Bm)
 	{
 		desc.Flags |= D3D12_RESOURCE_FLAG_ALLOW_RENDER_TARGET;
 	}
+	if (_Bm->GetUsage() & BM_USAGE_UAV)
+	{
+		desc.Flags |= D3D12_RESOURCE_FLAG_ALLOW_UNORDERED_ACCESS;
+	}
 
 	sys::TextureLink * tex = new sys::TextureLink;
 	tex->Resource12 = NULL;
@@ -381,7 +385,7 @@ void D3D12HAL::CreateTexture(Bitmap * _Bm)
 		MESSAGE("Other resource type");
 	}
 
-	m_CommandList->ResourceBarrier(1, &CD3DX12_RESOURCE_BARRIER::Transition(tex->Resource12, D3D12_RESOURCE_STATE_COPY_DEST, D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE));
+	m_CommandList->ResourceBarrier(1, &CD3DX12_RESOURCE_BARRIER::Transition(tex->Resource12, D3D12_RESOURCE_STATE_COPY_DEST, D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE | D3D12_RESOURCE_STATE_NON_PIXEL_SHADER_RESOURCE));
 
 	{ // Create shader view
 		D3D12_SHADER_RESOURCE_VIEW_DESC SRVDesc;
@@ -392,19 +396,31 @@ void D3D12HAL::CreateTexture(Bitmap * _Bm)
 		SRVDesc.Texture2D.MipLevels = desc.MipLevels;
 
 		U32 slot = m_SrvHeap.AllocateSlot(1);
-		tex->m_D3D12SRVcpu.ptr = m_SrvHeap.GetCPUSlotHandle(slot).ptr;
-		tex->m_D3D12SRVgpu.ptr = m_SrvHeap.GetGPUSlotHandle(slot).ptr;
-		Device->CreateShaderResourceView(tex->Resource12, &SRVDesc, tex->m_D3D12SRVcpu);
+		tex->m_SRV.ptr = m_SrvHeap.GetCPUSlotHandle(slot).ptr;
+		Device->CreateShaderResourceView(tex->Resource12, &SRVDesc, tex->m_SRV);
 	}
 
-	/*
+	if (_Bm->GetUsage() & BM_USAGE_UAV)
+	{
+		D3D12_UNORDERED_ACCESS_VIEW_DESC UAVDesc;
+		ZeroMemory(&UAVDesc, sizeof(UAVDesc));
+		UAVDesc.Format = desc.Format;
+		UAVDesc.ViewDimension = D3D12_UAV_DIMENSION_TEXTURE2D;
+		UAVDesc.Texture2D.MipSlice = 0;
+
+		U32 slot = m_SrvHeap.AllocateSlot(1);
+		tex->m_UAV.ptr = m_SrvHeap.GetCPUSlotHandle(slot).ptr;
+		Device->CreateUnorderedAccessView(tex->Resource12, nullptr, &UAVDesc, tex->m_UAV);
+	}
+
 	if (_Bm->GetUsage() & BM_USAGE_RTV)
 	{ // Create the render target view
 		D3D12_RENDER_TARGET_VIEW_DESC DescRT;
+		ZeroMemory(&DescRT, sizeof(DescRT));
 		DescRT.Format = desc.Format;
 		DescRT.ViewDimension = D3D12_RTV_DIMENSION_TEXTURE2D;
-		DescRT.Texture2D.MipSlice = 0;
-		GetDevice()->CreateRenderTargetView(tex->Resource, &DescRT, &tex->Surface);
+		U32 slot = m_RtvHeap.AllocateSlot(1);
+		tex->m_RTV.ptr = m_RtvHeap.GetCPUSlotHandle(slot).ptr;
+		GetDevice()->CreateRenderTargetView(tex->Resource12, &DescRT, tex->m_RTV);
 	}
-	*/
 }

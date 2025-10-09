@@ -35,7 +35,7 @@ inline bool equal_struct(const T& a, const T& b) {
 
 // ============ Hash & Equal pour PSO ============
 
-struct PipelineDescHash {
+struct PipelineDescHashGRAPHICS {
 	std::size_t operator()(const D3D12_GRAPHICS_PIPELINE_STATE_DESC& desc) const noexcept {
 		std::size_t seed = 0;
 
@@ -82,7 +82,7 @@ struct PipelineDescHash {
 	}
 };
 
-struct PipelineDescEqual {
+struct PipelineDescEqualGRAPHICS {
 	bool operator()(const D3D12_GRAPHICS_PIPELINE_STATE_DESC& a,
 		const D3D12_GRAPHICS_PIPELINE_STATE_DESC& b) const noexcept {
 		// RootSignature (même pointeur attendu ici)
@@ -135,16 +135,70 @@ struct PipelineDescEqual {
 	}
 };
 
+struct PipelineDescHashCOMPUTE {
+	std::size_t operator()(const D3D12_COMPUTE_PIPELINE_STATE_DESC& desc) const noexcept {
+		std::size_t seed = 0;
+
+		// RootSignature -> on hash juste le pointeur (optionnel : GUID unique ?)
+		hash_combine(seed, std::hash<void*>{}(desc.pRootSignature));
+
+		// Shaders (contenu, pas pointeur)
+		if (desc.CS.pShaderBytecode)
+			hash_combine(seed, std::hash<const void*>{}(desc.CS.pShaderBytecode)); //hash_memory(desc.VS.pShaderBytecode, desc.VS.BytecodeLength));
+
+		// Misc
+		hash_combine(seed, std::hash<UINT>{}(desc.NodeMask));
+		//hash_combine(seed, std::hash<D3D12_CACHED_PIPELINE_STATE>{}(desc.CachedPSO));
+		hash_combine(seed, std::hash<D3D12_PIPELINE_STATE_FLAGS>{}(desc.Flags));
+
+		return seed;
+	}
+};
+
+struct PipelineDescEqualCOMPUTE {
+	bool operator()(const D3D12_COMPUTE_PIPELINE_STATE_DESC& a,
+		const D3D12_COMPUTE_PIPELINE_STATE_DESC& b) const noexcept {
+		// RootSignature (même pointeur attendu ici)
+		if (a.pRootSignature != b.pRootSignature) return false;
+
+		// Shaders
+		/*auto cmp_shader = [](auto& A, auto& B) {
+			if (A.BytecodeLength != B.BytecodeLength) return false;
+			if (A.BytecodeLength == 0) return true;
+			return std::memcmp(A.pShaderBytecode, B.pShaderBytecode, A.BytecodeLength) == 0;
+			};*/
+		auto cmp_shader = [](auto& A, auto& B) {
+			if (A.BytecodeLength != B.BytecodeLength) return false;
+			if (A.BytecodeLength == 0) return true;
+			return A.pShaderBytecode == B.pShaderBytecode;
+			};
+		if (!cmp_shader(a.CS, b.CS)) return false;
+
+		// Misc
+		if (a.NodeMask != b.NodeMask) return false;
+		if (a.Flags != b.Flags) return false;
+
+		return true;
+	}
+};
+
 // ============ Alias pour le cache ============
-using PipelineCache = std::unordered_map<
+using PipelineCacheGRAPHICS = std::unordered_map<
 	D3D12_GRAPHICS_PIPELINE_STATE_DESC,
 	ComPtr<ID3D12PipelineState>,
-	PipelineDescHash,
-	PipelineDescEqual
+	PipelineDescHashGRAPHICS,
+	PipelineDescEqualGRAPHICS
+>;
+using PipelineCacheCOMPUTE = std::unordered_map<
+	D3D12_COMPUTE_PIPELINE_STATE_DESC,
+	ComPtr<ID3D12PipelineState>,
+	PipelineDescHashCOMPUTE,
+	PipelineDescEqualCOMPUTE
 >;
 std::vector<ComPtr<ID3D12PipelineState>> m_PSOStore;
 
-PipelineCache m_GraphicPSOCache;
+PipelineCacheGRAPHICS m_GraphicPSOCache;
+PipelineCacheCOMPUTE m_ComputePSOCache;
 
 ID3D12PipelineState* GetOrCreatePipeline(ID3D12Device* device,
 	const D3D12_GRAPHICS_PIPELINE_STATE_DESC& desc) {
@@ -157,6 +211,21 @@ ID3D12PipelineState* GetOrCreatePipeline(ID3D12Device* device,
 	HRESULT hr = device->CreateGraphicsPipelineState(&desc, IID_PPV_ARGS(&pipeline));
 	if (SUCCEEDED(hr)) {
 		m_GraphicPSOCache[desc] = pipeline;
+	}
+	return pipeline;
+}
+
+ID3D12PipelineState* GetOrCreatePipeline(ID3D12Device* device,
+	const D3D12_COMPUTE_PIPELINE_STATE_DESC& desc) {
+	auto it = m_ComputePSOCache.find(desc);
+	if (it != m_ComputePSOCache.end()) {
+		return it->second.Get(); // déjà en cache
+	}
+
+	ID3D12PipelineState* pipeline = nullptr;
+	HRESULT hr = device->CreateComputePipelineState(&desc, IID_PPV_ARGS(&pipeline));
+	if (SUCCEEDED(hr)) {
+		m_ComputePSOCache[desc] = pipeline;
 	}
 	return pipeline;
 }
@@ -175,12 +244,17 @@ void D3D12HAL::SetShaderResource(U32 Slot, EShaderType Type, sys::TextureLink* V
 {
 	if (Type == SHADER_TYPE_PIXEL)
 	{
-		m_CurrentSRV[0][Slot] = View->m_D3D12SRVcpu;
+		m_CurrentSRV[0][Slot] = View->m_SRV;
 	}
 	else if (Type == SHADER_TYPE_VERTEX)
 	{
-		m_CurrentSRV[1][Slot] = View->m_D3D12SRVcpu;
+		m_CurrentSRV[1][Slot] = View->m_SRV;
 	}
+}
+
+void D3D12HAL::SetUAV(U32 Slot, sys::TextureLink* View)
+{
+	m_CurrentUAV[Slot] = View->m_SRV;
 }
 
 void D3D12HAL::SetConstantBuffer(U32 Slot, EShaderType Type, ConstantBuffer* CBV)
@@ -236,7 +310,7 @@ void D3D12HAL::SetScissorRect(U32 left, U32 right, U32 top, U32 bottom)
 	m_CommandList->RSSetScissorRects(1, &rect);
 }
 
-void D3D12HAL::DrawIndexed(UINT IndexCount, UINT StartIndexLocation, INT BaseVertexLocation)
+void D3D12HAL::FlushGraphicsPipelineState()
 {
 	// Update descriptor table
 	{
@@ -302,6 +376,21 @@ void D3D12HAL::DrawIndexed(UINT IndexCount, UINT StartIndexLocation, INT BaseVer
 			}
 			m_CommandList->SetGraphicsRootDescriptorTable(4, m_SRVDynamicHeap.GetGPUSlotHandle(slot));
 		}
+		// uav
+		{
+			U32 slot = m_SRVDynamicHeap.AllocateSlot(MAX_UAVS);
+			for (int i = 0; i < MAX_UAVS; i++)
+			{
+				if (m_CurrentUAV[i].ptr != 0)
+				{
+					m_Device->CopyDescriptorsSimple(1,
+						m_SRVDynamicHeap.GetCPUSlotHandle(slot + i),
+						m_CurrentUAV[i],
+						D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
+				}
+			}
+			m_CommandList->SetGraphicsRootDescriptorTable(6, m_SRVDynamicHeap.GetGPUSlotHandle(slot));
+		}
 	}
 
 	{
@@ -322,7 +411,7 @@ void D3D12HAL::DrawIndexed(UINT IndexCount, UINT StartIndexLocation, INT BaseVer
 			if (m_CurrentSampler[1][i].ptr != 0)
 			{
 				m_Device->CopyDescriptorsSimple(1,
-					m_SamplerDynamicHeap.GetCPUSlotHandle(offset+MAX_SAMPLERS),
+					m_SamplerDynamicHeap.GetCPUSlotHandle(offset + MAX_SAMPLERS),
 					m_CurrentSampler[1][i],
 					D3D12_DESCRIPTOR_HEAP_TYPE_SAMPLER);
 
@@ -335,10 +424,122 @@ void D3D12HAL::DrawIndexed(UINT IndexCount, UINT StartIndexLocation, INT BaseVer
 		m_CommandList->SetGraphicsRootDescriptorTable(5, m_SamplerDynamicHeap.GetGPUSlotHandle(offset)); //Vertex Samplers		
 	}
 
-	m_CurrentGraphicsPSO.pRootSignature = m_RootSignature.Get();
+	m_CurrentGraphicsPSO.pRootSignature = m_GraphicsRootSignature.Get();
 
 	ComPtr<ID3D12PipelineState> PSO;
 	PSO = GetOrCreatePipeline(GetDevice(), m_CurrentGraphicsPSO);
 	m_CommandList->SetPipelineState(PSO.Get());
-	m_CommandList->DrawIndexedInstanced(IndexCount, 1, StartIndexLocation, BaseVertexLocation, 0);
+}
+
+void D3D12HAL::FlushComputePipelineState()
+{
+	// Update descriptor table
+	{
+		//compute - SRV
+		{
+			U32 slot = m_SRVDynamicHeap.AllocateSlot(MAX_SRVS);
+			for (int i = 0; i < MAX_SRVS; i++)
+			{
+				if (m_CurrentSRV[SHADER_TYPE_COMPUTE][i].ptr != 0)
+				{
+					m_Device->CopyDescriptorsSimple(1,
+						m_SRVDynamicHeap.GetCPUSlotHandle(slot + i),
+						m_CurrentSRV[SHADER_TYPE_COMPUTE][i],
+						D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
+				}
+			}
+			m_CommandList->SetComputeRootDescriptorTable(0, m_SRVDynamicHeap.GetGPUSlotHandle(slot));
+		}
+		//pixel - CBV
+		{
+			U32 slot = m_SRVDynamicHeap.AllocateSlot(MAX_SRVS);
+			for (int i = 0; i < MAX_CBS; i++)
+			{
+				if (m_CurrentCBV[SHADER_TYPE_COMPUTE][i].ptr != 0)
+				{
+					m_Device->CopyDescriptorsSimple(1,
+						m_SRVDynamicHeap.GetCPUSlotHandle(slot + i),
+						m_CurrentCBV[SHADER_TYPE_COMPUTE][i],
+						D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
+
+				}
+			}
+			m_CommandList->SetComputeRootDescriptorTable(1, m_SRVDynamicHeap.GetGPUSlotHandle(slot));
+		}
+		// uav
+		{
+			U32 slot = m_SRVDynamicHeap.AllocateSlot(MAX_UAVS);
+			for (int i = 0; i < MAX_UAVS; i++)
+			{
+				if (m_CurrentUAV[i].ptr != 0)
+				{
+					m_Device->CopyDescriptorsSimple(1,
+						m_SRVDynamicHeap.GetCPUSlotHandle(slot + i),
+						m_CurrentUAV[i],
+						D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
+				}
+			}
+			m_CommandList->SetComputeRootDescriptorTable(3, m_SRVDynamicHeap.GetGPUSlotHandle(slot));
+		}
+	}
+
+	{
+		U32 start = m_SamplerDynamicHeap.AllocateSlot(MAX_SAMPLERS * 2);
+		U32 offset = start;
+
+		//Sampler
+		for (int i = 0; i < MAX_SAMPLERS; i++, offset++)
+		{
+			if (m_CurrentSampler[0][i].ptr != 0)
+			{
+				m_Device->CopyDescriptorsSimple(1,
+					m_SamplerDynamicHeap.GetCPUSlotHandle(offset),
+					m_CurrentSampler[0][i],
+					D3D12_DESCRIPTOR_HEAP_TYPE_SAMPLER);
+
+			}
+			if (m_CurrentSampler[1][i].ptr != 0)
+			{
+				m_Device->CopyDescriptorsSimple(1,
+					m_SamplerDynamicHeap.GetCPUSlotHandle(offset + MAX_SAMPLERS),
+					m_CurrentSampler[1][i],
+					D3D12_DESCRIPTOR_HEAP_TYPE_SAMPLER);
+
+			}
+		}
+
+		offset = start + 0;
+		m_CommandList->SetComputeRootDescriptorTable(2, m_SamplerDynamicHeap.GetGPUSlotHandle(offset)); //Pixel Samplers
+	}
+
+	m_CurrentComputePSO.pRootSignature = m_ComputeRootSignature.Get();
+
+	ComPtr<ID3D12PipelineState> PSO;
+	PSO = GetOrCreatePipeline(GetDevice(), m_CurrentComputePSO);
+	m_CommandList->SetPipelineState(PSO.Get());
+
+}
+
+void D3D12HAL::DrawInstanced(UINT VertexCountPerInstance, UINT InstanceCount, UINT StartVertexLocation, UINT StartInstanceLocation)
+{
+	FlushGraphicsPipelineState();
+	m_CommandList->DrawInstanced(VertexCountPerInstance, InstanceCount, StartVertexLocation, StartInstanceLocation);
+}
+
+void D3D12HAL::DrawIndexedInstanced(UINT IndexCount, UINT InstanceCount, UINT StartIndexLocation, INT BaseVertexLocation)
+{
+	FlushGraphicsPipelineState();
+	m_CommandList->DrawIndexedInstanced(IndexCount, InstanceCount, StartIndexLocation, BaseVertexLocation, 0);
+}
+
+void D3D12HAL::Dispatch(UINT ThreadGroupCountX, UINT ThreadGroupCountY, UINT ThreadGroupCountZ)
+{
+	FlushComputePipelineState();
+	m_CommandList->Dispatch(ThreadGroupCountX, ThreadGroupCountY, ThreadGroupCountZ);
+}
+
+void D3D12HAL::DispatchRays(UINT DispatchRaysX, UINT DispatchRaysY, UINT DispatchRaysZ)
+{
+	//const D3D12_DISPATCH_RAYS_DESC* pDesc;
+	//m_CommandList->Dispatch(ThreadGroupCountX, ThreadGroupCountY, ThreadGroupCountZ);
 }

@@ -70,6 +70,45 @@ D3D12_VERSIONED_ROOT_SIGNATURE_DESC& GetStaticGraphicsRootSignatureDesc()
 	return RootDesc;
 }
 
+D3D12_VERSIONED_ROOT_SIGNATURE_DESC& GetStaticComputeRootSignatureDesc()
+{
+	static const U32 DescriptorTableCount = 4;
+	static struct
+	{
+		D3D12_SHADER_VISIBILITY Vis;
+		D3D12_DESCRIPTOR_RANGE_TYPE Type;
+		U32 Count;
+		U32 BaseShaderReg;
+		D3D12_DESCRIPTOR_RANGE_FLAGS Flags;
+	} RangeDesc[DescriptorTableCount] =
+	{
+		{ D3D12_SHADER_VISIBILITY_ALL, D3D12_DESCRIPTOR_RANGE_TYPE_SRV, MAX_SRVS, 0, D3D12ShaderUtils::StaticRootSignatureConstants::SRVDescriptorRangeFlags },
+		{ D3D12_SHADER_VISIBILITY_ALL, D3D12_DESCRIPTOR_RANGE_TYPE_CBV, MAX_CBS, 0, D3D12ShaderUtils::StaticRootSignatureConstants::CBVDescriptorRangeFlags },
+		{ D3D12_SHADER_VISIBILITY_ALL, D3D12_DESCRIPTOR_RANGE_TYPE_SAMPLER, MAX_SAMPLERS, 0, D3D12ShaderUtils::StaticRootSignatureConstants::SamplerDescriptorRangeFlags },
+
+		{ D3D12_SHADER_VISIBILITY_ALL, D3D12_DESCRIPTOR_RANGE_TYPE_UAV, MAX_UAVS, 0, D3D12ShaderUtils::StaticRootSignatureConstants::UAVDescriptorRangeFlags },
+	};
+
+	static CD3DX12_ROOT_PARAMETER1 TableSlots[DescriptorTableCount];
+	static CD3DX12_DESCRIPTOR_RANGE1 DescriptorRanges[DescriptorTableCount];
+
+	for (U32 i = 0; i < DescriptorTableCount; i++)
+	{
+		DescriptorRanges[i].Init(
+			RangeDesc[i].Type,
+			RangeDesc[i].Count,
+			RangeDesc[i].BaseShaderReg,
+			0u,
+			RangeDesc[i].Flags
+		);
+
+		TableSlots[i].InitAsDescriptorTable(1, &DescriptorRanges[i], RangeDesc[i].Vis);
+	}
+
+	static CD3DX12_VERSIONED_ROOT_SIGNATURE_DESC RootDesc(DescriptorTableCount, TableSlots, 0, nullptr, D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT);
+	return RootDesc;
+}
+
 void D3D12HAL::Init(int sizeX, int sizeY, sys::Renderer* owner)
 {
 	HRESULT hr;
@@ -87,7 +126,7 @@ void D3D12HAL::Init(int sizeX, int sizeY, sys::Renderer* owner)
 	int cy = (int)(rcWindow.bottom - rcWindow.top);
 	SetWindowPos(sys::pc::hWnd, 0, 0, 0, cx, cy, SWP_NOZORDER | SWP_NOMOVE);
 
-#if 0 //defined(_DEBUG)
+#if 1 //defined(_DEBUG)
 	// Enable the D3D12 debug layer.
 	{
 		ComPtr<ID3D12Debug> debugController;
@@ -161,40 +200,55 @@ void D3D12HAL::Init(int sizeX, int sizeY, sys::Renderer* owner)
 
 	m_FrameIndex = m_SwapChain->GetCurrentBackBufferIndex();
 
-	// Create descriptor heaps.
+	// Create SRV descriptor heap
 	{
-		// Describe and create a render target view (RTV) descriptor heap.
-		D3D12_DESCRIPTOR_HEAP_DESC rtvHeapDesc = {};
-		rtvHeapDesc.NumDescriptors = m_BufferCount;
-		rtvHeapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_RTV;
-		rtvHeapDesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_NONE;
-		m_Device->CreateDescriptorHeap(&rtvHeapDesc, IID_PPV_ARGS(&m_RtvHeap));
-
-		m_RtvDescriptorSize = m_Device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_RTV);
+		D3D12_DESCRIPTOR_HEAP_DESC heapDesc = {};
+		heapDesc.NumDescriptors = 1000000;
+		heapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV;
+		heapDesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_NONE;
+		m_SrvHeap.Init(heapDesc, "SRV/CBV Heap");
+	}
+	{
+		D3D12_DESCRIPTOR_HEAP_DESC heapDesc = {};
+		heapDesc.NumDescriptors = 2048;
+		heapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_SAMPLER;
+		heapDesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_NONE;
+		m_SamplerHeap.Init(heapDesc, "Sampler Heap");
+	}
+	{
+		D3D12_DESCRIPTOR_HEAP_DESC heapDesc = {};
+		heapDesc.NumDescriptors = 2048;
+		heapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_RTV;
+		heapDesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_NONE;
+		m_RtvHeap.Init(heapDesc, "RTV Heap");
+	}
+	{
+		D3D12_DESCRIPTOR_HEAP_DESC heapDesc = {};
+		heapDesc.NumDescriptors = 2048;
+		heapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_DSV;
+		heapDesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_NONE;
+		m_DsvHeap.Init(heapDesc, "DSV Heap");
 	}
 
 	// Create frame resources.
 	{
-		D3D12_CPU_DESCRIPTOR_HANDLE rtvHandle(m_RtvHeap->GetCPUDescriptorHandleForHeapStart());
+		U32 slot = m_RtvHeap.AllocateSlot(m_BufferCount);
+		D3D12_CPU_DESCRIPTOR_HANDLE rtvHandle = m_RtvHeap.GetCPUSlotHandle(slot);
 
 		// Create a RTV for each frame.
 		for (UINT n = 0; n < m_BufferCount; n++)
 		{
+			D3D12_CPU_DESCRIPTOR_HANDLE rtvHandle = m_RtvHeap.GetCPUSlotHandle(slot + n);
+
 			m_SwapChain->GetBuffer(n, IID_PPV_ARGS(&m_RenderTargets[n]));
 			m_Device->CreateRenderTargetView(m_RenderTargets[n].Get(), nullptr, rtvHandle);
 			m_RenderTargetsView[n] = rtvHandle;
-
-			//rtvHandle.Offset(1, m_RtvDescriptorSize);
-			rtvHandle.ptr += m_RtvDescriptorSize;
 		}
 	}
 
 	{
-		D3D12_DESCRIPTOR_HEAP_DESC dsvHeapDesc = {};
-		dsvHeapDesc.NumDescriptors = 1;
-		dsvHeapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_DSV;
-		dsvHeapDesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_NONE;
-		m_Device->CreateDescriptorHeap(&dsvHeapDesc, IID_PPV_ARGS(&m_DsvHeap));
+		U32 slot = m_DsvHeap.AllocateSlot(1);
+		D3D12_CPU_DESCRIPTOR_HANDLE dsvHandle = m_DsvHeap.GetCPUSlotHandle(slot);
 
 		CD3DX12_RESOURCE_DESC resdesc;
 		resdesc = CD3DX12_RESOURCE_DESC::Tex2D(DXGI_FORMAT_D32_FLOAT, sizeX, sizeY);
@@ -212,28 +266,9 @@ void D3D12HAL::Init(int sizeX, int sizeY, sys::Renderer* owner)
 			&clearZ,
 			IID_PPV_ARGS(&m_DepthStencil));
 
-		D3D12_CPU_DESCRIPTOR_HANDLE dsvHandle(m_DsvHeap->GetCPUDescriptorHandleForHeapStart());
-
 		D3D12_DEPTH_STENCIL_VIEW_DESC desc;
 		m_Device->CreateDepthStencilView(m_DepthStencil.Get(), nullptr, dsvHandle);
 		m_DepthStencilView = dsvHandle;
-	}
-
-	// Create SRV descriptor heap
-	{
-		D3D12_DESCRIPTOR_HEAP_DESC heapDesc = {};
-		heapDesc.NumDescriptors = 4096;
-		heapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV;
-		heapDesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_NONE;
-		m_SrvHeap.Init(heapDesc, "SRV/CBV Heap");
-	}
-
-	{
-		D3D12_DESCRIPTOR_HEAP_DESC heapDesc = {};
-		heapDesc.NumDescriptors = 2048;
-		heapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_SAMPLER;
-		heapDesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_NONE;
-		m_SamplerHeap.Init(heapDesc, "Sampler Heap");
 	}
 
 	// Command Allocator
@@ -289,32 +324,63 @@ void D3D12HAL::Init(int sizeX, int sizeY, sys::Renderer* owner)
 			featureData.HighestVersion = D3D_ROOT_SIGNATURE_VERSION_1;
 		}
 
-		CD3DX12_DESCRIPTOR_RANGE1 ranges[2];
-		ranges[0].Init(D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 48, 0, D3D12_DESCRIPTOR_RANGE_FLAG_DATA_STATIC_WHILE_SET_AT_EXECUTE | D3D12_DESCRIPTOR_RANGE_FLAG_DESCRIPTORS_VOLATILE);
-		ranges[1].Init(D3D12_DESCRIPTOR_RANGE_TYPE_SAMPLER, 16, 0, D3D12_DESCRIPTOR_RANGE_FLAG_DESCRIPTORS_VOLATILE);
-
-		CD3DX12_ROOT_PARAMETER1 rootParameters[2];
-		rootParameters[0].InitAsDescriptorTable(1, &ranges[0]);// , D3D12_SHADER_VISIBILITY_PIXEL);
-		rootParameters[1].InitAsDescriptorTable(1, &ranges[1]);//, D3D12_SHADER_VISIBILITY_PIXEL);
-
-		CD3DX12_VERSIONED_ROOT_SIGNATURE_DESC rootSignatureDesc;
-		rootSignatureDesc.Init_1_1(_countof(rootParameters), rootParameters, 0, nullptr, D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT);
-
-		ComPtr<ID3DBlob> signature;
-		ComPtr<ID3DBlob> error;
-		HRESULT hr = 0;// D3DX12SerializeVersionedRootSignature(&rootSignatureDesc, featureData.HighestVersion, &signature, &error);
-		
-		// use the one from UE4 instead
-		hr = D3DX12SerializeVersionedRootSignature(&GetStaticGraphicsRootSignatureDesc(), featureData.HighestVersion, &signature, &error);
-		if (hr != S_OK)
 		{
-			char * errormessage = (char*)error->GetBufferPointer();
-			MESSAGE(errormessage);
+			//CD3DX12_DESCRIPTOR_RANGE1 ranges[2];
+			//ranges[0].Init(D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 48, 0, D3D12_DESCRIPTOR_RANGE_FLAG_DATA_STATIC_WHILE_SET_AT_EXECUTE | D3D12_DESCRIPTOR_RANGE_FLAG_DESCRIPTORS_VOLATILE);
+			//ranges[1].Init(D3D12_DESCRIPTOR_RANGE_TYPE_SAMPLER, 16, 0, D3D12_DESCRIPTOR_RANGE_FLAG_DESCRIPTORS_VOLATILE);
+
+			//CD3DX12_ROOT_PARAMETER1 rootParameters[2];
+			//rootParameters[0].InitAsDescriptorTable(1, &ranges[0]);// , D3D12_SHADER_VISIBILITY_PIXEL);
+			//rootParameters[1].InitAsDescriptorTable(1, &ranges[1]);//, D3D12_SHADER_VISIBILITY_PIXEL);
+
+			//CD3DX12_VERSIONED_ROOT_SIGNATURE_DESC rootSignatureDesc;
+			//rootSignatureDesc.Init_1_1(_countof(rootParameters), rootParameters, 0, nullptr, D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT);
+
+			ComPtr<ID3DBlob> signature;
+			ComPtr<ID3DBlob> error;
+			HRESULT hr = 0;// D3DX12SerializeVersionedRootSignature(&rootSignatureDesc, featureData.HighestVersion, &signature, &error);
+
+			// use the one from UE4 instead
+			hr = D3DX12SerializeVersionedRootSignature(&GetStaticGraphicsRootSignatureDesc(), featureData.HighestVersion, &signature, &error);
+			if (hr != S_OK)
+			{
+				char* errormessage = (char*)error->GetBufferPointer();
+				MESSAGE(errormessage);
+			}
+			hr = m_Device->CreateRootSignature(0, signature->GetBufferPointer(), signature->GetBufferSize(), IID_PPV_ARGS(&m_GraphicsRootSignature));
+			if (hr != S_OK)
+			{
+				MESSAGE("ERROR : Failed to create Root Signature");
+			}
 		}
-		hr = m_Device->CreateRootSignature(0, signature->GetBufferPointer(), signature->GetBufferSize(), IID_PPV_ARGS(&m_RootSignature));
-		if (hr != S_OK)
 		{
-			MESSAGE("ERROR : Failed to create Root Signature");
+			CD3DX12_DESCRIPTOR_RANGE1 ranges[2];
+			ranges[0].Init(D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 48, 0, D3D12_DESCRIPTOR_RANGE_FLAG_DATA_STATIC_WHILE_SET_AT_EXECUTE | D3D12_DESCRIPTOR_RANGE_FLAG_DESCRIPTORS_VOLATILE);
+			ranges[1].Init(D3D12_DESCRIPTOR_RANGE_TYPE_SAMPLER, 16, 0, D3D12_DESCRIPTOR_RANGE_FLAG_DESCRIPTORS_VOLATILE);
+
+			CD3DX12_ROOT_PARAMETER1 rootParameters[2];
+			rootParameters[0].InitAsDescriptorTable(1, &ranges[0]);// , D3D12_SHADER_VISIBILITY_PIXEL);
+			rootParameters[1].InitAsDescriptorTable(1, &ranges[1]);//, D3D12_SHADER_VISIBILITY_PIXEL);
+
+			CD3DX12_VERSIONED_ROOT_SIGNATURE_DESC rootSignatureDesc;
+			rootSignatureDesc.Init_1_1(_countof(rootParameters), rootParameters, 0, nullptr, D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT);
+
+			ComPtr<ID3DBlob> signature;
+			ComPtr<ID3DBlob> error;
+			HRESULT hr = 0;// D3DX12SerializeVersionedRootSignature(&rootSignatureDesc, featureData.HighestVersion, &signature, &error);
+
+			// use the one from UE4 instead
+			hr = D3DX12SerializeVersionedRootSignature(&GetStaticComputeRootSignatureDesc(), featureData.HighestVersion, &signature, &error);
+			if (hr != S_OK)
+			{
+				char* errormessage = (char*)error->GetBufferPointer();
+				MESSAGE(errormessage);
+			}
+			hr = m_Device->CreateRootSignature(0, signature->GetBufferPointer(), signature->GetBufferSize(), IID_PPV_ARGS(&m_ComputeRootSignature));
+			if (hr != S_OK)
+			{
+				MESSAGE("ERROR : Failed to create Root Signature");
+			}
 		}
 
 		// Create dynamic descriptorHeaps
@@ -352,6 +418,10 @@ void D3D12HAL::Init(int sizeX, int sizeY, sys::Renderer* owner)
 				m_CurrentSampler[i][j] = {};
 			}
 		}
+		for (int i = 0; i < _countof(m_CurrentUAV); i++)
+		{
+			m_CurrentUAV[i] = {};
+		}
 	}
 
 	OutputDebugString("DX12 Renderer is up and running\n");
@@ -385,7 +455,8 @@ void D3D12HAL::SetAndClearRenderTarget()
 	ID3D12DescriptorHeap* ppHeaps[] = { m_SRVDynamicHeap.Get(), m_SamplerDynamicHeap.Get() };
 	m_CommandList->SetDescriptorHeaps(_countof(ppHeaps), ppHeaps);
 
-	m_CommandList->SetGraphicsRootSignature(m_RootSignature.Get());
+	m_CommandList->SetGraphicsRootSignature(m_GraphicsRootSignature.Get());
+	m_CommandList->SetComputeRootSignature(m_ComputeRootSignature.Get());
 }
 
 void D3D12HAL::PresentFrame()

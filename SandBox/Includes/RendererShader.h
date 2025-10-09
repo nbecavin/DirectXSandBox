@@ -32,6 +32,7 @@ struct ShaderMap
 	static ShaderKernel* ImGuiVS;
 	static ShaderKernel* ImGuiPS;
 	static ShaderKernel* ComputeHistogramCS;
+	static ShaderKernel* TonemappingPS;
 };
 
 #endif //__RENDERER_SHADER_HH__

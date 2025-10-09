@@ -65,11 +65,11 @@ namespace sys {
 
 		virtual void SetScissorRect(U32 left, U32 right, U32 top, U32 bottom) = 0;
 
-		virtual void	PushVertexDeclaration(VertexDeclaration* Decl) {}
-		virtual void	PushStreamSource(U32 StreamNumber,VertexBuffer* Buffer,U32 Offset,U32 Stride) {}
-		virtual void	PushIndices(IndexBuffer* Buffer,U32 _Fmt=FMT_IDX_16) {}
-		virtual void	PushDrawIndexed(PrimitiveType Type,U32 BaseVertexIndex,U32 MinVertexIndex,U32 NumVertices,U32 StartIndex,U32 PrimCount) {}
-		virtual void	PushMaterial(Material* Mat) {}
+		virtual void PushVertexDeclaration(VertexDeclaration* Decl) {}
+		virtual void PushStreamSource(U32 StreamNumber,VertexBuffer* Buffer,U32 Offset,U32 Stride) {}
+		virtual void PushIndices(IndexBuffer* Buffer,U32 _Fmt=FMT_IDX_16) {}
+		virtual void PushDrawIndexed(PrimitiveType Type,U32 BaseVertexIndex,U32 MinVertexIndex,U32 NumVertices,U32 StartIndex,U32 PrimCount) {}
+		virtual void PushMaterial(Material* Mat) {}
 
 		virtual ShaderKernel* CreateKernel(const char* src, const char* epoint, EShaderType type) = 0;
 		virtual void BindGraphicPipelineState(ShaderKernel* VS, ShaderKernel* PS) = 0;
@@ -80,10 +80,15 @@ namespace sys {
 		virtual void SetSampler(U32 Slot, EShaderType Type, SamplerDesc& Sampler) = 0;
 		virtual void SetConstantBuffer(U32 Slot, EShaderType Type, ConstantBuffer* CBV) = 0;
 		virtual void SetShaderResource(U32 Slot, EShaderType Type, Bitmap* Texture) = 0;
+		virtual void SetUAV(U32 Slot, Bitmap* Texture) = 0;
 		virtual void SetDepthStencilState(DepthStencilDesc& Desc) = 0;
 		virtual void SetRasterizerState(RasterizerDesc& Desc) = 0;
 		virtual void SetPrimitiveTopology(PrimitiveType Topology) = 0;
-		virtual void DrawIndexed(UINT IndexCount, UINT StartIndexLocation, INT BaseVertexLocation) = 0;
+
+		virtual void DrawInstanced(UINT VertexCountPerInstance, UINT InstanceCount, UINT StartVertexLocation, UINT StartInstanceLocation) = 0;
+		virtual void DrawIndexedInstanced(UINT IndexCount, UINT InstanceCount, UINT StartIndexLocation, INT BaseVertexLocation) = 0;
+		virtual void Dispatch(UINT ThreadGroupCountX, UINT ThreadGroupCountY, UINT ThreadGroupCountZ) = 0;
+		virtual void DispatchRays(UINT DispatchRaysX, UINT DispatchRaysY, UINT DispatchRaysZ) = 0;
 
 	protected:
 		int		SizeX, SizeY;

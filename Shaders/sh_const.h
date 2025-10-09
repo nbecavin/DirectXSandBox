@@ -19,7 +19,7 @@ struct ScreenVertexVsInput
 
 struct ScreenVertexVsOutput
 {
-	float4	pos : POSITION;
+	float4	pos : SV_POSITION;
 	float2	tex : TEXCOORD0;
 };
 
@@ -28,7 +28,7 @@ struct ScreenVertexVsOutput
 
 struct VS_Output
 {
-	float4 position : SV_POSITION;//POSITION;
+	float4 position : SV_POSITION;
 	float4 color	: COLOR0;
 	float3x3 tbn	: TBN;
 	float2 uv		: TEXCOORD0;
@@ -40,14 +40,14 @@ struct VS_Output
 
 cbuffer	cb_dlight
 {
-	float4	color;
-	float3	dir;
+	float4 color;
+	float3 dir;
 };
 
 struct InstanceParameters
 {
-	float4x4	worldMatrix;
-	float4x4	invWorldMatrix;
+	float4x4 worldMatrix;
+	float4x4 invWorldMatrix;
 };
 
 struct CameraParameters
