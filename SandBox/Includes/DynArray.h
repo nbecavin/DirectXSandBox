@@ -77,4 +77,6 @@ public:
 
 };
 
+using U8DA = DynArray<U8, 8>;
+
 #endif //__DYNARRAY_HH__

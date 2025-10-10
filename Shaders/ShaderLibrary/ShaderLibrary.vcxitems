@@ -83,6 +83,7 @@
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="$(MSBuildThisFileDirectory)..\auto_exposure.cs.hlsl" />
+    <FxCompile Include="$(MSBuildThisFileDirectory)..\raytracing_debug.raygen.hlsl" />
     <FxCompile Include="$(MSBuildThisFileDirectory)..\RTXDI-Integration\LightingPasses\Presampling\PresampleReGIR.hlsl" />
   </ItemGroup>
 </Project>

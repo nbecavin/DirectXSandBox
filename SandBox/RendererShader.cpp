@@ -13,6 +13,8 @@ ShaderKernel* ShaderMap::ImGuiPS = nullptr;
 ShaderKernel* ShaderMap::ComputeHistogramCS = nullptr;
 ShaderKernel* ShaderMap::TonemappingPS = nullptr;
 
+ShaderKernel* ShaderMap::RaytracingDebugRGS = nullptr;
+
 namespace sys {
 
 	ShaderKernel* textRTXDI;
@@ -39,6 +41,9 @@ namespace sys {
 		//ShaderMap::PassThroughPS = CreateKernel("shaders/post_process.ps.hlsl", "ph_passthrough", SHADER_TYPE_PIXEL);
 
 		//textRTXDI = CreateKernel("Shaders/RTXDI-Integration/LightingPasses/Presampling/PresampleReGIR.hlsl", "main", SHADER_TYPE_COMPUTE);
+
+		// Raygen
+		ShaderMap::RaytracingDebugRGS = CreateKernel("shaders/raytracing_debug.raygen.hlsl", "main", SHADER_TYPE_RAYGEN);
 	}
 
 };

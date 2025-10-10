@@ -157,5 +157,6 @@
     <FxCompile Include="$(MSBuildThisFileDirectory)..\auto_exposure.cs.hlsl">
       <Filter>Post Processing</Filter>
     </FxCompile>
+    <FxCompile Include="$(MSBuildThisFileDirectory)..\raytracing_debug.raygen.hlsl" />
   </ItemGroup>
 </Project>

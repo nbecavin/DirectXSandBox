@@ -33,6 +33,7 @@ struct ShaderMap
 	static ShaderKernel* ImGuiPS;
 	static ShaderKernel* ComputeHistogramCS;
 	static ShaderKernel* TonemappingPS;
+	static ShaderKernel* RaytracingDebugRGS;
 };
 
 #endif //__RENDERER_SHADER_HH__

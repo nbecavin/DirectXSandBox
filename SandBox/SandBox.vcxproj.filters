@@ -240,6 +240,9 @@
     <ClCompile Include="ImageImporter.cpp">
       <Filter>Engine\Assets\Import</Filter>
     </ClCompile>
+    <ClCompile Include="DirectoryWatcher.cpp">
+      <Filter>Engine\System</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="SandBox.h">
@@ -407,6 +410,9 @@
     </ClInclude>
     <ClInclude Include="Includes\tinyddsloader.h">
       <Filter>Engine\Assets\Import</Filter>
+    </ClInclude>
+    <ClInclude Include="Includes\DirectoryWatcher.h">
+      <Filter>Engine\System</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

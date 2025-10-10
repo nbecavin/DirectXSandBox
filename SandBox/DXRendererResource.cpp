@@ -112,6 +112,7 @@ namespace sys {
 		arguments.push_back(L"-I ../Tools/rtxdi/include");
 		arguments.push_back(L"/Zi");
 		arguments.push_back(L"-Qembed_debug");
+		arguments.push_back(L"-disable-payload-qualifiers");
 
 		WCHAR wpath[2049];
 		MultiByteToWideChar(CP_ACP, 0, path, -1, wpath, 2048);

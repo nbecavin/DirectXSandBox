@@ -139,6 +139,7 @@
     <ClCompile Include="D3D12HALShaders.cpp" />
     <ClCompile Include="D3D12HALSwapChain.cpp" />
     <ClCompile Include="D3D12HALTexture.cpp" />
+    <ClCompile Include="DirectoryWatcher.cpp" />
     <ClCompile Include="GraphObject.cpp" />
     <ClCompile Include="ImageImporter.cpp" />
     <ClCompile Include="Model.cpp">
@@ -198,6 +199,7 @@
     <ClInclude Include="Includes\D3D12HALSamplerState.h" />
     <ClInclude Include="Includes\D3D12HALShaders.h" />
     <ClInclude Include="Includes\d3dx12.h" />
+    <ClInclude Include="Includes\DirectoryWatcher.h" />
     <ClInclude Include="Includes\ImageImporter.h" />
     <ClInclude Include="Includes\Model.h" />
     <ClInclude Include="Includes\RendererPipelineState.h" />
