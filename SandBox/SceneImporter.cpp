@@ -210,6 +210,8 @@ void Mesh::LoadFromAiMesh(std::filesystem::path directory, aiMesh* importMesh, a
 		pItem->IndexStart = (U32)0;
 		pItem->IndexCount = (U32)numIndices; //Trilist
 		pItem->IndexType = FMT_IDX_32;
+
+		delete[] pIndices;
 	}
 
 	struct MeshVertex
@@ -252,6 +254,7 @@ void Mesh::LoadFromAiMesh(std::filesystem::path directory, aiMesh* importMesh, a
 		}
 		//	UINT byteSize = (UINT)m_pVertexBufferArray[i].SizeBytes;
 		pItem->VB = gData.Rdr->GetHAL()->CreateVertexBuffer(vertexByteSize, 0, pVertices);
+		delete [] pVertices;
 	}
 
 	// Vertex Declaration
