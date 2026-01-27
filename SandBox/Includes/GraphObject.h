@@ -21,7 +21,7 @@ class GraphObject
 public:
 	GraphObject();
 
-	virtual void SetName(std::string& _name) final { m_Name = _name; }
+	virtual void SetName(const std::string& _name) final { m_Name = NameID(_name); }
 	virtual const std::string& GetName() final { return m_Name.Str; }
 
 	virtual void Update(F32 dTime);

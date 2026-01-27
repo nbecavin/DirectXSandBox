@@ -1,10 +1,14 @@
 #ifndef __CAMERA_H__
 #define __CAMERA_H__
 
-class Camera
+#include <GraphObject.h>
+
+class Camera : public GraphObject
 {
 public:
 	Camera();
+
+	virtual void Update(F32 dTime);
 
 	void	SetWorldPosition(const Vec4f& worldPos) { m_WorldPos=worldPos; }
 	void	SetWorldTarget(const Vec4f& targetPos)  { m_WorldTarget=targetPos; }

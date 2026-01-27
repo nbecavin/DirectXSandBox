@@ -18,7 +18,6 @@ public:
 	virtual void DrawGBuffer();
 
 public:
-	void Load(const char * fname);
 	void LoadFromAiMesh(std::filesystem::path directory, aiMesh* importMesh, aiMaterial* importMaterial);
 
 	struct MeshSubSet {

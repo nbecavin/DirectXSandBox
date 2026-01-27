@@ -90,15 +90,10 @@ void sys::MainLoop()
 //		imp.LoadScene("assets\\Bistro_v5_2\\BistroExterior.fbx");
 //		imp.LoadScene("assets\\from_blender\\from_blender.gltf");
 //		imp.LoadScene("assets\\asobo_mansion\\mansion.gltf");
+//		imp.LoadScene("assets\\trench\\trench.gltf");
 //		imp.LoadScene("assets\\breakfast_room\\BreakfastRoom.gltf");
 //		imp.LoadScene("assets\\sponza\\sponza.gltf");
 //		imp.LoadScene("assets\\gi_walt\\gi_walt.gltf");
-	//	imp.LoadScene("assets\\\sponza.FBX");
-	//	imp.LoadScene("assets\\models\\sponza\\SponzaNoFlag.sdkmesh");
-	//	imp.LoadScene("assets\\models\\powerplant.sdkmesh");
-	//	imp.LoadScene("assets\\models\\MicroscopeCity\\scanner.sdkmesh");
-	//	imp.LoadScene("assets\\models\\MicroscopeCity\\column.sdkmesh");
-	//	imp.LoadScene("assets\\models\\Dwarf\\dwarf.sdkmesh");
 	}
 
 	MESSAGE("Entering mainloop");
@@ -142,6 +137,11 @@ void sys::MainLoop()
 	}
 
 MESSAGE("Exit mainloop");
+}
+
+void sys::RegisterCameraObject(GraphObject* object)
+{
+	gData.m_CameraObjectDA.Add(object);
 }
 
 void sys::RegisterGraphObject(GraphObject * object)
@@ -226,37 +226,58 @@ void sys::UpdateEditorMenu()
 	}
 
 	// Show Materials
-	if (ImGui::Begin("Materials"))
+	if (ImGui::Begin("Asset Browser"))
 	{
-		const MaterialDA& materialStore = gData.Scene->GetMaterialDA();
-
-		DynArray<const char*, 8> NameRef;
-		NameRef.SetSize(materialStore.GetSize());
-		for (int i = 0; i < materialStore.GetSize(); i++)
+		if (ImGui::CollapsingHeader("Camera"))
 		{
-			NameRef[i] = materialStore[i]->GetName().c_str();
+			// Update Actors and modifiers
+			for (U32 i = 0; i < gData.m_CameraObjectDA.GetSize(); i++)
+			{
+				Camera* it = (Camera * )gData.m_CameraObjectDA[i];
+				//it->Update(dTime);
+			}
+
+			DynArray<const char*, 8> NameRef;
+			NameRef.SetSize(gData.m_CameraObjectDA.GetSize());
+			for (int i = 0; i < gData.m_CameraObjectDA.GetSize(); i++)
+			{
+				Camera* it = (Camera*)gData.m_CameraObjectDA[i];
+				NameRef[i] = it->GetName().c_str();
+			}
+
+			static int current = -1;
+			ImGui::ListBox("##cam", &current, NameRef.GetArrayPtr(), NameRef.GetSize());
 		}
-
-		static int current = -1;
-		ImGui::ListBox("##mat", &current, NameRef.GetArrayPtr(), NameRef.GetSize());
-
-		if (current != -1)
+		if (ImGui::CollapsingHeader("Materials"))
 		{
+			const MaterialDA& materialStore = gData.Scene->GetMaterialDA();
 
+			DynArray<const char*, 8> NameRef;
+			NameRef.SetSize(materialStore.GetSize());
+			for (int i = 0; i < materialStore.GetSize(); i++)
+			{
+				NameRef[i] = materialStore[i]->GetName().c_str();
+			}
 
-			Material* pMat = materialStore[current];
-			ImGui::Text("Selected material");
-			ImGui::Text(pMat->GetName().c_str());
-			ImGui::InputFloat3("Diffuse", (float*)&pMat->GetDiffuse());
-			float r = pMat->GetRoughness();
-			ImGui::InputFloat("Roughness", &r);
-			float m = pMat->GetMetallic();
-			ImGui::InputFloat("Metallic", &m);
+			static int current = -1;
+			ImGui::ListBox("##mat", &current, NameRef.GetArrayPtr(), NameRef.GetSize());
 
-			ImTextureRef ref1(pMat->GetBitmap(MTL_STAGE_ALBEDO));
-			ImGui::Image(ref1, ImVec2(200, 200));
-			ImTextureRef ref2(pMat->GetBitmap(MTL_STAGE_NORMAL));
-			ImGui::SameLine(); ImGui::Image(ref2, ImVec2(200, 200));
+			if (current != -1)
+			{
+				Material* pMat = materialStore[current];
+				ImGui::Text("Selected material");
+				ImGui::Text(pMat->GetName().c_str());
+				ImGui::InputFloat3("Diffuse", (float*)&pMat->GetDiffuse());
+				float r = pMat->GetRoughness();
+				ImGui::InputFloat("Roughness", &r);
+				float m = pMat->GetMetallic();
+				ImGui::InputFloat("Metallic", &m);
+
+				ImTextureRef ref1(pMat->GetBitmap(MTL_STAGE_ALBEDO));
+				ImGui::Image(ref1, ImVec2(200, 200));
+				ImTextureRef ref2(pMat->GetBitmap(MTL_STAGE_NORMAL));
+				ImGui::SameLine(); ImGui::Image(ref2, ImVec2(200, 200));
+			}
 		}
 	}
 	ImGui::End();

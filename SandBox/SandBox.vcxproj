@@ -157,14 +157,6 @@
     <ClCompile Include="GpouScene.cpp" />
     <ClCompile Include="GraphObject.cpp" />
     <ClCompile Include="ImageImporter.cpp" />
-    <ClCompile Include="Model.cpp">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
-    </ClCompile>
-    <ClCompile Include="ModelH3D.cpp">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
-    </ClCompile>
     <ClCompile Include="RaytracingScene.cpp" />
     <ClCompile Include="RendererImGui.cpp" />
     <ClCompile Include="RendererResource.cpp" />
@@ -175,7 +167,6 @@
     <ClCompile Include="ScriptObject.cpp" />
     <ClCompile Include="Sky.cpp" />
     <ClCompile Include="Mesh.cpp" />
-    <ClCompile Include="MeshLoad.cpp" />
     <ClCompile Include="PrimitiveBuffers.cpp" />
     <ClCompile Include="Renderer.cpp" />
     <ClCompile Include="RendererInit.cpp" />
@@ -223,7 +214,6 @@
     <ClInclude Include="Includes\GpuScene.h" />
     <ClInclude Include="includes\RendererResource.h" />
     <ClInclude Include="Includes\ImageImporter.h" />
-    <ClInclude Include="Includes\Model.h" />
     <ClInclude Include="Includes\RaytracingScene.h" />
     <ClInclude Include="Includes\RendererPipelineState.h" />
     <ClInclude Include="includes\RenderGraph.h" />
@@ -237,7 +227,6 @@
     <ClInclude Include="Includes\GraphObject.h" />
     <ClInclude Include="Includes\Sky.h" />
     <ClInclude Include="Includes\Mesh.h" />
-    <ClInclude Include="Includes\MeshSDKMesh.h" />
     <ClInclude Include="Includes\PrimitiveBuffers.h" />
     <ClInclude Include="Includes\Renderer.h" />
     <ClInclude Include="Includes\RendererShader.h" />

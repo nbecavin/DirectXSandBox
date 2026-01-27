@@ -127,7 +127,7 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
 {
 #if WINAPI_FAMILY!=WINAPI_FAMILY_APP
 	DWORD ws = WS_OVERLAPPED | WS_CAPTION | WS_SYSMENU | WS_THICKFRAME | WS_MINIMIZEBOX | WS_MAXIMIZEBOX;
-	sys::pc::hWnd = CreateWindow(szWindowClass, szTitle, ws, 0, 0, 0, 0, NULL, NULL, hInstance, NULL);
+	sys::pc::hWnd = CreateWindow(szWindowClass, szTitle, ws, CW_USEDEFAULT, CW_USEDEFAULT, 0, 0, NULL, NULL, hInstance, NULL);
 	if (!sys::pc::hWnd)
 		return FALSE;
 	ShowWindow(sys::pc::hWnd, nCmdShow);

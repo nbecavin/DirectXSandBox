@@ -7,6 +7,10 @@ Camera::Camera()
 	Update();
 }
 
+void Camera::Update(float dTime)
+{
+}
+
 void Camera::Update()
 {
 #ifdef _PC
@@ -22,7 +26,8 @@ void Camera::Update()
 
 void Camera::DebugDraw()
 {
-	ImGui::Begin("CameraDebug", nullptr);
+	ImGui::Begin("Camera Debug", nullptr);
+	ImGui::Text(GetName().c_str());
 	char str[1024];
 	sprintf(str, "Position %.3f %.3f %.3f", m_WorldPos.x, m_WorldPos.y, m_WorldPos.z);
 	ImGui::Text(str);

@@ -54,16 +54,7 @@ void SceneImporter::LoadScene(std::string& filepath)
 	std::filesystem::path directory(with_alias);
 
 	std::string extension = str_toupper(directory.extension().string());
-	if (extension.compare(".SDKMESH")==0)
-	{
-		Mesh* pMesh;
-		pMesh = new Mesh();
-		pMesh->Load(filepath.c_str());
-		pMesh->SetScale(0.01f);
-		pMesh->SetWorldPosition(60.5f * 0.01f, -128.f * 0.01f, -5.f * 0.01f);
-		sys::RegisterGraphObject(pMesh);
-	}
-	else //ASSIMP
+	//ASSIMP
 	{
 		directory.remove_filename();
 
@@ -155,13 +146,15 @@ void SceneImporter::LoadScene(std::string& filepath)
 
 					aiNode* cameraNode = pScene->mRootNode->FindNode(pCamera->mName);
 					aiMatrix4x4 transform = cameraNode->mTransformation;
-					transform = aiMatrix4x4();
+					//transform = aiMatrix4x4();
 					aiVector3D cameraPosition = transform * pCamera->mPosition;
 					aiVector3D cameraTarget = transform * pCamera->mLookAt;
-					cameraPosition = pCamera->mPosition;
-					cameraTarget = pCamera->mLookAt;
+					//cameraPosition = pCamera->mPosition;
+					//cameraTarget = pCamera->mLookAt;
 
-					Camera* cam = gData.Rdr->GetCamera();
+					Camera* cam = new Camera();
+					sys::RegisterCameraObject(cam);
+					cam->SetName(std::string(pCamera->mName.C_Str()));
 					cam->SetWorldPosition(Vec4f(cameraPosition.x, cameraPosition.y, cameraPosition.z, 1.f));
 					cam->SetWorldTarget(Vec4f(cameraTarget.x, cameraTarget.y, cameraTarget.z, 1.f));
 
@@ -171,6 +164,13 @@ void SceneImporter::LoadScene(std::string& filepath)
 					//aiMatrix4x4 cameraTransformationMatrix = cameraNode->mTransformation;					
 					//auto worldPosition = cameraTransformationMatrix * pCamera->mPosition;
 					//MESSAGE("kjlkj");
+				}
+
+				// Set Camera
+				if (gData.m_CameraObjectDA.GetSize())
+				{
+					Camera* src = (Camera *)gData.m_CameraObjectDA[0];
+					gData.Rdr->SetCamera(src);
 				}
 			}
 

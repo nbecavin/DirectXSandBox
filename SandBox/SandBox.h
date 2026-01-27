@@ -22,6 +22,7 @@ namespace sys
 
 	void RegisterMaterial(Material* material);
 	void RegisterGraphObject(GraphObject * object);
+	void RegisterCameraObject(GraphObject* object);
 	void RegisterScriptObject(ScriptObject * object);
 
 	// Global pointers - Can be accessed from everywhere
@@ -32,6 +33,7 @@ namespace sys
 		Renderer* Rdr;
 		std::unique_ptr<GpuScene> Scene;
 
+		GraphObjectDA	m_CameraObjectDA;
 		ScriptObjectDA	m_ScriptObjectDA;
 		GraphObjectDA	m_GraphObjectDA;
 

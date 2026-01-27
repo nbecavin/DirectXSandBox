@@ -222,15 +222,6 @@
     <ClCompile Include="DirectoryWatcher.cpp">
       <Filter>Engine\System</Filter>
     </ClCompile>
-    <ClCompile Include="Model.cpp">
-      <Filter>Engine\Assets\Import</Filter>
-    </ClCompile>
-    <ClCompile Include="ModelH3D.cpp">
-      <Filter>Engine\Assets\Import</Filter>
-    </ClCompile>
-    <ClCompile Include="MeshLoad.cpp">
-      <Filter>Engine\Assets\Import</Filter>
-    </ClCompile>
     <ClCompile Include="RenderGraph.cpp">
       <Filter>Engine\Renderer</Filter>
     </ClCompile>
@@ -413,12 +404,6 @@
     </ClInclude>
     <ClInclude Include="Includes\DirectoryWatcher.h">
       <Filter>Engine\System</Filter>
-    </ClInclude>
-    <ClInclude Include="Includes\MeshSDKMesh.h">
-      <Filter>Engine\Assets\Import</Filter>
-    </ClInclude>
-    <ClInclude Include="Includes\Model.h">
-      <Filter>Engine\Assets\Import</Filter>
     </ClInclude>
     <ClInclude Include="includes\RenderGraph.h">
       <Filter>Engine\Renderer</Filter>
