@@ -1,6 +1,6 @@
 #if defined(_PC)
 
-#include <DXRenderer.h>
+#include <RenderHAL.h>
 #include <WinMain.h>
 #include <D3D12HAL.h>
 #include <D3D12HALBuffers.h>
@@ -15,26 +15,6 @@
 #pragma comment(lib,"../Tools/dxc/lib/x64/dxcompiler.lib")
 
 namespace sys {
-
-	VertexBuffer* DXRenderer::CreateVertexBuffer(U32 _Size,U32 _Usage,void* _Datas)
-	{
-		VertexBuffer* ret = GetHAL().CreateVertexBuffer(_Size, _Usage, _Datas);
-		if (ret)
-		{
-			m_VertexBufferDA.Add(ret);
-		}
-		return ret;
-	}
-
-	IndexBuffer* DXRenderer::CreateIndexBuffer(U32 _Size,U32 _Usage,U32 _Fmt,void* _Datas)
-	{
-		IndexBuffer* ret = GetHAL().CreateIndexBuffer(_Size, _Usage, _Fmt, _Datas);
-		if (ret)
-		{
-			m_IndexBufferDA.Add(ret);
-		}
-		return ret;
-	}
 
 	const char* GetShaderProfile(U32 type)
 	{
@@ -83,7 +63,7 @@ namespace sys {
 		std::unordered_set<std::wstring> IncludedFiles;
 	};
 
-	ShaderKernel* DXRenderer::CreateKernel(const char* src, const char* epoint, EShaderType type)
+	ShaderKernel* RenderHAL::CreateKernel(const char* src, const char* epoint, EShaderType type)
 	{
 		ShaderKernel* aShader = nullptr;
 
@@ -161,17 +141,12 @@ namespace sys {
 			//hash_memory(desc.VS.pShaderBytecode, desc.VS.BytecodeLength);
 
 			pResults->GetResult((IDxcBlob**)pCode.GetAddressOf());
-			aShader = GetHAL().CreateShaderResource(pCode.Get());
+			aShader = AsPtr<D3D12HAL>()->CreateShaderResource(pCode.Get());
 			aShader->m_Type = type;
 			pCode.Detach(); //detach from resource (ouais ca leak)
 		}
 
 		return aShader;
-	}
-
-	void DXRenderer::CreateTexture(Bitmap * _Bm)
-	{
-		GetHAL().CreateTexture(_Bm);
 	}
 
 };

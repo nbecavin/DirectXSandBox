@@ -8,7 +8,6 @@
 #include <Renderer.h>
 #include <InputManager.h>
 #include <Sky.h>
-#include <Terrain.h>
 #include <Mesh.h>
 #include <CameraFree.h>
 #include <Bitmap.h>
@@ -84,12 +83,16 @@ void sys::MainLoop()
 	}
 	else
 	{
-//		imp.LoadScene("assets\\Bistro_v5_2\\BistroInterior.fbx");
+		//imp.LoadScene("assets\\necropolis\\necropolis.gltf");
+		//imp.LoadScene("assets\\restaurant_scene_fbx\\restaurant_scene.fbx");
+		//imp.LoadScene("assets\\restaurant_scene_gltf\\restaurant_scene_gltf.gltf");
+		imp.LoadScene("assets\\Bistro_v5_2\\BistroInterior.fbx");
 //		imp.LoadScene("assets\\Bistro_v5_2\\BistroExterior.fbx");
 //		imp.LoadScene("assets\\from_blender\\from_blender.gltf");
-		imp.LoadScene("assets\\asobo_mansion\\mansion.gltf");
+//		imp.LoadScene("assets\\asobo_mansion\\mansion.gltf");
 //		imp.LoadScene("assets\\breakfast_room\\BreakfastRoom.gltf");
 //		imp.LoadScene("assets\\sponza\\sponza.gltf");
+//		imp.LoadScene("assets\\gi_walt\\gi_walt.gltf");
 	//	imp.LoadScene("assets\\\sponza.FBX");
 	//	imp.LoadScene("assets\\models\\sponza\\SponzaNoFlag.sdkmesh");
 	//	imp.LoadScene("assets\\models\\powerplant.sdkmesh");
@@ -148,7 +151,7 @@ void sys::RegisterGraphObject(GraphObject * object)
 
 void sys::RegisterMaterial(Material* material)
 {
-	gData.m_MaterialDA.Add(material);
+	gData.Scene->RegisterMaterial(material);
 }
 
 void sys::RegisterScriptObject(ScriptObject * object)
@@ -177,6 +180,10 @@ void sys::UpdateEditorMenu()
 				p.Visualize = EVIZ_LIT;
 			if(ImGui::MenuItem("Show Normals", nullptr, p.Visualize == EVIZ_SHOW_NORMAL))
 				p.Visualize = EVIZ_SHOW_NORMAL;
+			if (ImGui::MenuItem("Show Roughness", nullptr, p.Visualize == EVIZ_SHOW_ROUGHNESS))
+				p.Visualize = EVIZ_SHOW_ROUGHNESS;
+			if (ImGui::MenuItem("Show Metallic", nullptr, p.Visualize == EVIZ_SHOW_METAL))
+				p.Visualize = EVIZ_SHOW_METAL;
 			gData.Rdr->SetGlobalParameters(p);
 
 			//ShowExampleMenuFile();
@@ -221,11 +228,13 @@ void sys::UpdateEditorMenu()
 	// Show Materials
 	if (ImGui::Begin("Materials"))
 	{
+		const MaterialDA& materialStore = gData.Scene->GetMaterialDA();
+
 		DynArray<const char*, 8> NameRef;
-		NameRef.SetSize(gData.m_MaterialDA.GetSize());
-		for (int i = 0; i < gData.m_MaterialDA.GetSize(); i++)
+		NameRef.SetSize(materialStore.GetSize());
+		for (int i = 0; i < materialStore.GetSize(); i++)
 		{
-			NameRef[i] = gData.m_MaterialDA[i]->GetName().c_str();
+			NameRef[i] = materialStore[i]->GetName().c_str();
 		}
 
 		static int current = -1;
@@ -233,12 +242,16 @@ void sys::UpdateEditorMenu()
 
 		if (current != -1)
 		{
-			Material* pMat = gData.m_MaterialDA[current];
+
+
+			Material* pMat = materialStore[current];
 			ImGui::Text("Selected material");
 			ImGui::Text(pMat->GetName().c_str());
 			ImGui::InputFloat3("Diffuse", (float*)&pMat->GetDiffuse());
 			float r = pMat->GetRoughness();
 			ImGui::InputFloat("Roughness", &r);
+			float m = pMat->GetMetallic();
+			ImGui::InputFloat("Metallic", &m);
 
 			ImTextureRef ref1(pMat->GetBitmap(MTL_STAGE_ALBEDO));
 			ImGui::Image(ref1, ImVec2(200, 200));

@@ -20,17 +20,19 @@ void Mesh::Update(F32 dTime)
 
 void Mesh::Draw()
 {
+	auto* HAL = gData.Rdr->GetHAL();
+
 	if (m_Constant == nullptr)
 	{
-		m_Constant = gData.Rdr->CreateConstantBuffer(sizeof(InstanceConstant));
+		m_Constant = HAL->CreateConstantBuffer(sizeof(InstanceConstant));
 		InstanceConstant* c;
 		m_Constant->Lock(0, 0, (void**)&c);
 		c->WorldMatrix = m_Node;
 		m_Constant->Unlock();
 	}
 
-	gData.Rdr->BindGraphicPipelineState(ShaderMap::BaseMeshVS, ShaderMap::BasePassPS);
-	gData.Rdr->SetConstantBuffer(1, SHADER_TYPE_VERTEX, m_Constant);
+	HAL->BindGraphicPipelineState(ShaderMap::BaseMeshVS, ShaderMap::BasePassPS);
+	HAL->SetConstantBuffer(1, SHADER_TYPE_VERTEX, m_Constant);
 
 	U32 SubSetCount = SubSetsDA.GetSize();
 	for(int i=0;i<SubSetCount;i++)
@@ -38,33 +40,35 @@ void Mesh::Draw()
 		MeshSubSet * pMesh = &SubSetsDA[i];
 
 		if(MtlDA.GetSize())
-			gData.Rdr->PushMaterial( &MtlDA[pMesh->MtlId] );
+			HAL->PushMaterial( &MtlDA[pMesh->MtlId] );
 
-		gData.Rdr->PushVertexDeclaration(pMesh->Decl);
+		HAL->SetVertexDeclaration(pMesh->Decl);
 
-		gData.Rdr->PushStreamSource(0,pMesh->VB,pMesh->VertexStart,pMesh->Stride);
-		gData.Rdr->PushIndices(pMesh->IB,pMesh->IndexType);
+		HAL->SetStreamSource(0,pMesh->VB,pMesh->VertexStart,pMesh->Stride);
+		HAL->SetIndices(pMesh->IB,pMesh->IndexType);
 
-		gData.Rdr->SetPrimitiveTopology(pMesh->PrimType);
-		gData.Rdr->DrawIndexedInstanced(pMesh->IndexCount, 1, pMesh->IndexStart, pMesh->VertexStart);
+		HAL->SetPrimitiveTopology(pMesh->PrimType);
+		HAL->DrawIndexedInstanced(pMesh->IndexCount, 1, pMesh->IndexStart, pMesh->VertexStart);
 	}
 }
 
 void Mesh::DrawGBuffer()
 {
-	gData.Rdr->BindGraphicPipelineState(ShaderMap::BaseMeshVS, ShaderMap::GBufferPassPS);
+	auto* HAL = gData.Rdr->GetHAL();
+
+	HAL->BindGraphicPipelineState(ShaderMap::BaseMeshVS, ShaderMap::GBufferPassPS);
 
 	U32 SubSetCount = SubSetsDA.GetSize();
 	for(int i=0;i<SubSetCount;i++)
 	{
 		MeshSubSet * pMesh = &SubSetsDA[i];
 
-		gData.Rdr->PushMaterial( &MtlDA[pMesh->MtlId] );
-
-		gData.Rdr->PushVertexDeclaration(pMesh->Decl);
-
-		gData.Rdr->PushStreamSource(0,pMesh->VB,pMesh->VertexStart,pMesh->Stride);
-		gData.Rdr->PushIndices(pMesh->IB,pMesh->IndexType);
-		gData.Rdr->PushDrawIndexed(pMesh->PrimType,0,0,pMesh->VertexCount,pMesh->IndexStart,pMesh->IndexCount/3);
+		HAL->PushMaterial( &MtlDA[pMesh->MtlId] );
+		
+		HAL->SetVertexDeclaration(pMesh->Decl);
+		
+		HAL->SetStreamSource(0,pMesh->VB,pMesh->VertexStart,pMesh->Stride);
+		HAL->SetIndices(pMesh->IB,pMesh->IndexType);
+		//HAL->PushushDrawIndexed(pMesh->PrimType,0,0,pMesh->VertexCount,pMesh->IndexStart,pMesh->IndexCount/3);
 	}
 }

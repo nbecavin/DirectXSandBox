@@ -17,8 +17,10 @@ class Material : public GraphObject
 protected:
 	Bitmap * m_BitmapStage[16];
 
-	Vec4f m_Diffuse;
-	float m_Roughness;
+	Vec4f m_Diffuse = Vec4f(0.5, 0.5, 0.5, 1);
+	float m_Roughness = 0.5f;
+	float m_Metallic = 0.f;
+	float m_Emission = 0.f;
 
 public:
 	Material();
@@ -28,6 +30,8 @@ public:
 
 	Vec4f GetDiffuse() { return m_Diffuse; }
 	float GetRoughness() { return m_Roughness; }
+	float GetMetallic() { return m_Metallic; }
+	float GetEmission() { return m_Emission; }
 
 	void LoadFromAiMaterial(std::filesystem::path directory, aiMaterial* importMaterial);
 };

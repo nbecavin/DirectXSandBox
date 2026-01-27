@@ -4,6 +4,8 @@
 #define FMT_IDX_16	0
 #define FMT_IDX_32	1
 
+#include <RendererResource.h>
+
 enum PrimitiveType
 {
 	PRIM_TRIANGLELIST = 0,

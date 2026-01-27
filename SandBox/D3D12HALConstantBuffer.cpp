@@ -1,7 +1,14 @@
-#include <DXRenderer.h>
 #include <D3D12HAL.h>
+#include <RenderHAL.h>
+#include <Renderer.h>
 
 static const int sConstantBufferSize = 16 * 1024 * 1024;
+
+Buffer* D3D12HAL::CreateBuffer()
+{
+	ID3D12Device* Device = GetD3D12HALRef().GetDevice();
+	return nullptr;
+}
 
 ConstantBuffer* D3D12HAL::CreateConstantBuffer(U32 _Size)
 {
@@ -18,7 +25,7 @@ U32 Align(U32 uLocation, UINT uAlign)
 void D3D12ConstantBuffer::Create(U32 _Size)
 {
 	HRESULT hr;
-	ID3D12Device * Device = GET_RDR_INSTANCE()->GetD3D12HAL().GetDevice();
+	ID3D12Device * Device = GetD3D12HALRef().GetDevice();
 
 	//
 	Device->CreateCommittedResource(
@@ -36,7 +43,7 @@ void D3D12ConstantBuffer::Create(U32 _Size)
 	m_BufferView.BufferLocation = res->GetGPUVirtualAddress();
 	m_BufferView.SizeInBytes = Align(_Size, 256);
 
-	auto& heap = GET_RDR_INSTANCE()->GetD3D12HAL().GetSrvHeap();
+	auto& heap = GetD3D12HALRef().GetSrvHeap();
 	U32 slot = heap.AllocateSlot(1);
 	Device->CreateConstantBufferView(&m_BufferView, heap.GetCPUSlotHandle(slot));
 

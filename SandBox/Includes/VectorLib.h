@@ -38,6 +38,14 @@ struct Vec2f
 	inline void Set(F32 _x,F32 _y) { x=_x; y=_y; }
 };
 
+struct Vec3f
+{
+	F32 x, y, z;
+	Vec3f() {}
+	Vec3f(F32 _x, F32 _y, F32 _z) : x(_x), y(_y), z(_z) {}
+	inline void Set(F32 _x, F32 _y, F32 _z) { x = _x; y = _y; z = _z; }
+};
+
 DECL_ALIGNED(16) struct Mat4x4
 {
 	F32			m[4][4];

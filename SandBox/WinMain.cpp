@@ -7,8 +7,11 @@
 #include "resource.h"
 #include "SandBox.h"
 #include <WinMain.h>
-#include <DXRenderer.h>
 #include <WinInputManager.h>
+#include <GpuScene.h>
+#include <imgui.h>
+#include <Renderer.h>
+#include <RenderHAL.h>
 
 #if WINAPI_FAMILY==WINAPI_FAMILY_APP
 	using namespace Windows::ApplicationModel;
@@ -355,14 +358,15 @@ void sys::pc::LowLevelInit()
 #endif
 
 	// Instantiate managers
-	gData.Rdr = (Renderer*) new DXRenderer;
+	gData.Rdr = (Renderer*) new Renderer;
 	gData.Rdr->Init();
 	gData.Input = (InputManager*) new WinInputManager;
 	gData.Input->Init();
+	gData.Scene = std::make_unique<GpuScene>();
 
 	// Change windows title
 	char title[512];
-	sprintf(title, "SandBox - %s", GET_RDR_INSTANCE()->GetHAL().GetName());
+	sprintf(title, "SandBox - %s", GetHALPtr<RenderHAL>()->GetName());
 	SetWindowText(sys::pc::hWnd, title);
 }
 

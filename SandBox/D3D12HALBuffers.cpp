@@ -1,24 +1,37 @@
-#include <DXRenderer.h>
+#include <D3D12HAL.h>
 #include <D3D12HALBuffers.h>
+#include <Renderer.h>
 
 VertexBuffer* D3D12HAL::CreateVertexBuffer(U32 _Size, U32 _Usage, void* _Datas)
 {
 	D3D12VertexBuffer* vb = new D3D12VertexBuffer();
 	vb->Create(_Size, _Usage, 0, _Datas);
-	return (vb->IsInited()) ? vb : nullptr;
+	if (vb->IsInited())
+	{
+		VertexBuffer* p = (VertexBuffer*)vb;
+		m_VertexBufferDA.Add(p);
+		return vb;
+	}
+	return nullptr;
 }
 
 IndexBuffer* D3D12HAL::CreateIndexBuffer(U32 _Size, U32 _Usage, U32 _Fmt, void* _Datas)
 {
 	D3D12IndexBuffer* ib = new D3D12IndexBuffer();
 	ib->Create(_Size, _Usage, _Fmt, _Datas);
-	return (ib->IsInited()) ? ib : nullptr;
+	if (ib->IsInited())
+	{
+		IndexBuffer* p = (IndexBuffer*)ib;
+		m_IndexBufferDA.Add(p);
+		return ib;
+	}
+	return nullptr;
 }
 
 void D3D12VertexBuffer::Create(U32 _Size, U32 _Usage, U32 _Fmt, void * _Datas)
 {
 	HRESULT hr;
-	ID3D12Device * Device = GET_RDR_INSTANCE()->GetD3D12HAL().GetDevice();
+	ID3D12Device * Device = GetD3D12HALRef().GetDevice();
 
 	// Fill in a buffer description.
 	D3D12_HEAP_PROPERTIES heapProperties;
@@ -73,7 +86,7 @@ void D3D12VertexBuffer::Create(U32 _Size, U32 _Usage, U32 _Fmt, void * _Datas)
 void D3D12IndexBuffer::Create(U32 _Size, U32 _Usage, U32 _Fmt, void * _Datas)
 {
 	HRESULT hr;
-	ID3D12Device * Device = GET_RDR_INSTANCE()->GetD3D12HAL().GetDevice();
+	ID3D12Device * Device = GetD3D12HALRef().GetDevice();
 	/*
 	U32 _ItemSize = (_Fmt == FMT_IDX_16) ? 2 : 4;
 
@@ -160,7 +173,7 @@ void D3D12IndexBuffer::Unlock()
 
 void D3D12VertexDeclaration::Create(VertexElement *Decl)
 {
-	ID3D12Device * Device = GET_RDR_INSTANCE()->GetD3D12HAL().GetDevice();
+	ID3D12Device * Device = GetD3D12HALRef().GetDevice();
 
 	int nCurElt = 0;
 	while (Decl[nCurElt].Type != -1)

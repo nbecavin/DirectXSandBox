@@ -1,5 +1,5 @@
-#include <DXRenderer.h>
 #include <D3D12HAL.h>
+#include <RenderHAL.h>
 #include <Bitmap.h>
 
 static inline DXGI_FORMAT GetDXFormat(BitmapFormat Format, Bool sRGB = TRUE)
@@ -229,8 +229,8 @@ U64 Align(U64 uLocation, UINT uAlign)
 
 void D3D12HAL::CreateTexture(Bitmap * _Bm)
 {
-	ID3D12Device * Device = GET_RDR_INSTANCE()->GetD3D12HAL().GetDevice();
-	ID3D12GraphicsCommandList * pCommandList = GET_RDR_INSTANCE()->GetD3D12HAL().GetCommandList();
+	ID3D12Device * Device = GetDevice();
+	ID3D12GraphicsCommandList * pCommandList = GetCommandList();
 
 	bool sRGB = (_Bm->GetFlags()&BM_SRGB) ? true : false;
 

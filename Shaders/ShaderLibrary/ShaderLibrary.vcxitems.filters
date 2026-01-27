@@ -123,6 +123,12 @@
     <None Include="$(MSBuildThisFileDirectory)..\..\Tools\RTXDI\Include\Rtxdi\ReGIR\ReGIRSampling.hlsli">
       <Filter>RTXDI-Integration\RTXDI-SDK\ReGIR</Filter>
     </None>
+    <None Include="$(MSBuildThisFileDirectory)..\material_parameter.hlsli.h">
+      <Filter>Material</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)..\brdf.hlsli">
+      <Filter>Material</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="$(MSBuildThisFileDirectory)..\..\Tools\RTXDI\Include\Rtxdi\DI\ReSTIRDI.h">
@@ -149,6 +155,7 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)..\..\Tools\RTXDI\Include\Rtxdi\ReGIR\ReGIRParameters.h">
       <Filter>RTXDI-Integration\RTXDI-SDK\ReGIR</Filter>
     </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\cpp_interop.hlsli.h" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="$(MSBuildThisFileDirectory)..\RTXDI-Integration\LightingPasses\Presampling\PresampleReGIR.hlsl">

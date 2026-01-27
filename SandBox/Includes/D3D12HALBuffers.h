@@ -1,6 +1,8 @@
 #ifndef __D3D12BUFFERS_HH__
 #define __D3D12BUFFERS_HH__
 
+#include <PrimitiveBuffers.h>
+
 class D3D12VertexBuffer : public VertexBuffer {
 private:
 	ID3D12Resource*				res;

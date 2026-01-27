@@ -205,7 +205,7 @@ void Mesh::LoadFromAiMesh(std::filesystem::path directory, aiMesh* importMesh, a
 			pWrite[2] = it.mIndices[2];
 			pWrite += 3;
 		}
-		pItem->IB = gData.Rdr->CreateIndexBuffer(sizeBytes, 0, FMT_IDX_32, pIndices);
+		pItem->IB = gData.Rdr->GetHAL()->CreateIndexBuffer(sizeBytes, 0, FMT_IDX_32, pIndices);
 
 		pItem->IndexStart = (U32)0;
 		pItem->IndexCount = (U32)numIndices; //Trilist
@@ -251,7 +251,7 @@ void Mesh::LoadFromAiMesh(std::filesystem::path directory, aiMesh* importMesh, a
 			pVtx.uv[1] = importMesh->mTextureCoords[0][i].y;
 		}
 		//	UINT byteSize = (UINT)m_pVertexBufferArray[i].SizeBytes;
-		pItem->VB = gData.Rdr->CreateVertexBuffer(vertexByteSize, 0, pVertices);
+		pItem->VB = gData.Rdr->GetHAL()->CreateVertexBuffer(vertexByteSize, 0, pVertices);
 	}
 
 	// Vertex Declaration
@@ -292,7 +292,7 @@ void Mesh::LoadFromAiMesh(std::filesystem::path directory, aiMesh* importMesh, a
 		//
 		pElt[0].END();
 
-		pItem->Decl = gData.Rdr->CreateVertexDecl(DeclDesc);
+		pItem->Decl = gData.Rdr->GetHAL()->CreateVertexDecl(DeclDesc);
 		pItem->Stride = vertexStride;
 		pItem->MtlId = 0;// pSubSet->MaterialID;
 	}
@@ -314,13 +314,6 @@ void Material::LoadFromAiMaterial(std::filesystem::path directory, aiMaterial* i
 
 	std::string albedo, normal;
 	Bitmap* bm;
-
-	for(int m=0; m<importMaterial->mNumProperties; m++)
-	{
-		/** List of all material properties loaded. */
-		aiMaterialProperty* prop = importMaterial->mProperties[m];
-		MESSAGE("%s %d %s", prop->mKey.C_Str(), prop->mSemantic, prop->mData);
-	}
 
 	auto LoadBitmapFromPath = [&](std::filesystem::path& tex, MaterialStage stage)
 		{
@@ -349,7 +342,7 @@ void Material::LoadFromAiMaterial(std::filesystem::path directory, aiMaterial* i
 
 				if (bLoaded)
 				{
-					gData.Rdr->CreateTexture(bm);
+					gData.Rdr->GetHAL()->CreateTexture(bm);
 				}
 				else
 				{
@@ -403,4 +396,17 @@ void Material::LoadFromAiMaterial(std::filesystem::path directory, aiMaterial* i
 	{
 		LoadBitmapFromPath(std::filesystem::path("..\\GameDB\\assets\\models\\sponza\\spnza_bricks_a_diff.dds"), MTL_STAGE_ROUGHNESS);
 	}
+
+	// Load values
+	aiGetMaterialFloat(importMaterial, AI_MATKEY_ROUGHNESS_FACTOR, &m_Roughness);
+	aiGetMaterialFloat(importMaterial, AI_MATKEY_METALLIC_FACTOR, &m_Metallic);
+	aiGetMaterialFloat(importMaterial, AI_MATKEY_EMISSIVE_INTENSITY, &m_Emission);
+
+	aiColor4D c;
+	aiGetMaterialColor(importMaterial, AI_MATKEY_BASE_COLOR, &c);
+	m_Diffuse.Set(c.r, c.g, c.b, c.a);
+
+	//AI_MATKEY_USE_METALLIC_MAP
+	//AI_MATKEY_USE_ROUGHNESS_MAP
+	//AI_MATKEY_USE_EMISSIVE_MAP
 }

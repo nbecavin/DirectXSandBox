@@ -22,28 +22,28 @@ namespace sys {
 	void Renderer::InitShaders()
 	{
 		// Base mesh shaders
-		ShaderMap::BasePassPS = CreateKernel("shaders/base_pass.ps.hlsl", "ForwardMain", SHADER_TYPE_PIXEL);
-		ShaderMap::GBufferPassPS = CreateKernel("shaders/base_pass.ps.hlsl", "GbufferMain", SHADER_TYPE_PIXEL);
-		ShaderMap::BaseMeshVS = CreateKernel("shaders/vertex_factory.vs.hlsl", "MeshFactory", SHADER_TYPE_VERTEX);
+		ShaderMap::BasePassPS = GetHAL()->CreateKernel("shaders/base_pass.ps.hlsl", "ForwardMain", SHADER_TYPE_PIXEL);
+		ShaderMap::GBufferPassPS = GetHAL()->CreateKernel("shaders/base_pass.ps.hlsl", "GbufferMain", SHADER_TYPE_PIXEL);
+		ShaderMap::BaseMeshVS = GetHAL()->CreateKernel("shaders/vertex_factory.vs.hlsl", "MeshFactory", SHADER_TYPE_VERTEX);
 
 		// Register 2D shaders
-		ShaderMap::SimpleVertexFactoryVS = CreateKernel("shaders/simple_vertex_factory.vs.hlsl", "vh2d_base", SHADER_TYPE_VERTEX);
-		ShaderMap::ScreenVertexVS = CreateKernel("shaders/simple_vertex_factory.vs.hlsl", "vh_screenvertex", SHADER_TYPE_VERTEX);
+		ShaderMap::SimpleVertexFactoryVS = GetHAL()->CreateKernel("shaders/simple_vertex_factory.vs.hlsl", "vh2d_base", SHADER_TYPE_VERTEX);
+		ShaderMap::ScreenVertexVS = GetHAL()->CreateKernel("shaders/simple_vertex_factory.vs.hlsl", "vh_screenvertex", SHADER_TYPE_VERTEX);
 		
 		// ImGUI
-		ShaderMap::ImGuiVS = CreateKernel("shaders/ImGui.hlsl", "VsMain", SHADER_TYPE_VERTEX);
-		ShaderMap::ImGuiPS = CreateKernel("shaders/ImGui.hlsl", "PsMain", SHADER_TYPE_PIXEL);
+		ShaderMap::ImGuiVS = GetHAL()->CreateKernel("shaders/ImGui.hlsl", "VsMain", SHADER_TYPE_VERTEX);
+		ShaderMap::ImGuiPS = GetHAL()->CreateKernel("shaders/ImGui.hlsl", "PsMain", SHADER_TYPE_PIXEL);
 
 		// Post process
-		ShaderMap::ComputeHistogramCS = CreateKernel("shaders/auto_exposure.cs.hlsl", "ComputeHistogram", SHADER_TYPE_COMPUTE);
-		ShaderMap::TonemappingPS = CreateKernel("shaders/post_process.ps.hlsl", "Tonemapping", SHADER_TYPE_PIXEL);
-		//ShaderMap::ColorGradingPS = CreateKernel("shaders/post_process.ps.hlsl", "ph_colorgrading", SHADER_TYPE_PIXEL);
-		//ShaderMap::PassThroughPS = CreateKernel("shaders/post_process.ps.hlsl", "ph_passthrough", SHADER_TYPE_PIXEL);
+		ShaderMap::ComputeHistogramCS = GetHAL()->CreateKernel("shaders/auto_exposure.cs.hlsl", "ComputeHistogram", SHADER_TYPE_COMPUTE);
+		ShaderMap::TonemappingPS = GetHAL()->CreateKernel("shaders/post_process.ps.hlsl", "Tonemapping", SHADER_TYPE_PIXEL);
+		//ShaderMap::ColorGradingPS = GetHAL()->CreateKernel("shaders/post_process.ps.hlsl", "ph_colorgrading", SHADER_TYPE_PIXEL);
+		//ShaderMap::PassThroughPS = GetHAL()->CreateKernel("shaders/post_process.ps.hlsl", "ph_passthrough", SHADER_TYPE_PIXEL);
 
-		//textRTXDI = CreateKernel("Shaders/RTXDI-Integration/LightingPasses/Presampling/PresampleReGIR.hlsl", "main", SHADER_TYPE_COMPUTE);
+		//textRTXDI = GetHAL()->CreateKernel("Shaders/RTXDI-Integration/LightingPasses/Presampling/PresampleReGIR.hlsl", "main", SHADER_TYPE_COMPUTE);
 
 		// Raygen
-		ShaderMap::RaytracingDebugRGS = CreateKernel("shaders/raytracing_debug.raygen.hlsl", "main", SHADER_TYPE_RAYGEN);
+		ShaderMap::RaytracingDebugRGS = GetHAL()->CreateKernel("shaders/raytracing_debug.raygen.hlsl", "main", SHADER_TYPE_RAYGEN);
 	}
 
 };

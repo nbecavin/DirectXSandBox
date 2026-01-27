@@ -23,6 +23,11 @@ public:
 		return Datas[Id];
 	}
 
+	const T& operator[](U32 Id) const
+	{
+		return Datas[Id];
+	}
+
 	T* Add()
 	{
 		if(!Reserve)

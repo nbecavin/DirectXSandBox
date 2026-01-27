@@ -48,6 +48,7 @@ struct InstanceParameters
 {
 	float4x4 worldMatrix;
 	float4x4 invWorldMatrix;
+	uint materialID;
 };
 
 struct CameraParameters
@@ -93,5 +94,11 @@ float4x4 SetMatrix4x4( float4 u, float4 v, float4 w, float4 i )
 						u.z, v.z, w.z, i.z,
 						u.w, v.w, w.w, i.w );
 }
+
+//
+// Bindless resource access
+
+template<typename T> T GetBindlessResource(uint index) { return (T)ResourceDescriptorHeap[NonUniformResourceIndex(index)]; }
+template<typename T> T GetBindlessResourceUniform(uint index) { return (T)ResourceDescriptorHeap[index]; }
 
 #endif //__SH_CONST_HH__

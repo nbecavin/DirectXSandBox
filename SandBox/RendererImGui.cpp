@@ -66,7 +66,7 @@ void Renderer::InitImGUI()
 	bmap->SetSize(width, height);
 	bmap->SetType(BM_TYPE_2D);
 	bmap->SetData(pixels, width*height*bpp);	
-	CreateTexture(bmap);
+	GetHAL()->CreateTexture(bmap);
 	io.Fonts->TexID = (void*)bmap;
 
 	VertexElement DeclDesc[] =
@@ -77,7 +77,7 @@ void Renderer::InitImGUI()
 		DECL_END()
 	};
 
-	m_ImGuiVertexDeclaration = gData.Rdr->CreateVertexDecl(DeclDesc);
+	m_ImGuiVertexDeclaration = GetHAL()->CreateVertexDecl(DeclDesc);
 }
 
 void Renderer::DrawImGUI()
@@ -94,13 +94,13 @@ void Renderer::DrawImGUI()
 	{
 		//if (m_ImGuiVB) DeleteVertexBuffer(m_ImGuiVB);
 		U32 byteWidth = (drawData->TotalVtxCount + 5000) * sizeof(ImDrawVert);
-		m_ImGuiVB = CreateVertexBuffer(byteWidth, 0, nullptr);
+		m_ImGuiVB = GetHAL()->CreateVertexBuffer(byteWidth, 0, nullptr);
 	}
 	if (!m_ImGuiIB || ((m_ImGuiIB->GetSize() / 2) < drawData->TotalIdxCount))
 	{
 		//if (m_ImGuiIB) DeleteIndexBuffer(m_ImGuiIB);
 		U32 byteWidth = (drawData->TotalIdxCount + 10000) * sizeof(U16);
-		m_ImGuiIB = CreateIndexBuffer(byteWidth, 0, FMT_IDX_16, nullptr);
+		m_ImGuiIB = GetHAL()->CreateIndexBuffer(byteWidth, 0, FMT_IDX_16, nullptr);
 	}
 
 	void* vtxResource;
@@ -143,13 +143,13 @@ void Renderer::DrawImGUI()
 	//}
 
 	//// Bind shader and vertex buffers
-	PushVertexDeclaration(m_ImGuiVertexDeclaration);
-	PushStreamSource(0, m_ImGuiVB, 0, sizeof(ImDrawVert));
-	PushIndices(m_ImGuiIB);
+	GetHAL()->SetVertexDeclaration(m_ImGuiVertexDeclaration);
+	GetHAL()->SetStreamSource(0, m_ImGuiVB, 0, sizeof(ImDrawVert));
+	GetHAL()->SetIndices(m_ImGuiIB, FMT_IDX_16);
 	//ctx->IASetIndexBuffer(g_pIB, sizeof(ImDrawIdx) == 2 ? DXGI_FORMAT_R16_UINT : DXGI_FORMAT_R32_UINT, 0);
 
-	SetPrimitiveTopology(PRIM_TRIANGLELIST);
-	BindGraphicPipelineState(ShaderMap::ImGuiVS, ShaderMap::ImGuiPS);
+	GetHAL()->SetPrimitiveTopology(PRIM_TRIANGLELIST);
+	GetHAL()->BindGraphicPipelineState(ShaderMap::ImGuiVS, ShaderMap::ImGuiPS);
 
 	//ctx->VSSetConstantBuffers(0, 1, &g_pVertexConstantBuffer);
 	//ctx->PSSetSamplers(0, 1, &g_pFontSampler);
@@ -159,22 +159,22 @@ void Renderer::DrawImGUI()
 	fontSampler.desc.MaxAnisotropy = 1;
 	fontSampler.desc.ComparisonFunc = D3D12_COMPARISON_FUNC_NONE;
 	fontSampler.desc.MaxLOD = D3D12_FLOAT32_MAX;
-	SetSampler(0, SHADER_TYPE_PIXEL, fontSampler);
+	GetHAL()->SetSampler(0, SHADER_TYPE_PIXEL, fontSampler);
 
 	//// Setup render state
 	BlendDesc blend;
 	blend.desc.RenderTarget[0].BlendEnable = TRUE;
 	blend.desc.RenderTarget[0].SrcBlend = D3D12_BLEND_SRC_ALPHA;
 	blend.desc.RenderTarget[0].DestBlend = D3D12_BLEND_INV_SRC_ALPHA;
-	SetBlendState(blend);
+	GetHAL()->SetBlendState(blend);
 	
 	DepthStencilDesc ds;
 	ds.desc.DepthEnable = FALSE;
-	SetDepthStencilState(ds);
+	GetHAL()->SetDepthStencilState(ds);
 	
 	RasterizerDesc rs;
 	rs.desc.CullMode = D3D12_CULL_MODE_NONE;
-	SetRasterizerState(rs);
+	GetHAL()->SetRasterizerState(rs);
 
 	// Render command lists
 	int vtx_offset = 0;
@@ -202,13 +202,13 @@ void Renderer::DrawImGUI()
 
 				// Apply scissor/clipping rectangle
 				const D3D12_RECT r = { (LONG)clip_min.x, (LONG)clip_min.y, (LONG)clip_max.x, (LONG)clip_max.y };
-				SetScissorRect(r.left, r.right, r.top, r.bottom);
+				GetHAL()->SetScissorRect(r.left, r.right, r.top, r.bottom);
 
 				// Bind texture, Draw
 				Bitmap* bmap = reinterpret_cast<Bitmap*>(pcmd->GetTexID());
 				if(bmap)
-					SetShaderResource(0, SHADER_TYPE_PIXEL, bmap);
-				DrawIndexedInstanced(pcmd->ElemCount, 1, idx_offset, vtx_offset);
+					GetHAL()->SetShaderResource(0, SHADER_TYPE_PIXEL, bmap);
+				GetHAL()->DrawIndexedInstanced(pcmd->ElemCount, 1, idx_offset, vtx_offset);
 			}
 			idx_offset += pcmd->ElemCount;
 		}

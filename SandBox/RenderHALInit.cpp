@@ -1,6 +1,6 @@
 #if defined(_PC)
 
-#include <DXRenderer.h>
+#include <RenderHAL.h>
 #include <Material.h>
 #include <Bitmap.h>
 #include "SandBox.h"
@@ -102,21 +102,19 @@ namespace sys
 
 	}
 
-	int DXRenderer::Init()
+	void RenderHAL::Init(int sizeX, int sizeY, sys::Renderer* owner)
 	{
-		Renderer::Init();
-		SizeX = 1920;
-		SizeY = 1080;
+		SizeX = sizeX;
+		SizeY = sizeY;
+		m_FrameIndex = 0;
 
-		m_PixModule = LoadWinPixWithMinVersion(L"2208.10");
+		//m_PixModule = LoadWinPixWithMinVersion(L"2208.10");
 		if (m_PixModule) {
 			MESSAGE("PIXGpuCapturer Loaded");
 			PIXSetHUDOptions(PIX_HUD_SHOW_ON_NO_WINDOWS);
 		}
 		else
 			MESSAGE("Impossible to load PIXGpuCapturer. Either you don't have PIX installed OR you don't have a version greater than 2208.10");
-
-		GetHAL().Init(SizeX, SizeY, this);
 
 		//// Fill in a buffer description.
 		//D3D12_BUFFER_DESC cbDesc;
@@ -170,53 +168,56 @@ namespace sys
 		m_NoBilinearSS.desc.MaxLOD = D3D12_FLOAT32_MAX;
 
 		InitShaders();
-		InitSurface();
 		InitStaticDatas();
-		InitImGUI();
-		return 0;
 	}
 
-	bool DXRenderer::InitStaticDatas()
+	struct SCREEN_VERTEX
 	{
-		if(!Renderer::InitStaticDatas())
-			return FALSE;
+		Vec4f	pos;
+		Vec2f	tex;
+	};
 
-		XMFLOAT3	lightDir;
-
-		#define SH_ORDER		2
-		float shX[SH_ORDER*SH_ORDER];
-		float shY[SH_ORDER*SH_ORDER];
-		float shZ[SH_ORDER*SH_ORDER];
-
-		lightDir.x=0.f;
-		lightDir.y=-1.f;
-		lightDir.z=1.f;
-		//D3DXSHEvalDirectionalLight(SH_ORDER,&lightDir,0,0,1,shX,shY,shZ);
-
-		lightDir.x=0.f;
-		lightDir.y=-1.f;
-		lightDir.z=0.f;
-		//D3DXSHEvalHemisphereLight(SH_ORDER,&lightDir,D3DXCOLOR(1,0,0,1),D3DXCOLOR(0,1,0,1),shX,shY,shZ);
-
-		Vec4f	coeffs[16];
-		for(int i=0;i<(SH_ORDER*SH_ORDER);i++)
+	bool RenderHAL::InitStaticDatas()
+	{
+		// Fullscreen quad for post processing
 		{
-			coeffs[i].x = shX[i];
-			coeffs[i].y = shY[i];
-			coeffs[i].z = shZ[i];
-			coeffs[i].w = 1.f;
-		}
+			// Create a screen quad for render to texture operations
+			SCREEN_VERTEX svQuad[4];
+			svQuad[0].pos.Set(-1.0f, 1.0f, 0.5f, 1.0f);
+			svQuad[0].tex.Set(0.0f, 0.0f);
+			svQuad[1].pos.Set(1.0f, 1.0f, 0.5f, 1.0f);
+			svQuad[1].tex.Set(1.0f, 0.0f);
+			svQuad[2].pos.Set(-1.0f, -1.0f, 0.5f, 1.0f);
+			svQuad[2].tex.Set(0.0f, 1.0f);
+			svQuad[3].pos.Set(1.0f, -1.0f, 0.5f, 1.0f);
+			svQuad[3].tex.Set(1.0f, 1.0f);
 
-		m_CameraConstant = CreateConstantBuffer(sizeof(CameraConstant));
-		m_GlobalConstant = CreateConstantBuffer(sizeof(GlobalParameters));
+			// Generate runtime buffers
+			m_FullscreenQuadVB = CreateVertexBuffer(sizeof(svQuad), 0, NULL);
+
+			SCREEN_VERTEX* pVtxData;
+			if (m_FullscreenQuadVB && m_FullscreenQuadVB->Lock(0, 0, (void**)&pVtxData) == true)
+			{
+				memcpy(pVtxData, svQuad, sizeof(svQuad));
+				m_FullscreenQuadVB->Unlock();
+			}
+
+			VertexElement DeclDesc[] =
+			{
+				{ 0, 0, DECL_FMT_FLOAT4, DECL_POSITION },
+				{ 0, 16, DECL_FMT_FLOAT2, DECL_TEXCOORD0 },
+				DECL_END()
+			};
+
+			m_ScreenVertexDecl = CreateVertexDecl(DeclDesc);
+		}
 
 		return TRUE;
 	}
 
-	void DXRenderer::Shut()
+	void RenderHAL::Shut()
 	{
 		ReleaseAllResources();
-		GetHAL().Shut();
 		if (m_PixModule)
 			FreeLibrary(m_PixModule);
 	}

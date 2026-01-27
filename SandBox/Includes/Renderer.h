@@ -8,7 +8,11 @@
 #include <Camera.h>
 #include <imgui.h>
 #include <ShaderConstants.h>
+#include <GpuScene.h>
 #include <..\..\Shaders\ShaderRegs.h>
+#include <RenderHAL.h>
+
+class RenderGraph;
 
 namespace sys {
 
@@ -18,9 +22,9 @@ namespace sys {
 
 		virtual int	Init();
 		virtual bool InitStaticDatas();
-		virtual void Shut() = 0;
+		virtual void Shut();
 		virtual void BeginFrame(float dTime);
-		virtual void MainLoop() = 0;
+		virtual void MainLoop();
 		virtual void InitShaders();
 		virtual void SetSize(U32 _SizeX,U32 _SizeY) { SizeX=_SizeX; SizeY=_SizeY; }
 		virtual Vec2f GetSize() { return Vec2f((float)SizeX, (float)SizeY); }
@@ -32,71 +36,23 @@ namespace sys {
 			m_GlobalParams = p;
 		}
 
-		virtual void ProfileBeginEvent(U32 _ColorRGBA, const char* _Message) = 0;
-		virtual void ProfileBeginEventArgs(U32 _ColorRGBA, const char* _Format, ...)
-		{
-			va_list args, args_copy;
-			va_start(args, _Format);
-			va_copy(args_copy, args);
-			const auto len = std::vsnprintf(nullptr, 0, _Format, args) + 1;
-			std::string str(len, ' ');
-			std::vsnprintf(&str.front(), len, _Format, args_copy);
-			va_end(args);
-			va_end(args_copy);
-			ProfileBeginEvent(_ColorRGBA, str.c_str());
-		}
-		virtual void ProfileEndEvent() = 0;
-
 		// ImGui integration
 		virtual void InitImGUI();
 		virtual void DrawImGUI();
+
+		// Render Graph
+		RenderGraph* GetRenderGraph() const {
+			return m_RenderGraph;
+		}
+
+		RenderHAL* GetHAL() { return m_HAL.get(); }
 
 		// Set current scene camera
 				void	SetCamera(Camera * _Cam) { m_Camera=_Cam; }
 		inline	Camera* GetCamera() const { return m_Camera; }
 		
-		//
-		// Vertex/Index buffers
-		virtual VertexBuffer *		CreateVertexBuffer(U32 _Size,U32 _Usage,void * _Datas);
-		virtual IndexBuffer *		CreateIndexBuffer(U32 _Size,U32 _Usage,U32 _Fmt,void * _Datas);
-		virtual VertexDeclaration *	CreateVertexDecl(VertexElement* Decl);
-		virtual void				CreateTexture(Bitmap * _Bmap) = 0;
-		virtual ConstantBuffer *	CreateConstantBuffer(U32 _Size) = 0;
-
-		virtual void SetScissorRect(U32 left, U32 right, U32 top, U32 bottom) = 0;
-
-		virtual void PushVertexDeclaration(VertexDeclaration* Decl) {}
-		virtual void PushStreamSource(U32 StreamNumber,VertexBuffer* Buffer,U32 Offset,U32 Stride) {}
-		virtual void PushIndices(IndexBuffer* Buffer,U32 _Fmt=FMT_IDX_16) {}
-		virtual void PushDrawIndexed(PrimitiveType Type,U32 BaseVertexIndex,U32 MinVertexIndex,U32 NumVertices,U32 StartIndex,U32 PrimCount) {}
-		virtual void PushMaterial(Material* Mat) {}
-
-		virtual ShaderKernel* CreateKernel(const char* src, const char* epoint, EShaderType type) = 0;
-		virtual void BindGraphicPipelineState(ShaderKernel* VS, ShaderKernel* PS) = 0;
-		virtual void BindComputePipelineState(ShaderKernel* CS) = 0;
-
-		// Graphics command list
-		virtual void SetBlendState(BlendDesc& desc) = 0;
-		virtual void SetSampler(U32 Slot, EShaderType Type, SamplerDesc& Sampler) = 0;
-		virtual void SetConstantBuffer(U32 Slot, EShaderType Type, ConstantBuffer* CBV) = 0;
-		virtual void SetShaderResource(U32 Slot, EShaderType Type, Bitmap* Texture) = 0;
-		virtual void SetUAV(U32 Slot, Bitmap* Texture) = 0;
-		virtual void SetDepthStencilState(DepthStencilDesc& Desc) = 0;
-		virtual void SetRasterizerState(RasterizerDesc& Desc) = 0;
-		virtual void SetPrimitiveTopology(PrimitiveType Topology) = 0;
-
-		virtual void DrawInstanced(UINT VertexCountPerInstance, UINT InstanceCount, UINT StartVertexLocation, UINT StartInstanceLocation) = 0;
-		virtual void DrawIndexedInstanced(UINT IndexCount, UINT InstanceCount, UINT StartIndexLocation, INT BaseVertexLocation) = 0;
-		virtual void Dispatch(UINT ThreadGroupCountX, UINT ThreadGroupCountY, UINT ThreadGroupCountZ) = 0;
-		virtual void DispatchRays(UINT DispatchRaysX, UINT DispatchRaysY, UINT DispatchRaysZ) = 0;
-
 	protected:
 		int		SizeX, SizeY;
-
-		int						m_FrameIndex;
-
-		VertexBuffer		*	m_FullscreenQuadVB;
-		VertexDeclaration	*	m_ScreenVertexDecl;
 
 		Bitmap				*	m_RenderTarget;
 		Bitmap				*	m_HdrRenderTarget;
@@ -116,13 +72,22 @@ namespace sys {
 		VertexBuffer* m_ImGuiVB = nullptr;
 		IndexBuffer* m_ImGuiIB = nullptr;
 
-		// Some global buffers... yeah it's bad
-		ConstantBuffer*			m_GlobalConstant;
-		ConstantBuffer*			m_CameraConstant;
-
 		GlobalParameters		m_GlobalParams;
+
+		// Some global buffers... yeah it's bad
+		ConstantBuffer* m_GlobalConstant;
+		ConstantBuffer* m_CameraConstant;
+
+		RenderGraph* m_RenderGraph;
+		std::unique_ptr<RenderHAL> m_HAL;
+
 	};
 
 };
+
+template<typename T>
+T* GetHALPtr() {
+	return gData.Rdr->GetHAL()->AsPtr<T>();
+}
 
 #endif //__RENDERER_H__

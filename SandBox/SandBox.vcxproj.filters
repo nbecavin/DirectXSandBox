@@ -23,9 +23,6 @@
     <Filter Include="Engine\Scenery Objects">
       <UniqueIdentifier>{b6155926-dee7-48dd-b1a3-535aa95e6c9c}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Engine\Scenery Objects\Terrain">
-      <UniqueIdentifier>{bf4a44e2-d66b-4b53-b456-b19b9c77d053}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Engine\Scenery Objects\Sky">
       <UniqueIdentifier>{b08840bd-4e72-49b6-a2b6-1a1d07aa3baa}</UniqueIdentifier>
     </Filter>
@@ -72,30 +69,27 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav</Extensions>
     </Filter>
-    <Filter Include="Engine\PC\D3D12">
-      <UniqueIdentifier>{e12b9704-806a-4220-be6b-fd045eab7013}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Engine\PC\Vulkan">
-      <UniqueIdentifier>{665beda8-144c-439d-8be8-29cb2cbeaf3a}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Editor">
       <UniqueIdentifier>{99979970-e1d7-4eb7-8018-197f27f42ada}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\HAL">
+      <UniqueIdentifier>{94e0e6cc-d42a-49af-ab4d-d794c2b7340f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\HAL\D3D12">
+      <UniqueIdentifier>{e12b9704-806a-4220-be6b-fd045eab7013}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\HAL\Vulkan">
+      <UniqueIdentifier>{665beda8-144c-439d-8be8-29cb2cbeaf3a}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="SandBox.cpp">
       <Filter>Engine</Filter>
     </ClCompile>
-    <ClCompile Include="Terrain.cpp">
-      <Filter>Engine\Scenery Objects\Terrain</Filter>
-    </ClCompile>
     <ClCompile Include="Sky.cpp">
       <Filter>Engine\Scenery Objects\Sky</Filter>
     </ClCompile>
     <ClCompile Include="Mesh.cpp">
-      <Filter>Engine\Scenery Objects\Mesh</Filter>
-    </ClCompile>
-    <ClCompile Include="MeshLoad.cpp">
       <Filter>Engine\Scenery Objects\Mesh</Filter>
     </ClCompile>
     <ClCompile Include="PrimitiveBuffers.cpp">
@@ -124,9 +118,6 @@
     </ClCompile>
     <ClCompile Include="InputManager.cpp">
       <Filter>Engine\InputManager</Filter>
-    </ClCompile>
-    <ClCompile Include="DXRendererResource.cpp">
-      <Filter>Engine\PC</Filter>
     </ClCompile>
     <ClCompile Include="WinMain.cpp">
       <Filter>Engine\PC</Filter>
@@ -158,23 +149,17 @@
     <ClCompile Include="WinFile.cpp">
       <Filter>Engine\PC</Filter>
     </ClCompile>
-    <ClCompile Include="DXRenderer.cpp">
-      <Filter>Engine\PC</Filter>
-    </ClCompile>
-    <ClCompile Include="DXRendererInit.cpp">
-      <Filter>Engine\PC</Filter>
-    </ClCompile>
     <ClCompile Include="D3D12HALSwapChain.cpp">
-      <Filter>Engine\PC\D3D12</Filter>
+      <Filter>Engine\HAL\D3D12</Filter>
     </ClCompile>
     <ClCompile Include="D3D12HALShaders.cpp">
-      <Filter>Engine\PC\D3D12</Filter>
+      <Filter>Engine\HAL\D3D12</Filter>
     </ClCompile>
     <ClCompile Include="D3D12HALBuffers.cpp">
-      <Filter>Engine\PC\D3D12</Filter>
+      <Filter>Engine\HAL\D3D12</Filter>
     </ClCompile>
     <ClCompile Include="D3D12HALConstantBuffer.cpp">
-      <Filter>Engine\PC\D3D12</Filter>
+      <Filter>Engine\HAL\D3D12</Filter>
     </ClCompile>
     <ClCompile Include="..\Tools\imgui\imgui.cpp">
       <Filter>Tools\ImGui</Filter>
@@ -192,22 +177,16 @@
       <Filter>Engine\Renderer</Filter>
     </ClCompile>
     <ClCompile Include="D3D12HALTexture.cpp">
-      <Filter>Engine\PC\D3D12</Filter>
+      <Filter>Engine\HAL\D3D12</Filter>
     </ClCompile>
     <ClCompile Include="D3D12HALPipelineState.cpp">
-      <Filter>Engine\PC\D3D12</Filter>
+      <Filter>Engine\HAL\D3D12</Filter>
     </ClCompile>
     <ClCompile Include="D3D12HALDescriptorHeaps.cpp">
-      <Filter>Engine\PC\D3D12</Filter>
+      <Filter>Engine\HAL\D3D12</Filter>
     </ClCompile>
     <ClCompile Include="D3D12HALSamplerState.cpp">
-      <Filter>Engine\PC\D3D12</Filter>
-    </ClCompile>
-    <ClCompile Include="Model.cpp">
-      <Filter>Engine\Scenery Objects\Mesh</Filter>
-    </ClCompile>
-    <ClCompile Include="ModelH3D.cpp">
-      <Filter>Engine\Scenery Objects\Mesh</Filter>
+      <Filter>Engine\HAL\D3D12</Filter>
     </ClCompile>
     <ClCompile Include="..\Tools\imgui\imgui_tables.cpp">
       <Filter>Tools\ImGui</Filter>
@@ -235,13 +214,46 @@
       <Filter>Tools\RTXDI</Filter>
     </ClCompile>
     <ClCompile Include="D3D12HALRaytracing.cpp">
-      <Filter>Engine\PC\D3D12</Filter>
+      <Filter>Engine\HAL\D3D12</Filter>
     </ClCompile>
     <ClCompile Include="ImageImporter.cpp">
       <Filter>Engine\Assets\Import</Filter>
     </ClCompile>
     <ClCompile Include="DirectoryWatcher.cpp">
       <Filter>Engine\System</Filter>
+    </ClCompile>
+    <ClCompile Include="Model.cpp">
+      <Filter>Engine\Assets\Import</Filter>
+    </ClCompile>
+    <ClCompile Include="ModelH3D.cpp">
+      <Filter>Engine\Assets\Import</Filter>
+    </ClCompile>
+    <ClCompile Include="MeshLoad.cpp">
+      <Filter>Engine\Assets\Import</Filter>
+    </ClCompile>
+    <ClCompile Include="RenderGraph.cpp">
+      <Filter>Engine\Renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="RendererResource.cpp">
+      <Filter>Engine\Renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="GpouScene.cpp">
+      <Filter>Engine\Renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="RaytracingScene.cpp">
+      <Filter>Engine\Renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="RenderHALResource.cpp">
+      <Filter>Engine\HAL</Filter>
+    </ClCompile>
+    <ClCompile Include="RenderHAL.cpp">
+      <Filter>Engine\HAL</Filter>
+    </ClCompile>
+    <ClCompile Include="RenderHALInit.cpp">
+      <Filter>Engine\HAL</Filter>
+    </ClCompile>
+    <ClCompile Include="D3D12HAL.cpp">
+      <Filter>Engine\HAL\D3D12</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -251,16 +263,10 @@
     <ClInclude Include="Includes\GraphObject.h">
       <Filter>Engine\Scenery Objects</Filter>
     </ClInclude>
-    <ClInclude Include="Includes\Terrain.h">
-      <Filter>Engine\Scenery Objects\Terrain</Filter>
-    </ClInclude>
     <ClInclude Include="Includes\Sky.h">
       <Filter>Engine\Scenery Objects\Sky</Filter>
     </ClInclude>
     <ClInclude Include="Includes\Mesh.h">
-      <Filter>Engine\Scenery Objects\Mesh</Filter>
-    </ClInclude>
-    <ClInclude Include="Includes\MeshSDKMesh.h">
       <Filter>Engine\Scenery Objects\Mesh</Filter>
     </ClInclude>
     <ClInclude Include="Includes\PrimitiveBuffers.h">
@@ -311,9 +317,6 @@
     <ClInclude Include="Includes\InputManager.h">
       <Filter>Engine\InputManager</Filter>
     </ClInclude>
-    <ClInclude Include="Includes\DXRenderer.h">
-      <Filter>Engine\PC</Filter>
-    </ClInclude>
     <ClInclude Include="targetver.h">
       <Filter>Engine\PC</Filter>
     </ClInclude>
@@ -346,16 +349,16 @@
       <Filter>Engine\System</Filter>
     </ClInclude>
     <ClInclude Include="Includes\D3D12HAL.h">
-      <Filter>Engine\PC\D3D12</Filter>
+      <Filter>Engine\HAL\D3D12</Filter>
     </ClInclude>
     <ClInclude Include="Includes\D3D12HALBuffers.h">
-      <Filter>Engine\PC\D3D12</Filter>
+      <Filter>Engine\HAL\D3D12</Filter>
     </ClInclude>
     <ClInclude Include="Includes\d3dx12.h">
-      <Filter>Engine\PC\D3D12</Filter>
+      <Filter>Engine\HAL\D3D12</Filter>
     </ClInclude>
     <ClInclude Include="Includes\D3D12HALConstantBuffer.h">
-      <Filter>Engine\PC\D3D12</Filter>
+      <Filter>Engine\HAL\D3D12</Filter>
     </ClInclude>
     <ClInclude Include="..\Tools\imgui\imconfig.h">
       <Filter>Tools\ImGui</Filter>
@@ -379,13 +382,10 @@
       <Filter>Engine\Renderer</Filter>
     </ClInclude>
     <ClInclude Include="Includes\D3D12HALDescriptorHeaps.h">
-      <Filter>Engine\PC\D3D12</Filter>
+      <Filter>Engine\HAL\D3D12</Filter>
     </ClInclude>
     <ClInclude Include="Includes\D3D12HALSamplerState.h">
-      <Filter>Engine\PC\D3D12</Filter>
-    </ClInclude>
-    <ClInclude Include="Includes\Model.h">
-      <Filter>Engine\Scenery Objects\Mesh</Filter>
+      <Filter>Engine\HAL\D3D12</Filter>
     </ClInclude>
     <ClInclude Include="Includes\SceneImporter.h">
       <Filter>Engine\Assets\Import</Filter>
@@ -403,7 +403,7 @@
       <Filter>Tools\RTXDI</Filter>
     </ClInclude>
     <ClInclude Include="Includes\D3D12HALShaders.h">
-      <Filter>Engine\PC\D3D12</Filter>
+      <Filter>Engine\HAL\D3D12</Filter>
     </ClInclude>
     <ClInclude Include="Includes\ImageImporter.h">
       <Filter>Engine\Assets\Import</Filter>
@@ -413,6 +413,30 @@
     </ClInclude>
     <ClInclude Include="Includes\DirectoryWatcher.h">
       <Filter>Engine\System</Filter>
+    </ClInclude>
+    <ClInclude Include="Includes\MeshSDKMesh.h">
+      <Filter>Engine\Assets\Import</Filter>
+    </ClInclude>
+    <ClInclude Include="Includes\Model.h">
+      <Filter>Engine\Assets\Import</Filter>
+    </ClInclude>
+    <ClInclude Include="includes\RenderGraph.h">
+      <Filter>Engine\Renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="Includes\D3D12HALRaytracing.h">
+      <Filter>Engine\HAL\D3D12</Filter>
+    </ClInclude>
+    <ClInclude Include="includes\RendererResource.h">
+      <Filter>Engine\Renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="Includes\GpuScene.h">
+      <Filter>Engine\Renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="Includes\RaytracingScene.h">
+      <Filter>Engine\Renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="Includes\RenderHAL.h">
+      <Filter>Engine\HAL</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

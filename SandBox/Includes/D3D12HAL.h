@@ -8,20 +8,33 @@ using namespace Microsoft::WRL;
 #include <D3D12HALSamplerState.h>
 #include <D3D12HALShaders.h>
 
+#include <RenderHAL.h>
+
 #define MAX_SRVS 48
 #define MAX_CBS 16
 #define MAX_SAMPLERS 16
 #define MAX_UAVS 16
 
-class D3D12HAL
+class D3D12HAL : public sys::RenderHAL
 {
 public:
 	const char * GetName() { return "D3D12"; }
 
-	void Init(int sizeX,int sizeY, sys::Renderer* owner);
-	void Shut();
+	void Init(int sizeX,int sizeY, sys::Renderer* owner) override;
+	void Shut() override;
 
 	void PresentFrame();
+
+	virtual void ProfileBeginEvent(U32 _ColorRGBA, const char* _Message)
+	{
+		WCHAR wString[129];
+		mbstowcs(wString, _Message, 128);
+		PIXBeginEvent(GetCommandList(), _ColorRGBA, wString);
+	}
+	virtual void ProfileEndEvent()
+	{
+		PIXEndEvent(GetCommandList());
+	}
 
 	VertexDeclaration *	CreateVertexDecl(VertexElement* Decl);
 	ShaderKernel* CreateShaderResource(ID3DBlob * pCode);
@@ -29,15 +42,16 @@ public:
 	VertexBuffer* CreateVertexBuffer(U32 _Size, U32 _Usage, void* _Datas);
 	IndexBuffer* CreateIndexBuffer(U32 _Size, U32 _Usage, U32 _Fmt, void* _Datas);
 	ConstantBuffer* CreateConstantBuffer(U32 _Size);
+	Buffer* CreateBuffer();
 
 	void InitShaders();
 	void SetScissorRect(U32 left, U32 right, U32 top, U32 bottom);
 	void SetPrimitiveTopology(PrimitiveType Topology);
-	void SetVertexDeclaration(VertexDeclaration* Decl);
+	void SetVertexDeclaration(VertexDeclaration* Decl) override;
 	void SetIndices(IndexBuffer* Buffer, U32 _Fmt);
 	void SetStreamSource(U32 StreamNumber, VertexBuffer* Buffer, U32 Offset, U32 Stride);
-	void BindGraphicPipelineState(ShaderKernel* VS, ShaderKernel* PS);
-	void BindComputePipelineState(ShaderKernel* CS);
+	void BindGraphicPipelineState(ShaderKernel* VS, ShaderKernel* PS) override;
+	void BindComputePipelineState(ShaderKernel* CS) override;
 	void FlushGraphicsPipelineState();
 	void FlushComputePipelineState();
 
@@ -58,8 +72,8 @@ public:
 	void SetBlendState(BlendDesc& desc);
 	void SetSampler(U32 Slot, EShaderType Type, SamplerDesc& Sampler);
 	void SetConstantBuffer(U32 Slot, EShaderType Type, ConstantBuffer* CBV);
-	void SetShaderResource(U32 Slot, EShaderType Type, sys::TextureLink* View);
-	void SetUAV(U32 Slot, sys::TextureLink* View);
+	void SetShaderResource(U32 Slot, EShaderType Type, Bitmap* Texture);
+	void SetUAV(U32 Slot, Bitmap* Texture);
 
 	void DrawInstanced(UINT VertexCountPerInstance, UINT InstanceCount, UINT StartVertexLocation, UINT StartInstanceLocation);
 	void DrawIndexedInstanced(UINT IndexCount, UINT InstanceCount, UINT StartIndexLocation, INT BaseVertexLocation);
@@ -67,6 +81,7 @@ public:
 
 	// Raytracing
 	void BuildAccelerationStructure();
+	void BuildTLAS();
 	void DispatchRays(UINT DispatchRaysX, UINT DispatchRaysY, UINT DispatchRaysZ);
 
 	D3D12_CPU_DESCRIPTOR_HANDLE& GetCurrentBackBufferView() {
@@ -117,3 +132,5 @@ private:
 
 	D3D12VertexDeclarationDA		m_InputLayoutDA;
 };
+
+#define GetD3D12HALRef() (*GetHALPtr<D3D12HAL>())

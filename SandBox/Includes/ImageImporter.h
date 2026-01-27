@@ -1,5 +1,6 @@
 #pragma once
 #include <filesystem>
+class Bitmap;
 
 class ImageImporter
 {

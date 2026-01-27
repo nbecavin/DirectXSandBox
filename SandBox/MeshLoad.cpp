@@ -191,7 +191,7 @@ loadmesh:
 					pDecl++; pElt++;
 				}
 				pElt[0].END();
-				pItem->Decl = gData.Rdr->CreateVertexDecl( DeclDesc);
+				pItem->Decl = gData.Rdr->GetHAL()->CreateVertexDecl( DeclDesc);
 				pItem->Stride = _mesh.m_pVertexBufferArray[pMesh->VertexBuffers[0]].StrideBytes;
 				pItem->MtlId = pSubSet->MaterialID;
 			}
@@ -239,7 +239,7 @@ loadmesh:
 					imp.LoadFromDDS(tex, bm);
 					if (bm->GetSx() && bm->GetSy())
 					{
-						gData.Rdr->CreateTexture(bm);
+						gData.Rdr->GetHAL()->CreateTexture(bm);
 					}
 				}
 				if (bm)
@@ -294,7 +294,7 @@ loadmesh:
 				{
 					ImageImporter imp;
 					imp.LoadFromDDS(tex, bm);
-					gData.Rdr->CreateTexture(bm);
+					gData.Rdr->GetHAL()->CreateTexture(bm);
 				}
 				pMat->SetBitmap(bm,MTL_STAGE_NORMAL);
 			}
@@ -308,7 +308,7 @@ loadmesh:
 				{
 					ImageImporter imp;
 					imp.LoadFromDDS(tex, bm);
-					gData.Rdr->CreateTexture(bm);
+					gData.Rdr->GetHAL()->CreateTexture(bm);
 				}
 				pMat->SetBitmap(bm, MTL_STAGE_ROUGHNESS);
 			}
@@ -362,7 +362,7 @@ bool DXMesh::CreateDXSDKMESHFromMemory( U8* pData, U32 DataBytes,bool bCreateAdj
         BYTE* pVertices = NULL;
         pVertices = ( BYTE* )( pBufferData + ( m_pVertexBufferArray[i].DataOffset - BufferDataStart ) );
 		UINT byteSize = ( UINT ) m_pVertexBufferArray[i].SizeBytes;
-		m_pVertexBufferArray[i].pVB = gData.Rdr->CreateVertexBuffer( byteSize, 0, pVertices );
+		m_pVertexBufferArray[i].pVB = gData.Rdr->GetHAL()->CreateVertexBuffer( byteSize, 0, pVertices );
         m_ppVertices[i] = pVertices;
     }
 
@@ -383,7 +383,7 @@ bool DXMesh::CreateDXSDKMESHFromMemory( U8* pData, U32 DataBytes,bool bCreateAdj
 			m_pIndexBufferArray[i].SizeBytes /= 2;
 			m_pIndexBufferArray[i].IndexType=IT_16BIT;
 		}*/
-		m_pIndexBufferArray[i].pIB = gData.Rdr->CreateIndexBuffer( m_pIndexBufferArray[i].SizeBytes, 0, (m_pIndexBufferArray[i].IndexType==IT_32BIT)?FMT_IDX_32:FMT_IDX_16, pIndices );
+		m_pIndexBufferArray[i].pIB = gData.Rdr->GetHAL()->CreateIndexBuffer( m_pIndexBufferArray[i].SizeBytes, 0, (m_pIndexBufferArray[i].IndexType==IT_32BIT)?FMT_IDX_32:FMT_IDX_16, pIndices );
 		//m_pIndexBufferArray[i].pIB = gData.Rdr->CreateIndexBuffer( m_pIndexBufferArray[i].SizeBytes, 0, FMT_IDX_16, pIndices );
         m_ppIndices[i] = pIndices;
     }

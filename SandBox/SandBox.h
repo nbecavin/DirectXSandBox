@@ -2,13 +2,14 @@
 
 #include <ScriptObject.h>
 #include <GraphObject.h>
-#include <Material.h>
+class Material;
 #include <AssetCache.h>
 
 namespace sys
 {
 	// Some forward declaration
 	class Renderer;
+	class GpuScene;
 	class InputManager;
 
 	void Init();
@@ -27,12 +28,12 @@ namespace sys
 	class Globals
 	{
 	public:
-		InputManager	*	Input;
-		Renderer		*	Rdr;
+		InputManager* Input;
+		Renderer* Rdr;
+		std::unique_ptr<GpuScene> Scene;
 
 		ScriptObjectDA	m_ScriptObjectDA;
 		GraphObjectDA	m_GraphObjectDA;
-		MaterialDA		m_MaterialDA;
 
 		float			DeltaTime;
 

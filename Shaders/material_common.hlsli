@@ -1,6 +1,9 @@
 #ifndef __MATERIAL_COMMON_HH__
 #define __MATERIAL_COMMON_HH__
 
+#include "brdf.hlsli"
+#include "material_parameter.hlsli.h"
+
 // -------------------------------
 // Physically Based Materials
 // -------------------------------
@@ -10,6 +13,14 @@ SamplerState sSampler : register(s0);
 Texture2D sAlbedo : register(t0);
 Texture2D sNormal : register(t1);
 Texture2D sSpecular : register(t2);
+
+StructuredBuffer<MaterialParameter> MaterialStore;
+
+/*MaterialParameter GetBindlessMaterial(uint index)
+{
+	StructuredBuffer<MaterialParameter> store = GetBindlessResource(0);
+	return store[index];
+}*/
 
 struct MaterialPBR
 {
@@ -21,48 +32,6 @@ struct MaterialPBR
 	float ao;
 	float3 emission;
 };
-
-// BRDF: GGX / Smith-Schlick
-// -------------------------------
-
-// GGX / Trowbridge-Reitz NDF
-float DistributionGGX(float NdotH, float roughness)
-{
-	float a = roughness * roughness;
-	float a2 = a * a;
-	float denom = (NdotH * NdotH) * (a2 - 1.0) + 1.0;
-	denom = PI * denom * denom;
-	return a2 / max(denom, 1e-6);
-}
-
-// Schlick-GGX Geometry term (single direction)
-float GeometrySchlickGGX(float NdotV, float roughness)
-{
-	float r = roughness + 1.0;
-	float k = (r * r) / 8.0; // UE4 optimization, energy-preserving
-	return NdotV / (NdotV * (1.0 - k) + k);
-}
-
-// Smith’s method: combine view & light terms
-float GeometrySmith(float NdotV, float NdotL, float roughness)
-{
-	float ggx1 = GeometrySchlickGGX(NdotV, roughness);
-	float ggx2 = GeometrySchlickGGX(NdotL, roughness);
-	return ggx1 * ggx2;
-}
-
-float3 FresnelSchlick(float cosTheta, float3 F0)
-{
-    // Schlick approximation
-	return F0 + (1.0 - F0) * pow(1.0 - cosTheta, 5.0);
-}
-
-// Optional: fresnel with roughness to account for rough-surface desaturation
-float3 FresnelSchlickRoughness(float cosTheta, float3 F0, float roughness)
-{
-    // Blend between F0 and (1.0) by roughness to approximate energy shift
-	return F0 + (max(1.0, F0) - F0) * pow(1.0 - cosTheta, 5.0) * roughness;
-}
 
 MaterialPBR SampleMaterial(in VS_Output i)
 {
@@ -106,8 +75,7 @@ float3 EvaluateBRDF(MaterialPBR m, float3 LightColor, float3 L, float3 N, float3
 	float3 H = normalize(Vdir + Ldir);
 
     // Calculate base reflectivity F0 (dielectric vs metallic)
-	float3 dielectricF0 = float3(0.04, 0.04, 0.04); // typical default for dielectrics
-	float3 F0 = lerp(dielectricF0, m.albedo, m.metallic); // metals use albedo as F0
+	float3 F0 = GetSpecularF0(m.albedo, m.metallic); // metals use albedo as F0
 
     // NdotV, NdotL etc.
 	float NdotV = max(dot(N, Vdir), 0.0001);
@@ -116,20 +84,13 @@ float3 EvaluateBRDF(MaterialPBR m, float3 LightColor, float3 L, float3 N, float3
 	float VdotH = max(dot(Vdir, H), 0.0);
 
     // Cook-Torrance BRDF
-	float D = DistributionGGX(NdotH, m.roughness);
-	float G = GeometrySmith(NdotV, NdotL, m.roughness);
 	float3 F = FresnelSchlick(VdotH, F0);
-
-	float3 numerator = D * G * F;
-	float denominator = 4.0 * NdotV * NdotL + 1e-6;
-	float3 specular = numerator / denominator;
-
-    // kS is Fresnel, kD is diffuse contribution (energy conservation)
-	float3 kS = F;
-	float3 kD = (1.0 - kS) * (1.0 - m.metallic); // metals have no diffuse
+	float D = GGX_NDF(NdotH, m.roughness);
+	float Vis = V_SmithJointApprox(NdotV, NdotL, m.roughness);
+	float3 specular = F * D * Vis;
 
     // Lambertian diffuse (albedo / PI)
-	float3 diffuse = kD * m.albedo / PI;
+	float3 diffuse = GetDiffuseReflectance(m.albedo, m.metallic) * (1.f - F) / PI;
 
     // Direct lighting (single directional light)
 	float3 radiance = LightColor; // incoming radiance from light

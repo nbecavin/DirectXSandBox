@@ -2,6 +2,8 @@
 #ifndef __D3D12_SAMPLER_STATE_HH__
 #define __D3D12_SAMPLER_STATE_HH__
 
+#include <RendererPipelineState.h>
+
 class D3D12SamplerState
 {
 public:

@@ -56,10 +56,12 @@
     <None Include="$(MSBuildThisFileDirectory)..\..\Tools\RTXDI\Include\Rtxdi\Utils\Checkerboard.hlsli" />
     <None Include="$(MSBuildThisFileDirectory)..\..\Tools\RTXDI\Include\Rtxdi\Utils\Math.hlsli" />
     <None Include="$(MSBuildThisFileDirectory)..\..\Tools\RTXDI\Include\Rtxdi\Utils\ReservoirAddressing.hlsli" />
+    <None Include="$(MSBuildThisFileDirectory)..\brdf.hlsli" />
     <None Include="$(MSBuildThisFileDirectory)..\ImGui.hlsl">
       <FileType>Document</FileType>
     </None>
     <None Include="$(MSBuildThisFileDirectory)..\material_common.hlsli" />
+    <None Include="$(MSBuildThisFileDirectory)..\material_parameter.hlsli.h" />
     <None Include="$(MSBuildThisFileDirectory)..\rtxdi_integration.hlsli" />
   </ItemGroup>
   <ItemGroup>
@@ -80,6 +82,7 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)..\..\Tools\RTXDI\Include\Rtxdi\LightSampling\RISBufferSegmentParameters.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)..\..\Tools\RTXDI\Include\Rtxdi\ReGIR\ReGIR.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)..\..\Tools\RTXDI\Include\Rtxdi\ReGIR\ReGIRParameters.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\cpp_interop.hlsli.h" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="$(MSBuildThisFileDirectory)..\auto_exposure.cs.hlsl" />

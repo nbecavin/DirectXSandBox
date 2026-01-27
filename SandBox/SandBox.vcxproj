@@ -130,6 +130,7 @@
     <ClCompile Include="AssetCache.cpp" />
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="CameraFree.cpp" />
+    <ClCompile Include="D3D12HAL.cpp" />
     <ClCompile Include="D3D12HALBuffers.cpp" />
     <ClCompile Include="D3D12HALConstantBuffer.cpp" />
     <ClCompile Include="D3D12HALDescriptorHeaps.cpp" />
@@ -140,6 +141,7 @@
     <ClCompile Include="D3D12HALSwapChain.cpp" />
     <ClCompile Include="D3D12HALTexture.cpp" />
     <ClCompile Include="DirectoryWatcher.cpp" />
+    <ClCompile Include="GpouScene.cpp" />
     <ClCompile Include="GraphObject.cpp" />
     <ClCompile Include="ImageImporter.cpp" />
     <ClCompile Include="Model.cpp">
@@ -148,12 +150,14 @@
     <ClCompile Include="ModelH3D.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
     </ClCompile>
+    <ClCompile Include="RaytracingScene.cpp" />
     <ClCompile Include="RendererImGui.cpp" />
+    <ClCompile Include="RendererResource.cpp" />
+    <ClCompile Include="RenderGraph.cpp" />
     <ClCompile Include="SandBox.cpp" />
     <ClCompile Include="SandBoxFile.cpp" />
     <ClCompile Include="SceneImporter.cpp" />
     <ClCompile Include="ScriptObject.cpp" />
-    <ClCompile Include="Terrain.cpp" />
     <ClCompile Include="Sky.cpp" />
     <ClCompile Include="Mesh.cpp" />
     <ClCompile Include="MeshLoad.cpp" />
@@ -166,9 +170,9 @@
     <ClCompile Include="Bitmap.cpp" />
     <ClCompile Include="Material.cpp" />
     <ClCompile Include="InputManager.cpp" />
-    <ClCompile Include="DXRenderer.cpp" />
-    <ClCompile Include="DXRendererInit.cpp" />
-    <ClCompile Include="DXRendererResource.cpp" />
+    <ClCompile Include="RenderHAL.cpp" />
+    <ClCompile Include="RenderHALInit.cpp" />
+    <ClCompile Include="RenderHALResource.cpp" />
     <ClCompile Include="WinFile.cpp" />
     <ClCompile Include="WinInputManager.cpp" />
     <ClCompile Include="WinMain.cpp" />
@@ -196,13 +200,18 @@
     <ClInclude Include="Includes\D3D12HALBuffers.h" />
     <ClInclude Include="Includes\D3D12HALConstantBuffer.h" />
     <ClInclude Include="Includes\D3D12HALDescriptorHeaps.h" />
+    <ClInclude Include="Includes\D3D12HALRaytracing.h" />
     <ClInclude Include="Includes\D3D12HALSamplerState.h" />
     <ClInclude Include="Includes\D3D12HALShaders.h" />
     <ClInclude Include="Includes\d3dx12.h" />
     <ClInclude Include="Includes\DirectoryWatcher.h" />
+    <ClInclude Include="Includes\GpuScene.h" />
+    <ClInclude Include="includes\RendererResource.h" />
     <ClInclude Include="Includes\ImageImporter.h" />
     <ClInclude Include="Includes\Model.h" />
+    <ClInclude Include="Includes\RaytracingScene.h" />
     <ClInclude Include="Includes\RendererPipelineState.h" />
+    <ClInclude Include="includes\RenderGraph.h" />
     <ClInclude Include="Includes\SandBoxFile.h" />
     <ClInclude Include="Includes\SceneImporter.h" />
     <ClInclude Include="Includes\ScriptObject.h" />
@@ -211,7 +220,6 @@
     <ClInclude Include="Includes\WinInputManager.h" />
     <ClInclude Include="SandBox.h" />
     <ClInclude Include="Includes\GraphObject.h" />
-    <ClInclude Include="Includes\Terrain.h" />
     <ClInclude Include="Includes\Sky.h" />
     <ClInclude Include="Includes\Mesh.h" />
     <ClInclude Include="Includes\MeshSDKMesh.h" />
@@ -231,7 +239,7 @@
     <ClInclude Include="Includes\BitmapFlags.h" />
     <ClInclude Include="Includes\Material.h" />
     <ClInclude Include="Includes\InputManager.h" />
-    <ClInclude Include="Includes\DXRenderer.h" />
+    <ClInclude Include="Includes\RenderHAL.h" />
     <ClInclude Include="targetver.h" />
     <ClInclude Include="Includes\WinMain.h" />
     <ClInclude Include="Resource.h" />

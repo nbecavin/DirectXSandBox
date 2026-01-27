@@ -7,6 +7,8 @@ SamplerState g_samLinear : register( s0 );*/
 
 float4 ForwardMain(const in VS_Output i) : SV_TARGET
 {
+	//StructuredBuffer<MaterialParameter> materialStore = GetBindlessResourceUniform(Object.materialID);
+	
     // Camera vector from surface to camera
     //float3 V = normalize(g_CameraPos - IN.worldPos);
     float3 V = i.eyevec;
@@ -47,10 +49,14 @@ float4 ForwardMain(const in VS_Output i) : SV_TARGET
 
 	if(Global.Visualize == EVIZ_SHOW_NORMAL)
 		return float4(mat.normal, mat.opacity);
-
+	if (Global.Visualize == EVIZ_SHOW_ROUGHNESS)
+		return float4(mat.roughness.xxx, mat.opacity);
+	if (Global.Visualize == EVIZ_SHOW_METAL)
+		return float4(mat.metallic.xxx, mat.opacity);
+	
 	return float4(radiance, mat.opacity);
 }
-	
+
 float4 GbufferMain( const in VS_Output i ) : SV_TARGET
 {
 	float albedo_alpha = sAlbedo.Sample(sSampler, i.uv).a;

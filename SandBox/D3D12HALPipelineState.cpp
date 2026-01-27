@@ -1,5 +1,5 @@
-#include <DXRenderer.h>
 #include <D3D12HAL.h>
+#include <RenderHAL.h>
 
 #include <functional>
 #include <unordered_map>
@@ -240,21 +240,29 @@ void D3D12HAL::SetRasterizerState(RasterizerDesc& Desc)
 	m_CurrentGraphicsPSO.RasterizerState = Desc.desc;
 }
 
-void D3D12HAL::SetShaderResource(U32 Slot, EShaderType Type, sys::TextureLink* View)
+void D3D12HAL::SetShaderResource(U32 Slot, EShaderType Type, Bitmap* Texture)
 {
-	if (Type == SHADER_TYPE_PIXEL)
+	sys::TextureLink* tex = reinterpret_cast<sys::TextureLink*>(Texture->GetBinHwResId());
+	if ((U64)tex != BM_INVALIDHWRESID)
 	{
-		m_CurrentSRV[0][Slot] = View->m_SRV;
-	}
-	else if (Type == SHADER_TYPE_VERTEX)
-	{
-		m_CurrentSRV[1][Slot] = View->m_SRV;
+		if (Type == SHADER_TYPE_PIXEL)
+		{
+			m_CurrentSRV[0][Slot] = tex->m_SRV;
+		}
+		else if (Type == SHADER_TYPE_VERTEX)
+		{
+			m_CurrentSRV[1][Slot] = tex->m_SRV;
+		}
 	}
 }
 
-void D3D12HAL::SetUAV(U32 Slot, sys::TextureLink* View)
+void D3D12HAL::SetUAV(U32 Slot, Bitmap* Texture)
 {
-	m_CurrentUAV[Slot] = View->m_SRV;
+	sys::TextureLink* tex = reinterpret_cast<sys::TextureLink*>(Texture->GetBinHwResId());
+	if ((U64)tex != BM_INVALIDHWRESID)
+	{
+		m_CurrentUAV[Slot] = tex->m_SRV;
+	}
 }
 
 void D3D12HAL::SetConstantBuffer(U32 Slot, EShaderType Type, ConstantBuffer* CBV)
