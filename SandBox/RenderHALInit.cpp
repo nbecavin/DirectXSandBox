@@ -7,16 +7,6 @@
 #include <WinMain.h>
 #include <..\..\Shaders\ShaderRegs.h>
 
-#if WINAPI_FAMILY==WINAPI_FAMILY_APP
-using namespace Windows::Graphics::Display;
-// Method to convert a length in device-independent pixels (DIPs) to a length in physical pixels.
-float ConvertDipsToPixels(float dips)
-{
-	static const float dipsPerInch = 96.0f;
-	return floor(dips * DisplayProperties::LogicalDpi / dipsPerInch + 0.5f); // Round to nearest integer.
-}
-#endif
-
 namespace sys
 {
 	/// Load and return the newest pix version, newest than minVersion.

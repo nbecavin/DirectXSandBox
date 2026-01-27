@@ -12,6 +12,7 @@
 #	define WIN32_LEAN_AND_MEAN             // Exclure les en-têtes Windows rarement utilisés
 #	define _CRT_SECURE_NO_WARNINGS
 #	define NOMINMAX
+#	define USE_PIX //force PIX
 #	include <windows.h>
 #	include <algorithm>
 #	include <stdlib.h>

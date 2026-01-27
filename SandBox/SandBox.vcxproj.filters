@@ -450,7 +450,7 @@
     <None Include="packages.config" />
     <None Include="PropertySheets\Common.props" />
     <None Include="DeployDeps.bat">
-      <Filter>Engine</Filter>
+      <Filter>Tools</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>
