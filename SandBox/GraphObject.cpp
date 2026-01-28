@@ -27,13 +27,3 @@ void GraphObject::SetMatrix(const Mat4x4& m)
 void GraphObject::Update(F32 dTime)
 {
 }
-
-void GraphObject::Draw()
-{
-}
-
-void GraphObject::DrawGBuffer()
-{
-
-	double test = std::max(1.0, 2.0);
-}

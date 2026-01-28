@@ -69,7 +69,9 @@ public:
 		if(NewSize>Size)
 		{
 			// Realloc
+			U8* old = (U8*)Datas;
 			Realloc(NewSize);
+			memset(Datas + Size, 0, NewSize - Size);
 			Size = NewSize;
 			Reserve = 0;
 		}

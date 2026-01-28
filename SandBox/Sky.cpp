@@ -17,8 +17,3 @@ void Sky::Update(F32 dTime)
 	}
 }
 
-void Sky::Draw()
-{
-
-}
-

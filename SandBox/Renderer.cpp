@@ -129,11 +129,7 @@ namespace sys {
 			rs.desc.SlopeScaledDepthBias = 0.f;
 			hal->SetRasterizerState(rs);
 
-			for (int i = 0; i < gData.m_GraphObjectDA.GetSize(); i++)
-			{
-				GraphObject* it = gData.m_GraphObjectDA[i];
-				it->Draw();
-			}
+			gData.Scene->DrawScene();
 
 			hal->ProfileEndEvent();
 		}

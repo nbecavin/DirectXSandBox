@@ -80,7 +80,6 @@ namespace sys {
 		virtual void SetVertexDeclaration(VertexDeclaration* Decl) = 0;
 		virtual void SetStreamSource(U32 StreamNumber, VertexBuffer* Buffer, U32 Offset, U32 Stride) = 0;
 		virtual void SetIndices(IndexBuffer* Buffer, U32 _Fmt) = 0;
-		virtual void PushMaterial(Material* Mat);
 
 		virtual void SetConstantBuffer(U32 Slot, EShaderType Type, ConstantBuffer* CBV) = 0;
 		virtual void SetShaderResource(U32 Slot, EShaderType Type, Bitmap* Texture);

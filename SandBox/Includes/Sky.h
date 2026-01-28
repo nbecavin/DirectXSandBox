@@ -11,7 +11,6 @@ public:
 	virtual ~Sky();
  
 	virtual void Update(F32 dTime);
-	virtual void Draw();
 
 protected:
 	VertexBuffer		*	m_VB;

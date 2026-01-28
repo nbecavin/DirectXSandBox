@@ -24,9 +24,9 @@ public:
 	virtual void SetName(const std::string& _name) final { m_Name = NameID(_name); }
 	virtual const std::string& GetName() final { return m_Name.Str; }
 
+	Mat4x4 GetNode() const { return m_Node; }
+
 	virtual void Update(F32 dTime);
-	virtual void Draw();
-	virtual void DrawGBuffer();
 
 			void SetScale(float scale);
 			void SetWorldPosition(float x,float y,float z);

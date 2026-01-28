@@ -13,6 +13,8 @@ RenderGraph::~RenderGraph()
 
 void RenderGraph::DrawFrame()
 {
+	gData.Scene->GatherDrawObjects();
+
 	sys::RenderHAL* device = gData.Rdr->GetHAL();
 
 	{

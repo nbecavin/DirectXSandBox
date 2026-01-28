@@ -162,6 +162,7 @@
     <ClCompile Include="RendererResource.cpp" />
     <ClCompile Include="RenderGraph.cpp" />
     <ClCompile Include="SandBox.cpp" />
+    <ClCompile Include="SandBoxEditor.cpp" />
     <ClCompile Include="SandBoxFile.cpp" />
     <ClCompile Include="SceneImporter.cpp" />
     <ClCompile Include="ScriptObject.cpp" />
@@ -212,11 +213,13 @@
     <ClInclude Include="Includes\d3dx12.h" />
     <ClInclude Include="Includes\DirectoryWatcher.h" />
     <ClInclude Include="Includes\GpuScene.h" />
+    <ClInclude Include="includes\GpuSceneInstance.h" />
     <ClInclude Include="includes\RendererResource.h" />
     <ClInclude Include="Includes\ImageImporter.h" />
     <ClInclude Include="Includes\RaytracingScene.h" />
     <ClInclude Include="Includes\RendererPipelineState.h" />
     <ClInclude Include="includes\RenderGraph.h" />
+    <ClInclude Include="includes\SandBoxEditor.h" />
     <ClInclude Include="Includes\SandBoxFile.h" />
     <ClInclude Include="Includes\SceneImporter.h" />
     <ClInclude Include="Includes\ScriptObject.h" />

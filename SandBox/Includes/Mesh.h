@@ -14,8 +14,6 @@ public:
 	virtual ~Mesh();
 
 	virtual void Update(F32 dTime);
-	virtual void Draw();
-	virtual void DrawGBuffer();
 
 public:
 	void LoadFromAiMesh(std::filesystem::path directory, aiMesh* importMesh, aiMaterial* importMaterial);
