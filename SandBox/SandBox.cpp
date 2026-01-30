@@ -86,13 +86,13 @@ void sys::MainLoop()
 		//imp.LoadScene("assets\\necropolis\\necropolis.gltf");
 		//imp.LoadScene("assets\\restaurant_scene_fbx\\restaurant_scene.fbx");
 		//imp.LoadScene("assets\\restaurant_scene_gltf\\restaurant_scene_gltf.gltf");
-		imp.LoadScene("assets\\Bistro_v5_2\\BistroInterior.fbx");
+//		imp.LoadScene("assets\\Bistro_v5_2\\BistroInterior.fbx");
 //		imp.LoadScene("assets\\Bistro_v5_2\\BistroExterior.fbx");
 //		imp.LoadScene("assets\\from_blender\\from_blender.gltf");
 //		imp.LoadScene("assets\\asobo_mansion\\mansion.gltf");
 //		imp.LoadScene("assets\\trench\\trench.gltf");
 //		imp.LoadScene("assets\\breakfast_room\\BreakfastRoom.gltf");
-//		imp.LoadScene("assets\\sponza\\sponza.gltf");
+		imp.LoadScene("assets\\sponza\\sponza.gltf");
 //		imp.LoadScene("assets\\gi_walt\\gi_walt.gltf");
 	}
 
