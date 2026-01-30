@@ -67,7 +67,7 @@ void sys::MainLoop()
 	CameraFree* pCameraScript = new CameraFree;
 	RegisterScriptObject(pCameraScript);
 
-	RegisterGraphObject(new Sky());
+	//RegisterGraphObject(new Sky());
 	//RegisterGraphObject(new Terrain());
 
 	MESSAGE("Load some assets");
