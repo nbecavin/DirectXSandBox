@@ -51,9 +51,7 @@ namespace sys {
 				void	SetCamera(Camera * _Cam) { m_Camera=_Cam; }
 		inline	Camera* GetCamera() const { return m_Camera; }
 		
-	protected:
-		int		SizeX, SizeY;
-
+	public:
 		Bitmap				*	m_RenderTarget;
 		Bitmap				*	m_HdrRenderTarget;
 
@@ -64,6 +62,8 @@ namespace sys {
 		Bitmap				*	m_shadowBuffer;
 		Bitmap				*	m_ssaoBuffer;
 
+	protected:
+		int		SizeX, SizeY;
 		// Viewports and camera
 		Camera				*	m_Camera;
 

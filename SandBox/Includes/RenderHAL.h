@@ -7,17 +7,14 @@
 #include <RendererShader.h>
 #include <RendererPipelineState.h>
 
-namespace sys
+struct TextureLink
 {
-	struct TextureLink
-	{
-		union {
-			ID3D12Resource* Resource12;
-		};
-		D3D12_CPU_DESCRIPTOR_HANDLE m_RTV;
-		D3D12_CPU_DESCRIPTOR_HANDLE m_SRV;
-		D3D12_CPU_DESCRIPTOR_HANDLE m_UAV;
+	union {
+		ID3D12Resource* Resource12;
 	};
+	D3D12_CPU_DESCRIPTOR_HANDLE m_RTV;
+	D3D12_CPU_DESCRIPTOR_HANDLE m_SRV;
+	D3D12_CPU_DESCRIPTOR_HANDLE m_UAV;
 };
 
 struct Vertex2D

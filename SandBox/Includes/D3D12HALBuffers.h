@@ -3,6 +3,13 @@
 
 #include <PrimitiveBuffers.h>
 
+class D3D12AccelerationStructure : public AccelerationStructure
+{
+public:
+	ID3D12Resource* res;
+	D3D12_GPU_DESCRIPTOR_HANDLE View;
+};
+
 class D3D12VertexBuffer : public VertexBuffer {
 private:
 	ID3D12Resource*				res;

@@ -1,6 +1,7 @@
 #pragma once
 
-class Bitmap;
+class Buffer;
+class AccelerationStructure;
 class RaytracingScene
 {
 public:
@@ -12,6 +13,6 @@ public:
 
 public:
 
-	Bitmap* m_TLAS;
-	Bitmap* m_ScratchBuffer;
+	AccelerationStructure* m_TLAS;
+	Buffer* m_ScratchBuffer;
 };

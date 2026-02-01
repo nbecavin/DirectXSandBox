@@ -249,6 +249,9 @@
     <ClCompile Include="SandBoxEditor.cpp">
       <Filter>Editor</Filter>
     </ClCompile>
+    <ClCompile Include="PathTracer.cpp">
+      <Filter>Engine\Renderer</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="SandBox.h">
@@ -430,6 +433,9 @@
       <Filter>Editor</Filter>
     </ClInclude>
     <ClInclude Include="includes\GpuSceneInstance.h">
+      <Filter>Engine\Renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="includes\PathTracer.h">
       <Filter>Engine\Renderer</Filter>
     </ClInclude>
   </ItemGroup>

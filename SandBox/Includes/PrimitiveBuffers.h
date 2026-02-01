@@ -12,29 +12,8 @@ enum PrimitiveType
 	PRIM_TRIANGLESTRIP,
 };
 
-class Buffer {
-public:
-	enum EMap {
-		Read,
-		Write,
-		ReadWrite,
-		WriteDiscard,
-		WriteNoOverwrite
-	};
-
-public:
-	virtual void Create(U32 _Size,U32 _Usage,U32 _Fmt,void * _Datas) = 0;
-	virtual bool IsInited() = 0;
-	virtual bool Lock(U32 OffsetToLock, U32 SizeToLock, void **pData, EMap MapFlags = WriteNoOverwrite) = 0;
-	virtual void Unlock() = 0;
-	virtual U32 GetSize() { return Size; }
-protected:
-	U32 Size;
-};
-
-typedef Buffer VertexBuffer;
-typedef Buffer IndexBuffer;
-typedef Buffer ConstantBuffer;
+using VertexBuffer = LockableBuffer;
+using IndexBuffer = LockableBuffer;
 
 struct VertexElement
 {

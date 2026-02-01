@@ -31,6 +31,12 @@
     <Filter Include="RTXDI-Integration\RTXDI-SDK\DI">
       <UniqueIdentifier>{f366589b-1316-499e-af57-7b30585851b1}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Raytracing">
+      <UniqueIdentifier>{c68d5824-01ef-4eac-9c17-506e70110026}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Pathtracer">
+      <UniqueIdentifier>{dbce3341-e811-4110-a575-512bcfe175f9}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="$(MSBuildThisFileDirectory)..\base_pass.ps.hlsl">
@@ -39,15 +45,15 @@
     <Text Include="$(MSBuildThisFileDirectory)..\vertex_factory.vs.hlsl">
       <Filter>Forward Renderer</Filter>
     </Text>
-    <Text Include="$(MSBuildThisFileDirectory)..\simple_vertex_factory.vs.hlsl">
-      <Filter>Post Processing</Filter>
-    </Text>
     <Text Include="$(MSBuildThisFileDirectory)..\post_process.ps.hlsl">
       <Filter>Post Processing</Filter>
     </Text>
     <Text Include="$(MSBuildThisFileDirectory)..\sh_const.h" />
     <Text Include="$(MSBuildThisFileDirectory)..\sh_math.h" />
     <Text Include="$(MSBuildThisFileDirectory)..\ShaderRegs.h" />
+    <Text Include="$(MSBuildThisFileDirectory)..\simple_vertex_factory.vs.hlsl">
+      <Filter>Forward Renderer</Filter>
+    </Text>
   </ItemGroup>
   <ItemGroup>
     <None Include="$(MSBuildThisFileDirectory)..\ImGui.hlsl" />
@@ -164,6 +170,8 @@
     <FxCompile Include="$(MSBuildThisFileDirectory)..\auto_exposure.cs.hlsl">
       <Filter>Post Processing</Filter>
     </FxCompile>
-    <FxCompile Include="$(MSBuildThisFileDirectory)..\raytracing_debug.raygen.hlsl" />
+    <FxCompile Include="$(MSBuildThisFileDirectory)..\raytracing_debug.raygen.hlsl">
+      <Filter>Raytracing</Filter>
+    </FxCompile>
   </ItemGroup>
 </Project>
