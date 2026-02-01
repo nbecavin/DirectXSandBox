@@ -363,6 +363,7 @@ void sys::pc::LowLevelInit()
 	gData.Input = (InputManager*) new WinInputManager;
 	gData.Input->Init();
 	gData.Scene = std::make_unique<GpuScene>();
+	gData.Scene->Init();
 
 	// Change windows title
 	char title[512];

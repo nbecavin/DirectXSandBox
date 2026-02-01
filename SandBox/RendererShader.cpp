@@ -14,6 +14,8 @@ ShaderKernel* ShaderMap::ComputeHistogramCS = nullptr;
 ShaderKernel* ShaderMap::TonemappingPS = nullptr;
 
 ShaderKernel* ShaderMap::RaytracingDebugRGS = nullptr;
+ShaderKernel* ShaderMap::RaytracingDebugInlineRGS = nullptr;
+ShaderKernel* ShaderMap::PathTracerRGS = nullptr;
 
 namespace sys {
 
@@ -44,6 +46,8 @@ namespace sys {
 
 		// Raygen
 		ShaderMap::RaytracingDebugRGS = GetHAL()->CreateKernel("shaders/raytracing_debug.raygen.hlsl", "main", SHADER_TYPE_RAYGEN);
+		ShaderMap::RaytracingDebugInlineRGS = GetHAL()->CreateKernel("shaders/raytracing_debug.raygen.hlsl", "main", SHADER_TYPE_COMPUTE); //inline RT
+		//ShaderMap::PathTracerRGS = GetHAL()->CreateKernel("shaders/pathtracer.raygen.hlsl", "main", SHADER_TYPE_RAYGEN);
 	}
 
 };

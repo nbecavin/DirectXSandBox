@@ -242,7 +242,7 @@ void D3D12HAL::SetRasterizerState(RasterizerDesc& Desc)
 
 void D3D12HAL::SetShaderResource(U32 Slot, EShaderType Type, Bitmap* Texture)
 {
-	sys::TextureLink* tex = reinterpret_cast<sys::TextureLink*>(Texture->GetBinHwResId());
+	TextureLink* tex = reinterpret_cast<TextureLink*>(Texture->GetBinHwResId());
 	if ((U64)tex != BM_INVALIDHWRESID)
 	{
 		if (Type == SHADER_TYPE_PIXEL)
@@ -258,7 +258,7 @@ void D3D12HAL::SetShaderResource(U32 Slot, EShaderType Type, Bitmap* Texture)
 
 void D3D12HAL::SetUAV(U32 Slot, Bitmap* Texture)
 {
-	sys::TextureLink* tex = reinterpret_cast<sys::TextureLink*>(Texture->GetBinHwResId());
+	TextureLink* tex = reinterpret_cast<TextureLink*>(Texture->GetBinHwResId());
 	if ((U64)tex != BM_INVALIDHWRESID)
 	{
 		m_CurrentUAV[Slot] = tex->m_SRV;

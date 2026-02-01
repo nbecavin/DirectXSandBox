@@ -257,7 +257,7 @@ void D3D12HAL::CreateTexture(Bitmap * _Bm)
 		desc.Flags |= D3D12_RESOURCE_FLAG_ALLOW_UNORDERED_ACCESS;
 	}
 
-	sys::TextureLink * tex = new sys::TextureLink;
+	TextureLink * tex = new TextureLink;
 	tex->Resource12 = NULL;
 
 	//if(desc.Width != desc.Height)

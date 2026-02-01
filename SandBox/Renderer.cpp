@@ -49,8 +49,6 @@ namespace sys {
 
 		d3d->SetAndClearRenderTarget();
 
-		gData.Rdr->GetRenderGraph()->DrawFrame();
-
 		TextureLink* hdrtex = reinterpret_cast<TextureLink*>(m_HdrRenderTarget->GetBinHwResId());
 		d3d->GetCommandList()->OMSetRenderTargets(1, &hdrtex->m_RTV, true, &d3d->GetDSV());
 		d3d->GetCommandList()->ResourceBarrier(1, &CD3DX12_RESOURCE_BARRIER::Transition(hdrtex->Resource12, D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE | D3D12_RESOURCE_STATE_NON_PIXEL_SHADER_RESOURCE, D3D12_RESOURCE_STATE_RENDER_TARGET));
@@ -95,66 +93,12 @@ namespace sys {
 		globalParam[0] = m_GlobalParams;
 		m_GlobalConstant->Unlock();
 
-		// No geometry shader
-
-		//GetCommandList()->PSSetSamplers(0, 1, &m_DefaultSS);
-		//GetCommandList()->PSSetSamplers(1, 1, &m_DefaultSS);
-		//GetCommandList()->PSSetSamplers(2, 1, &m_DefaultSS);
 		hal->SetConstantBuffer(0, SHADER_TYPE_VERTEX, m_GlobalConstant);
 		hal->SetConstantBuffer(0, SHADER_TYPE_PIXEL, m_GlobalConstant);
 		hal->SetConstantBuffer(9, SHADER_TYPE_VERTEX, m_CameraConstant);
 		hal->SetConstantBuffer(9, SHADER_TYPE_PIXEL, m_CameraConstant);
 
-#if 1
-
-		{
-			hal->ProfileBeginEvent(0, "Build Acceleration Structure");
-
-			hal->ProfileEndEvent();
-		}
-
-		{
-			hal->ProfileBeginEvent(0, "Forward Pass");
-
-			RasterizerDesc rs;
-			rs.desc.AntialiasedLineEnable = FALSE;
-			rs.desc.CullMode = D3D12_CULL_MODE_NONE;
-			rs.desc.DepthBias = 0.f;
-			rs.desc.DepthBiasClamp = 0.f;
-			rs.desc.DepthClipEnable = TRUE;
-			rs.desc.FillMode = D3D12_FILL_MODE_SOLID;
-			rs.desc.FrontCounterClockwise = FALSE;
-			rs.desc.MultisampleEnable = FALSE;
-			//rs.desc.ScissorEnable = FALSE;
-			rs.desc.SlopeScaledDepthBias = 0.f;
-			hal->SetRasterizerState(rs);
-
-			gData.Scene->DrawScene();
-
-			hal->ProfileEndEvent();
-		}
-
-		{
-			hal->ProfileBeginEvent(0, "Post Process");
-			d3d->GetCommandList()->ResourceBarrier(1, &CD3DX12_RESOURCE_BARRIER::Transition(hdrtex->Resource12, D3D12_RESOURCE_STATE_RENDER_TARGET, D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE | D3D12_RESOURCE_STATE_NON_PIXEL_SHADER_RESOURCE));
-
-			{
-				hal->SetShaderResource(0, SHADER_TYPE_COMPUTE, m_HdrRenderTarget);
-				hal->SetUAV(0, m_RenderTarget);
-				hal->BindComputePipelineState(ShaderMap::ComputeHistogramCS);
-				hal->Dispatch(1, 1, 1);
-			}
-
-			D3D12_CPU_DESCRIPTOR_HANDLE rtv = d3d->GetCurrentBackBufferView();
-			d3d->GetCommandList()->OMSetRenderTargets(1, &rtv, false, &d3d->GetDSV());
-
-			hal->SetShaderResource(0, SHADER_TYPE_PIXEL, m_HdrRenderTarget);
-			hal->BindGraphicPipelineState(ShaderMap::ScreenVertexVS, ShaderMap::TonemappingPS);
-			hal->FullScreenQuad(Vec2f(1.f, 1.f), Vec2f(0.f, 0.f));
-
-			hal->ProfileEndEvent();
-		}
-#endif
+		gData.Rdr->GetRenderGraph()->DrawFrame();
 
 		DrawImGUI();
 

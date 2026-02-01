@@ -6,6 +6,7 @@
 
 #include <GpuSceneInstance.h>
 
+class RaytracingScene;
 namespace sys
 {
 
@@ -22,8 +23,13 @@ namespace sys
 
 		const MaterialDA& GetMaterialDA() const { return m_MaterialDA; }
 
+		const InstanceDataDA& GetInstance() const { return m_Instances; }
 		void GatherDrawObjects();
 		void UpdateBuffers();
+
+		RaytracingScene* GetRaytracingScene() {
+			return m_RaytracingScene.get();
+		}
 
 		void SetActiveMaterial(Material* Mat);
 		void DrawScene();
@@ -35,6 +41,7 @@ namespace sys
 		InstanceDataDA m_Instances;
 		DynArray<ConstantBuffer*, 256> m_InstanceData; //Naive construct
 
+		std::unique_ptr<RaytracingScene> m_RaytracingScene;
 	};
 
 }

@@ -42,7 +42,8 @@ public:
 	VertexBuffer* CreateVertexBuffer(U32 _Size, U32 _Usage, void* _Datas);
 	IndexBuffer* CreateIndexBuffer(U32 _Size, U32 _Usage, U32 _Fmt, void* _Datas);
 	ConstantBuffer* CreateConstantBuffer(U32 _Size);
-	Buffer* CreateBuffer();
+	AccelerationStructure* CreateAccelerationStructure(U32 _Size);
+	Buffer* CreateBuffer(U32 _Size);
 
 	void InitShaders();
 	void SetScissorRect(U32 left, U32 right, U32 top, U32 bottom);
@@ -96,7 +97,7 @@ private:
 	ComPtr<ID3D12CommandQueue>			m_CommandQueue;
 	ComPtr<ID3D12RootSignature>			m_GraphicsRootSignature;
 	ComPtr<ID3D12RootSignature>			m_ComputeRootSignature;
-	ComPtr<ID3D12GraphicsCommandList5>	m_CommandList;
+	ComPtr<ID3D12GraphicsCommandList10>	m_CommandList;
 	ComPtr<ID3D12Fence>					m_SyncFence;
 
 	UINT								m_FrameIndex = 0;

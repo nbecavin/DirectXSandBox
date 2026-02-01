@@ -5,6 +5,7 @@
 #include <../../Shaders/material_parameter.hlsli.h>
 
 #include <GpuSceneInstance.h>
+#include <RaytracingScene.h>
 
 //
 // collect drawcals
@@ -23,6 +24,7 @@ GpuScene::~GpuScene()
 
 void GpuScene::Init()
 {
+	m_RaytracingScene = std::make_unique<RaytracingScene>();
 }
 
 void GpuScene::Shut()
@@ -40,7 +42,7 @@ void GpuScene::UpdateBuffers()
 	{
 		m_MaterialStorage = std::make_shared<Bitmap>();
 		//m_MaterialStorage->
-		gData.Rdr->GetHAL()->CreateBuffer();
+		//gData.Rdr->GetHAL()->CreateBuffer();
 	}
 }
 

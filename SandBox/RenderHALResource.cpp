@@ -26,6 +26,20 @@ namespace sys {
 		case SHADER_TYPE_MESH:		return "ms_6_7";
 		case SHADER_TYPE_RAYGEN:	return "lib_6_7";
 		};
+		return "unkwon"; //will trigger a compiler error
+	}
+
+	const char* GetShaderType(U32 type)
+	{
+		switch (type)
+		{
+		case SHADER_TYPE_VERTEX:	return "-D VERTEX_SHADER";
+		case SHADER_TYPE_PIXEL:		return "-D PIXEL_SHADER";
+		case SHADER_TYPE_COMPUTE:	return "-D COMPUTE_SHADER";
+		case SHADER_TYPE_MESH:		return "-D MESH_SHADER";
+		case SHADER_TYPE_RAYGEN:	return "-D RAYGEN_SHADER";
+		};
+		return "";
 	}
 
 	class CustomIncludeHandler : public IDxcIncludeHandler
@@ -88,6 +102,7 @@ namespace sys {
 		arguments.push_back(ToWSTR(epoint));
 		arguments.push_back(L"-T");
 		arguments.push_back(ToWSTR(GetShaderProfile(type)));
+		arguments.push_back(ToWSTR(GetShaderType(type)));
 		arguments.push_back(L"-I ../Shaders");
 		arguments.push_back(L"-I ../Tools/rtxdi/include");
 		arguments.push_back(L"/Zi");

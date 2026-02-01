@@ -1,58 +1,93 @@
-
-#if NON_PATH_TRACING_PASS || defined(__cplusplus) || (__SHADER_TARGET_MAJOR < 6 || __SHADER_TARGET_MINOR < 8)
-#	define RAYPAYLOAD_QUALIFIER
-#	define RAYPAYLOAD_FIELD_QUALIFIER
+#if defined(COMPUTE_SHADER)
+#	define USE_INLINE_RAYTRACING 1
 #else
-#	define RAYPAYLOAD_QUALIFIER        [raypayload] 
-#	define RAYPAYLOAD_FIELD_QUALIFIER  : read(caller, anyhit, closesthit, miss) : write(caller, anyhit, closesthit, miss)
+#	define USE_INLINE_RAYTRACING 0
 #endif
 
-//#define RAYGEN_ENTRYPOINT(Name) \
-//		[shader("raygeneration")] \
-//		void Name()
-//
-//#define CLOSEST_HIT_ENTRYPOINT(Name, Pay, Attribute) \
-//		[shader("closesthit")] \
-//		void Name(inout RayPayload Pay, in BuiltInTriangleIntersectionAttributes Attribute)
-//
-//#define ANY_HIT_ENTRYPOINT(Name, Pay, Attribute) \
-//		[shader("anyhit")] \
-//		void Name(inout RayPayload Pay, in BuiltInTriangleIntersectionAttributes Attribute)
-//
-//#define MISS_ENTRYPOINT(Name, Pay) \
-//		[shader("miss")] \
-//		void Name(inout RayPayload Pay)
-//
-//#define INTERSECTION_ENTRYPOINT(Name) \
-//		[shader("intersection")] \
-//		void Name()
-//
-//#define CALLABLE_ENTRYPOINT(Name, Pay) \
-//		[shader("callable")] \
-//		void Name(inout CallablePayload Pay)
+RaytracingAccelerationStructure TLAS;
 
-struct RAYPAYLOAD_QUALIFIER RayPayload
+RWTexture2D<float4> Output : register(u0);
+
+struct RayPayload
 {
-	float tHit RAYPAYLOAD_FIELD_QUALIFIER;
+	float HitT;
 };
 
-[shader("miss")] \
+#if USE_INLINE_RAYTRACING
+
+[numthreads(8, 8, 1)]
+void main(uint2 did : SV_DispatchThreadID)
+{
+	float3 color = Output[did].xyz;
+
+	color *= float3(1,0,1);
+
+	RayDesc ray;
+	ray.TMin = 0;
+	ray.TMax = 1000000;
+	ray.Direction = float3(0,1,0);
+	ray.Origin = float3(0,0,0);
+
+	RayQuery<RAY_FLAG_NONE, RAYQUERY_FLAG_NONE> q;
+	q.TraceRayInline(TLAS, RAY_FLAG_NONE, -1, ray);
+	while(q.Proceed())
+    {
+        switch(q.CandidateType())
+        {
+		case CANDIDATE_NON_OPAQUE_TRIANGLE:
+			q.CommitNonOpaqueTriangleHit(); //Trivially accept for now
+			break;
+		}
+	}
+	switch(q.CommittedStatus())
+    {
+	case COMMITTED_TRIANGLE_HIT: //Closest
+		color = float3(0,1,0);
+		break;
+	case COMMITTED_NOTHING: //Miss
+		color = float3(1,0,0);
+		break;
+	}
+
+	Output[did] = float4(color, 1);
+}
+
+#else
+
+[shader("miss")]\
 void Miss(inout RayPayload Pay)
 {
 }
 
-[shader("anyhit")] \
+[shader("anyhit")]\
 void BaseAHS(inout RayPayload Pay, in BuiltInTriangleIntersectionAttributes Attribute)
 {
 }
 
-[shader("closesthit")] \
+[shader("closesthit")]\
 void BaseCHS(inout RayPayload Pay, in BuiltInTriangleIntersectionAttributes Attribute)
 {
+	Pay.HitT = RayTCurrent();
 }
 
 [shader("raygeneration")]
 void main()
 {
+	uint2 did = DispatchRaysIndex().xy;
+	
+	float3 color = 0;
+	
+	RayPayload pay = (RayPayload)0;
 
+	RayDesc ray;
+	ray.TMin = 0;
+	ray.TMax = 1000000;
+	ray.Direction = float3(0, 1, 0);
+	ray.Origin = float3(0, 0, 0);
+	
+	TraceRay(TLAS, RAY_FLAG_NONE, -1, 0, 1, 0, ray, pay);
+	
+	Output[did] = float4(color, 1);
 }
+
+#endif
