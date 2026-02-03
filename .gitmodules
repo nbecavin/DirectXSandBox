@@ -6,3 +6,6 @@
 	path = Tools/RTXDI
 	url = https://github.com/NVIDIA-RTX/RTXDI-Library
 	branch = main
+[submodule "Tools/Streamline"]
+	path = Tools/Streamline
+	url = https://github.com/NVIDIA-RTX/Streamline.git
