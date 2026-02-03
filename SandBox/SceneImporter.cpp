@@ -305,6 +305,7 @@ void Mesh::LoadFromAiMesh(std::filesystem::path directory, aiMesh* importMesh, a
 	Material* pMat = MtlDA.Add();
 	pMat->LoadFromAiMaterial(directory, importMaterial);
 
+	// Build raytracing acceleration structures
 	//gData.Rdr->BuildAccelerationStructure(SubSetsDA);
 }
 

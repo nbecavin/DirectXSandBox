@@ -146,3 +146,12 @@ void GpuScene::DrawScene()
 
 	HAL->ProfileEndEvent();
 }
+
+void GpuScene::BuilRaytracing()
+{
+	sys::RenderHAL* hal = gData.Rdr->GetHAL();
+
+
+	// Build top level acceleration structure
+	hal->BuildTLAS();
+}

@@ -10,7 +10,7 @@ namespace sys
 		InstanceConstant instanceCst;
 		struct GeometryData
 		{
-			Buffer* AS;
+			AccelerationStructure* AS;
 			VertexBuffer* VB;
 			IndexBuffer* IB;
 			U32				IndexStart;

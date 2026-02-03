@@ -94,7 +94,7 @@ namespace sys {
 		virtual void SetSampler(U32 Slot, EShaderType Type, SamplerDesc& Sampler) = 0;
 		virtual void SetBlendState(BlendDesc& desc) = 0;
 
-		virtual void BuildAccelerationStructure() = 0;
+		virtual void BuildBLAS() = 0;
 		virtual void BuildTLAS() = 0;
 
 		virtual ShaderKernel* CreateKernel(const char* src, const char* epoint, EShaderType type);

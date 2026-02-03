@@ -2,6 +2,27 @@
 
 class Buffer;
 class AccelerationStructure;
+
+struct RaytracingGeometryDesc
+{
+
+};
+
+class RaytracingGeometry
+{
+public:
+	struct Desc
+	{
+	};
+
+	RaytracingGeometry(RaytracingGeometryDesc& _initializer);
+
+	//void Create(RaytracingGeometryDesc& _initializer);
+
+	AccelerationStructure* m_BLAS = nullptr;
+	Buffer* m_ScratchBuffer = nullptr;
+};
+
 class RaytracingScene
 {
 public:

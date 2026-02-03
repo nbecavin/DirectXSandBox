@@ -24,6 +24,8 @@ namespace sys
 		const MaterialDA& GetMaterialDA() const { return m_MaterialDA; }
 
 		const InstanceDataDA& GetInstance() const { return m_Instances; }
+
+		void BuilRaytracing();
 		void GatherDrawObjects();
 		void UpdateBuffers();
 

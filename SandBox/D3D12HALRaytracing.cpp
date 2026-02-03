@@ -21,7 +21,7 @@ AccelerationStructure* D3D12HAL::CreateAccelerationStructure(U32 Size)
 	return newResource;
 }
 
-void D3D12HAL::BuildAccelerationStructure()
+void D3D12HAL::BuildBLAS()
 {
 
 	//m_Device->GetRaytracingAccelerationStructurePrebuildInfo();

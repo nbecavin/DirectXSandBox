@@ -81,7 +81,7 @@ public:
 	void Dispatch(UINT ThreadGroupCountX, UINT ThreadGroupCountY, UINT ThreadGroupCountZ);
 
 	// Raytracing
-	void BuildAccelerationStructure();
+	void BuildBLAS();
 	void BuildTLAS();
 	void DispatchRays(UINT DispatchRaysX, UINT DispatchRaysY, UINT DispatchRaysZ);
 

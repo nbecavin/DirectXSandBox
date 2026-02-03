@@ -30,7 +30,7 @@ void RenderGraph::DrawFrame()
 	{
 		hal->ProfileBeginEvent(0, "Build Acceleration Structure");
 
-		hal->BuildTLAS();
+		gData.Scene->BuilRaytracing();
 
 		hal->ProfileEndEvent();
 	}
