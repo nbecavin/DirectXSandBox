@@ -23,18 +23,45 @@ AccelerationStructure* D3D12HAL::CreateAccelerationStructure(U32 Size)
 
 void D3D12HAL::BuildBLAS()
 {
-
-	//m_Device->GetRaytracingAccelerationStructurePrebuildInfo();
 	D3D12_BUILD_RAYTRACING_ACCELERATION_STRUCTURE_DESC Desc = {};
-	Desc.DestAccelerationStructureData;
-	Desc.ScratchAccelerationStructureData;
-	//Desc.SourceAccelerationStructureData;
+
 	Desc.Inputs.Type = D3D12_RAYTRACING_ACCELERATION_STRUCTURE_TYPE_BOTTOM_LEVEL;
+	Desc.Inputs.DescsLayout = D3D12_ELEMENTS_LAYOUT_ARRAY;
+
+	D3D12_RAYTRACING_GEOMETRY_DESC GeometryDesc[64]; //this is a maximum	
+	Desc.Inputs.pGeometryDescs = GeometryDesc;
+
+	int NbSubMesh = 0;
+	for (int i = 0; i < NbSubMesh; i++)
+	{
+		auto& Desc = GeometryDesc[i];
+		Desc.Type = D3D12_RAYTRACING_GEOMETRY_TYPE_TRIANGLES;
+		Desc.Flags = D3D12_RAYTRACING_GEOMETRY_FLAG_OPAQUE;
+		Desc.Triangles.Transform3x4 = 0;
+		Desc.Triangles.IndexBuffer = 0;
+		Desc.Triangles.IndexCount = 0;
+		Desc.Triangles.IndexFormat = DXGI_FORMAT_R16_UINT;
+		Desc.Triangles.VertexBuffer.StartAddress = 0;
+		Desc.Triangles.VertexBuffer.StrideInBytes = 0;
+		Desc.Triangles.VertexCount = 0;
+		Desc.Triangles.VertexFormat = DXGI_FORMAT_R32G32B32_FLOAT;
+	}
+
+	Desc.Inputs.Flags = D3D12_RAYTRACING_ACCELERATION_STRUCTURE_BUILD_FLAG_PREFER_FAST_TRACE;
+
+	D3D12_RAYTRACING_ACCELERATION_STRUCTURE_PREBUILD_INFO Info = {};
+	m_Device->GetRaytracingAccelerationStructurePrebuildInfo(&Desc.Inputs, &Info);
+
+	// Allocate scratch buffer
+	//scene->GetOrCreateScratchBuffer(Info.ScratchDataSizeInBytes + Info.UpdateScratchDataSizeInBytes);
+
+	// Allocate AS
+	//scene->GetOrCreateTLAS(Info.ResultDataMaxSizeInBytes);
+	
+	Desc.DestAccelerationStructureData = 0;
+	Desc.ScratchAccelerationStructureData = 0;
 
 	m_CommandList->BuildRaytracingAccelerationStructure(&Desc, 0, nullptr);
-		//_In_  UINT NumPostbuildInfoDescs,
-		//_In_reads_opt_(NumPostbuildInfoDescs)  const D3D12_RAYTRACING_ACCELERATION_STRUCTURE_POSTBUILD_INFO_DESC* pPostbuildInfoDescs) = 0;
-
 }
 
 void D3D12HAL::BuildTLAS()
