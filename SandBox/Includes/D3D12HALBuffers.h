@@ -6,7 +6,7 @@
 class D3D12Buffer : public Buffer
 {
 public:
-	D3D12Buffer(U32 _Size) : Buffer(_Size) {}
+	D3D12Buffer(U32 _Size, Buffer::ECpuAccess _CpuAccess) : Buffer(_Size, _CpuAccess) {}
 	ID3D12Resource* res;
 };
 
@@ -15,7 +15,8 @@ class D3D12AccelerationStructure : public AccelerationStructure
 public:
 	D3D12AccelerationStructure(U32 _Size) : AccelerationStructure(_Size) {}
 	ID3D12Resource* res;
-	D3D12_GPU_DESCRIPTOR_HANDLE View;
+	D3D12_CPU_DESCRIPTOR_HANDLE CpuView;
+	D3D12_GPU_DESCRIPTOR_HANDLE GpuView;
 };
 
 class D3D12VertexBuffer : public VertexBuffer {
@@ -26,7 +27,7 @@ private:
 public:
 	D3D12VertexBuffer() {}
 	D3D12_VERTEX_BUFFER_VIEW GetView() { return m_BufferView; }
-	virtual void Create(U32 _Size, U32 _Usage, U32 _Fmt = 0, void * _Datas = nullptr);
+	virtual void Create(U32 _Size, U32 _Stride, U32 _Usage, U32 _Fmt = 0, void * _Datas = nullptr);
 	virtual bool IsInited() { return res != NULL; }
 	virtual void operator = (D3D12VertexBuffer& _buffer)
 	{
@@ -46,7 +47,7 @@ private:
 public:
 	D3D12IndexBuffer() {}
 	D3D12_INDEX_BUFFER_VIEW GetView() { return m_BufferView; }
-	virtual void Create(U32 _Size, U32 _Usage, U32 _Fmt = FMT_IDX_16, void * _Datas = nullptr);
+	virtual void Create(U32 _Size, U32 _Stride, U32 _Usage, U32 _Fmt = FMT_IDX_16, void * _Datas = nullptr);
 	virtual bool IsInited() { return res != NULL; }
 	virtual void operator = (D3D12IndexBuffer& _buffer)
 	{

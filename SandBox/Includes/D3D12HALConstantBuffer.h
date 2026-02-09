@@ -17,7 +17,7 @@ public:
 	D3D12_GPU_DESCRIPTOR_HANDLE GetGPUDescriptorHandle() {
 		return m_GpuBase;
 	}
-	virtual void Create(U32 _Size, U32 _Usage, U32 _Fmt, void * _Datas) {}
+	virtual void Create(U32 _Size, U32 _Stride, U32 _Usage, U32 _Fmt, void * _Datas) {}
 	virtual void Create(U32 _Size);
 	virtual bool IsInited() { return res != NULL; }
 	virtual void operator = (D3D12ConstantBuffer& _buffer)

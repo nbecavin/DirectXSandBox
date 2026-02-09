@@ -6,6 +6,11 @@
 
 #define PI static_cast<float>(M_PI)
 
+inline U32 Align(U32 uLocation, UINT uAlign)
+{
+	return ((uLocation + (U64)(uAlign - 1)) & ~((U64)(uAlign - 1)));
+}
+
 inline float Cos(float a) { return cosf(a); }
 inline float Sin(float a) { return sinf(a); }
 inline float Clamp(float a,float min,float max) { a=(a<min)?min:a; a=(a>max)?max:a; return a; }

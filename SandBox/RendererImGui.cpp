@@ -94,7 +94,7 @@ void Renderer::DrawImGUI()
 	{
 		//if (m_ImGuiVB) DeleteVertexBuffer(m_ImGuiVB);
 		U32 byteWidth = (drawData->TotalVtxCount + 5000) * sizeof(ImDrawVert);
-		m_ImGuiVB = GetHAL()->CreateVertexBuffer(byteWidth, 0, nullptr);
+		m_ImGuiVB = GetHAL()->CreateVertexBuffer(byteWidth, sizeof(ImDrawVert), 0, nullptr);
 	}
 	if (!m_ImGuiIB || ((m_ImGuiIB->GetSize() / 2) < drawData->TotalIdxCount))
 	{

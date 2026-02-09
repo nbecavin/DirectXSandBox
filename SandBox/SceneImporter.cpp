@@ -10,6 +10,7 @@
 #include <Mesh.h>
 #include <Bitmap.h>
 #include <Material.h>
+#include <RaytracingScene.h>
 
 #pragma comment(lib, "../Tools/assimp/lib/x64/assimp-vc143-mt.lib")
 
@@ -253,7 +254,7 @@ void Mesh::LoadFromAiMesh(std::filesystem::path directory, aiMesh* importMesh, a
 			pVtx.uv[1] = importMesh->mTextureCoords[0][i].y;
 		}
 		//	UINT byteSize = (UINT)m_pVertexBufferArray[i].SizeBytes;
-		pItem->VB = gData.Rdr->GetHAL()->CreateVertexBuffer(vertexByteSize, 0, pVertices);
+		pItem->VB = gData.Rdr->GetHAL()->CreateVertexBuffer(vertexByteSize, vertexStride, 0, pVertices);
 		delete [] pVertices;
 	}
 
@@ -306,6 +307,13 @@ void Mesh::LoadFromAiMesh(std::filesystem::path directory, aiMesh* importMesh, a
 	pMat->LoadFromAiMaterial(directory, importMaterial);
 
 	// Build raytracing acceleration structures
+	{
+		RaytracingGeometryDesc desc = {};
+		desc.Mode = RaytracingGeometryDesc::Type::Static;
+		desc.Vertices = pItem->VB;
+		desc.Indices = pItem->IB;
+		pItem->AS = new RaytracingGeometry(desc);
+	}
 	//gData.Rdr->BuildAccelerationStructure(SubSetsDA);
 }
 

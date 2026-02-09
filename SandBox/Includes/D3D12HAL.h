@@ -39,11 +39,11 @@ public:
 	VertexDeclaration *	CreateVertexDecl(VertexElement* Decl);
 	ShaderKernel* CreateShaderResource(ID3DBlob * pCode);
 	void CreateTexture(Bitmap * _Bm);
-	VertexBuffer* CreateVertexBuffer(U32 _Size, U32 _Usage, void* _Datas);
+	VertexBuffer* CreateVertexBuffer(U32 _Size, U32 _Stride, U32 _Usage, void* _Datas);
 	IndexBuffer* CreateIndexBuffer(U32 _Size, U32 _Usage, U32 _Fmt, void* _Datas);
 	ConstantBuffer* CreateConstantBuffer(U32 _Size);
 	AccelerationStructure* CreateAccelerationStructure(U32 _Size);
-	Buffer* CreateBuffer(U32 _Size);
+	Buffer* CreateBuffer(U32 _Size, Buffer::ECpuAccess _CpuAccess);
 
 	void InitShaders();
 	void SetScissorRect(U32 left, U32 right, U32 top, U32 bottom);
@@ -72,6 +72,7 @@ public:
 	void SetRasterizerState(RasterizerDesc& Desc);
 	void SetBlendState(BlendDesc& desc);
 	void SetSampler(U32 Slot, EShaderType Type, SamplerDesc& Sampler);
+	void SetAccelerationStructure(U32 Slot, EShaderType Type, AccelerationStructure* AS);
 	void SetConstantBuffer(U32 Slot, EShaderType Type, ConstantBuffer* CBV);
 	void SetShaderResource(U32 Slot, EShaderType Type, Bitmap* Texture);
 	void SetUAV(U32 Slot, Bitmap* Texture);
@@ -81,7 +82,7 @@ public:
 	void Dispatch(UINT ThreadGroupCountX, UINT ThreadGroupCountY, UINT ThreadGroupCountZ);
 
 	// Raytracing
-	void BuildBLAS();
+	void BuildBLAS(RaytracingGeometry* Geometry);
 	void BuildTLAS();
 	void DispatchRays(UINT DispatchRaysX, UINT DispatchRaysY, UINT DispatchRaysZ);
 

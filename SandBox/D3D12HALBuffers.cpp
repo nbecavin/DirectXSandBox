@@ -2,10 +2,44 @@
 #include <D3D12HALBuffers.h>
 #include <Renderer.h>
 
-VertexBuffer* D3D12HAL::CreateVertexBuffer(U32 _Size, U32 _Usage, void* _Datas)
+Buffer* D3D12HAL::CreateBuffer(U32 _Size, Buffer::ECpuAccess _CpuAccess)
+{
+	U32 alignedSize = Align(_Size, 256);
+
+	ID3D12Device* Device = GetD3D12HALRef().GetDevice();
+	D3D12Buffer* buffer = new D3D12Buffer(alignedSize, _CpuAccess);
+
+	CD3DX12_RESOURCE_DESC desc = CD3DX12_RESOURCE_DESC::Buffer(alignedSize);
+
+	D3D12_RESOURCE_STATES resource_state;
+	CD3DX12_HEAP_PROPERTIES heap;
+
+	switch (_CpuAccess)
+	{
+	case Buffer::CpuAccess_Read:
+		heap = CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_READBACK);
+		resource_state = D3D12_RESOURCE_STATE_COPY_DEST;
+		break;
+	case Buffer::CpuAccess_Write:
+		heap = CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_UPLOAD);
+		resource_state = D3D12_RESOURCE_STATE_GENERIC_READ;
+		break;
+	default:    // kGfxCpuAccess_None
+		heap = CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_DEFAULT);
+		resource_state = D3D12_RESOURCE_STATE_COMMON;
+		desc.Flags = D3D12_RESOURCE_FLAG_ALLOW_UNORDERED_ACCESS;
+		break;
+	}
+
+	Device->CreateCommittedResource(&heap, D3D12_HEAP_FLAG_NONE, &desc, resource_state, nullptr, IID_PPV_ARGS(&buffer->res));
+	
+	return buffer;
+}
+
+VertexBuffer* D3D12HAL::CreateVertexBuffer(U32 _Size, U32 _Stride, U32 _Usage, void* _Datas)
 {
 	D3D12VertexBuffer* vb = new D3D12VertexBuffer();
-	vb->Create(_Size, _Usage, 0, _Datas);
+	vb->Create(_Size, _Stride, _Usage, 0, _Datas);
 	if (vb->IsInited())
 	{
 		VertexBuffer* p = (VertexBuffer*)vb;
@@ -18,7 +52,7 @@ VertexBuffer* D3D12HAL::CreateVertexBuffer(U32 _Size, U32 _Usage, void* _Datas)
 IndexBuffer* D3D12HAL::CreateIndexBuffer(U32 _Size, U32 _Usage, U32 _Fmt, void* _Datas)
 {
 	D3D12IndexBuffer* ib = new D3D12IndexBuffer();
-	ib->Create(_Size, _Usage, _Fmt, _Datas);
+	ib->Create(_Size, (_Fmt == FMT_IDX_16) ? 2 : 4, _Usage, _Fmt, _Datas);
 	if (ib->IsInited())
 	{
 		IndexBuffer* p = (IndexBuffer*)ib;
@@ -28,7 +62,7 @@ IndexBuffer* D3D12HAL::CreateIndexBuffer(U32 _Size, U32 _Usage, U32 _Fmt, void* 
 	return nullptr;
 }
 
-void D3D12VertexBuffer::Create(U32 _Size, U32 _Usage, U32 _Fmt, void * _Datas)
+void D3D12VertexBuffer::Create(U32 _Size, U32 _Stride, U32 _Usage, U32 _Fmt, void * _Datas)
 {
 	HRESULT hr;
 	ID3D12Device * Device = GetD3D12HALRef().GetDevice();
@@ -59,7 +93,7 @@ void D3D12VertexBuffer::Create(U32 _Size, U32 _Usage, U32 _Fmt, void * _Datas)
 		//bufferDesc.MiscFlags = 0;
 	}
 	
-	m_BufferView.StrideInBytes = 0;
+	m_BufferView.StrideInBytes = _Stride;
 	m_BufferView.SizeInBytes = _Size;
 	Size = m_BufferView.SizeInBytes;
 	//D3D12_HEAP_PROPERTIES
@@ -68,7 +102,7 @@ void D3D12VertexBuffer::Create(U32 _Size, U32 _Usage, U32 _Fmt, void * _Datas)
 		&CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_UPLOAD),
 		D3D12_HEAP_FLAG_NONE,
 		&CD3DX12_RESOURCE_DESC::Buffer(_Size),
-		D3D12_RESOURCE_STATE_GENERIC_READ,
+		D3D12_RESOURCE_STATE_COMMON,
 		nullptr,
 		IID_PPV_ARGS(&res));
 
@@ -83,7 +117,7 @@ void D3D12VertexBuffer::Create(U32 _Size, U32 _Usage, U32 _Fmt, void * _Datas)
 	}
 }
 
-void D3D12IndexBuffer::Create(U32 _Size, U32 _Usage, U32 _Fmt, void * _Datas)
+void D3D12IndexBuffer::Create(U32 _Size, U32 _Stride, U32 _Usage, U32 _Fmt, void * _Datas)
 {
 	HRESULT hr;
 	ID3D12Device * Device = GetD3D12HALRef().GetDevice();
@@ -126,6 +160,8 @@ void D3D12IndexBuffer::Create(U32 _Size, U32 _Usage, U32 _Fmt, void * _Datas)
 	m_BufferView.BufferLocation = res->GetGPUVirtualAddress();
 	m_BufferView.Format = (_Fmt == FMT_IDX_16) ? DXGI_FORMAT_R16_UINT : DXGI_FORMAT_R32_UINT;
 	m_BufferView.SizeInBytes = _Size;
+
+	res->SetName(L"Buffer");
 
 	if (_Datas)
 	{

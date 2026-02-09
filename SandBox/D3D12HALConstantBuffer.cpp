@@ -4,29 +4,6 @@
 
 static const int sConstantBufferSize = 16 * 1024 * 1024;
 
-U32 Align(U32 uLocation, UINT uAlign)
-{
-	return ((uLocation + (U64)(uAlign - 1)) & ~((U64)(uAlign - 1)));
-}
-
-Buffer* D3D12HAL::CreateBuffer(U32 _Size)
-{
-	U32 alignedSize = Align(_Size, 256);
-
-	ID3D12Device* Device = GetD3D12HALRef().GetDevice();
-	D3D12Buffer* buffer = new D3D12Buffer(alignedSize);
-
-	Device->CreateCommittedResource(
-		&CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_UPLOAD),
-		D3D12_HEAP_FLAG_NONE,
-		&CD3DX12_RESOURCE_DESC::Buffer(alignedSize),
-		D3D12_RESOURCE_STATE_GENERIC_READ,
-		nullptr,
-		IID_PPV_ARGS(&buffer->res));
-
-	return buffer;
-}
-
 ConstantBuffer* D3D12HAL::CreateConstantBuffer(U32 _Size)
 {
 	D3D12ConstantBuffer* cb = new D3D12ConstantBuffer();

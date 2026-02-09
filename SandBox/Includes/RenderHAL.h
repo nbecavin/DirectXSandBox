@@ -5,6 +5,7 @@
 #include <Bitmap.h>
 #include <ShaderConstants.h>
 #include <RendererShader.h>
+#include <RaytracingScene.h>
 #include <RendererPipelineState.h>
 
 struct TextureLink
@@ -44,7 +45,7 @@ namespace sys {
 		virtual void MainLoop();
 
 		U32 GetFrameIndex() const { return m_FrameIndex; }
-		void AdvanceFrameIndex() { m_FrameIndex++; }
+		void AdvanceFrameIndex() { m_FrameIndex++; m_RemainingASThisFrame = m_BudgetASPerFrame; }
 
 		// Push Event marker on current CommandList
 		virtual void ProfileBeginEvent(U32 _ColorRGBA, const char* _Message) = 0;
@@ -62,11 +63,11 @@ namespace sys {
 		}
 		virtual void ProfileEndEvent() = 0;
 
-		virtual VertexBuffer* CreateVertexBuffer(U32 _Size, U32 _Usage, void* _Datas) = 0;
+		virtual VertexBuffer* CreateVertexBuffer(U32 _Size, U32 _Stride, U32 _Usage, void* _Datas) = 0;
 		virtual IndexBuffer* CreateIndexBuffer(U32 _Size, U32 _Usage, U32 _Fmt, void* _Datas) = 0;
 		virtual VertexDeclaration* CreateVertexDecl(VertexElement* Decl) = 0;
 		virtual void CreateTexture(Bitmap* _Bmap) = 0;
-		virtual Buffer* CreateBuffer(U32 _Size) = 0;
+		virtual Buffer* CreateBuffer(U32 _Size, Buffer::ECpuAccess _CpuAccess) = 0;
 		virtual AccelerationStructure* CreateAccelerationStructure(U32 _Size) = 0;
 		virtual ConstantBuffer* CreateConstantBuffer(U32 _Size) = 0;
 
@@ -79,6 +80,7 @@ namespace sys {
 		virtual void SetStreamSource(U32 StreamNumber, VertexBuffer* Buffer, U32 Offset, U32 Stride) = 0;
 		virtual void SetIndices(IndexBuffer* Buffer, U32 _Fmt) = 0;
 
+		virtual void SetAccelerationStructure(U32 Slot, EShaderType Type, AccelerationStructure* AS);
 		virtual void SetConstantBuffer(U32 Slot, EShaderType Type, ConstantBuffer* CBV) = 0;
 		virtual void SetShaderResource(U32 Slot, EShaderType Type, Bitmap* Texture);
 		virtual void SetUAV(U32 Slot, Bitmap* Texture);
@@ -94,7 +96,7 @@ namespace sys {
 		virtual void SetSampler(U32 Slot, EShaderType Type, SamplerDesc& Sampler) = 0;
 		virtual void SetBlendState(BlendDesc& desc) = 0;
 
-		virtual void BuildBLAS() = 0;
+		virtual void BuildBLAS(RaytracingGeometry* Geometry) = 0;
 		virtual void BuildTLAS() = 0;
 
 		virtual ShaderKernel* CreateKernel(const char* src, const char* epoint, EShaderType type);
@@ -108,6 +110,8 @@ namespace sys {
 	protected:
 		int	SizeX, SizeY;
 		int m_FrameIndex;
+		int m_RemainingASThisFrame = m_BudgetASPerFrame;
+		int m_BudgetASPerFrame = 1;
 
 		VertexBuffer* m_FullscreenQuadVB;
 		VertexDeclaration* m_ScreenVertexDecl;

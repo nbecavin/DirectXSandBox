@@ -14,6 +14,7 @@ enum PrimitiveType
 
 using VertexBuffer = LockableBuffer;
 using IndexBuffer = LockableBuffer;
+class RaytracingGeometry;
 
 struct VertexElement
 {

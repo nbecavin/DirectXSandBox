@@ -67,7 +67,7 @@ void GpuScene::GatherDrawObjects()
 				Mesh::MeshSubSet* pMesh = &mesh->SubSetsDA[i];
 
 				instance->instanceCst.WorldMatrix = mesh->GetNode();
-				instance->geometry.AS = nullptr;
+				instance->geometry.AS = pMesh->AS;
 				instance->geometry.VB = pMesh->VB;
 				instance->geometry.IB = pMesh->IB;
 				instance->geometry.IndexStart = pMesh->IndexStart;
@@ -151,6 +151,12 @@ void GpuScene::BuilRaytracing()
 {
 	sys::RenderHAL* hal = gData.Rdr->GetHAL();
 
+	// Build bottom level acceleration structure
+	for (int id = 0; id < m_Instances.GetSize(); id++)
+	{
+		InstanceData& instance = m_Instances[id];
+		hal->BuildBLAS(instance.geometry.AS);
+	}
 
 	// Build top level acceleration structure
 	hal->BuildTLAS();

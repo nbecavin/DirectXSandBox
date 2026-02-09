@@ -5,7 +5,15 @@ class AccelerationStructure;
 
 struct RaytracingGeometryDesc
 {
+	enum class Type
+	{
+		Static,
+		Refittable
+	};
 
+	Type Mode;
+	Buffer* Vertices;
+	Buffer* Indices;
 };
 
 class RaytracingGeometry
@@ -17,10 +25,13 @@ public:
 
 	RaytracingGeometry(RaytracingGeometryDesc& _initializer);
 
-	//void Create(RaytracingGeometryDesc& _initializer);
+	void GetOrCreateScratchBuffer(U32 byteSize);
+	void GetOrCreateAS(U32 byteSize);
 
-	AccelerationStructure* m_BLAS = nullptr;
+	AccelerationStructure* m_AS = nullptr;
 	Buffer* m_ScratchBuffer = nullptr;
+
+	RaytracingGeometryDesc m_Desc;
 };
 
 class RaytracingScene

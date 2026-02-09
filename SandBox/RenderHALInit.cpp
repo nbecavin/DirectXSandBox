@@ -183,7 +183,7 @@ namespace sys
 			svQuad[3].tex.Set(1.0f, 1.0f);
 
 			// Generate runtime buffers
-			m_FullscreenQuadVB = CreateVertexBuffer(sizeof(svQuad), 0, NULL);
+			m_FullscreenQuadVB = CreateVertexBuffer(sizeof(svQuad), sizeof(SCREEN_VERTEX), 0, NULL);
 
 			SCREEN_VERTEX* pVtxData;
 			if (m_FullscreenQuadVB && m_FullscreenQuadVB->Lock(0, 0, (void**)&pVtxData) == true)

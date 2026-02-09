@@ -39,14 +39,14 @@ void main(uint2 did : SV_DispatchThreadID)
 			break;
 		}
 	}
-	switch(q.CommittedStatus())
-    {
-	case COMMITTED_TRIANGLE_HIT: //Closest
-		color = float3(0,1,0);
-		break;
-	case COMMITTED_NOTHING: //Miss
+	if(q.CommittedStatus()==COMMITTED_TRIANGLE_HIT) //Closest
+	{
+		float2 b = q.CommittedTriangleBarycentrics();
+		color = float3(1 - b.x - b.y, b.x, b.y);
+	}
+	else //COMMITTED_NOTHING //Miss
+	{
 		color = float3(1,0,0);
-		break;
 	}
 
 	Output[did] = float4(color, 1);

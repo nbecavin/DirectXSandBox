@@ -6,6 +6,7 @@
 
 class aiMesh;
 class aiMaterial;
+class RaytracingGeometry;
 
 class Mesh : public GraphObject
 {
@@ -19,7 +20,7 @@ public:
 	void LoadFromAiMesh(std::filesystem::path directory, aiMesh* importMesh, aiMaterial* importMaterial);
 
 	struct MeshSubSet {
-		Bitmap*			AS = nullptr;
+		RaytracingGeometry*	AS = nullptr;
 		VertexBuffer *	VB = nullptr;
 		IndexBuffer *	IB = nullptr;
 		U32				MtlId;

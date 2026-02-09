@@ -19,6 +19,10 @@ namespace sys {
 	{
 	}
 
+	void RenderHAL::SetAccelerationStructure(U32 Slot, EShaderType Type, AccelerationStructure* AS)
+	{
+	}
+
 	void RenderHAL::SetShaderResource(U32 Slot, EShaderType Type, Bitmap* Texture)
 	{
 	}

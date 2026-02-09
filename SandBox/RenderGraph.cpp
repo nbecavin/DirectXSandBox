@@ -67,6 +67,7 @@ void RenderGraph::DrawFrame()
 		U32 threadGroupX = (sceneX + 7) / 8;
 		U32 threadGroupY = (sceneY + 7) / 8;
 
+		hal->SetAccelerationStructure(0, SHADER_TYPE_COMPUTE, gData.Scene->GetRaytracingScene()->m_TLAS);
 		hal->SetUAV(0, hdrRenderTarget);
 		hal->BindComputePipelineState(ShaderMap::RaytracingDebugInlineRGS);
 		hal->Dispatch(threadGroupX, threadGroupY, 1);

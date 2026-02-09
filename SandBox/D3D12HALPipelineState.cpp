@@ -240,6 +240,14 @@ void D3D12HAL::SetRasterizerState(RasterizerDesc& Desc)
 	m_CurrentGraphicsPSO.RasterizerState = Desc.desc;
 }
 
+void D3D12HAL::SetAccelerationStructure(U32 Slot, EShaderType Type, AccelerationStructure* AS)
+{
+	if (AS)
+	{
+		m_CurrentSRV[Type][Slot] = AS->AsPtr<D3D12AccelerationStructure>()->CpuView;
+	}
+}
+
 void D3D12HAL::SetShaderResource(U32 Slot, EShaderType Type, Bitmap* Texture)
 {
 	TextureLink* tex = reinterpret_cast<TextureLink*>(Texture->GetBinHwResId());
@@ -248,6 +256,10 @@ void D3D12HAL::SetShaderResource(U32 Slot, EShaderType Type, Bitmap* Texture)
 		if (Type == SHADER_TYPE_PIXEL)
 		{
 			m_CurrentSRV[0][Slot] = tex->m_SRV;
+		}
+		else if (Type == SHADER_TYPE_COMPUTE)
+		{
+			m_CurrentSRV[SHADER_TYPE_COMPUTE][Slot] = tex->m_SRV;
 		}
 		else if (Type == SHADER_TYPE_VERTEX)
 		{
