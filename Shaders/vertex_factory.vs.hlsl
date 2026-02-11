@@ -15,6 +15,7 @@ VS_Output MeshFactory(
 	opos = mul( wpos, Camera.viewMatrix );
 	opos = mul( opos, Camera.projMatrix );
 	Out.position = opos;
+	Out.world_position = wpos;
 		
 	float3 lnormal;
 	lnormal.xy = normal.xy;
@@ -34,8 +35,6 @@ VS_Output MeshFactory(
 	Out.color.w = 1;
 		
 	Out.uv = uv;
-
-	Out.eyevec.xyz = Camera.eyeWorld - wpos.xyz;
-		
+	
 	return Out;
 }

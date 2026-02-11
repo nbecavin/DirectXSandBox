@@ -16,7 +16,7 @@ struct CameraConstant
 	Mat4x4	ViewMatrix;
 	Mat4x4	ProjMatrix;
 	Mat4x4	InvProjMatrix;
-	Mat4x4	InvViewProjMatrix;
+	Mat4x4	InvViewMatrix;
 	Vec4f	EyeWorld;
 	Vec4f   dummy[3];
 };

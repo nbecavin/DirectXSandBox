@@ -253,18 +253,7 @@ void D3D12HAL::SetShaderResource(U32 Slot, EShaderType Type, Bitmap* Texture)
 	TextureLink* tex = reinterpret_cast<TextureLink*>(Texture->GetBinHwResId());
 	if ((U64)tex != BM_INVALIDHWRESID)
 	{
-		if (Type == SHADER_TYPE_PIXEL)
-		{
-			m_CurrentSRV[0][Slot] = tex->m_SRV;
-		}
-		else if (Type == SHADER_TYPE_COMPUTE)
-		{
-			m_CurrentSRV[SHADER_TYPE_COMPUTE][Slot] = tex->m_SRV;
-		}
-		else if (Type == SHADER_TYPE_VERTEX)
-		{
-			m_CurrentSRV[1][Slot] = tex->m_SRV;
-		}
+		m_CurrentSRV[Type][Slot] = tex->m_SRV;
 	}
 }
 
@@ -280,27 +269,13 @@ void D3D12HAL::SetUAV(U32 Slot, Bitmap* Texture)
 void D3D12HAL::SetConstantBuffer(U32 Slot, EShaderType Type, ConstantBuffer* CBV)
 {
 	D3D12ConstantBuffer* cbv = (D3D12ConstantBuffer*)CBV;
-	if (Type == SHADER_TYPE_PIXEL)
-	{
-		m_CurrentCBV[0][Slot] = cbv->GetCPUDescriptorHandle();
-	}
-	else if (Type == SHADER_TYPE_VERTEX)
-	{
-		m_CurrentCBV[1][Slot] = cbv->GetCPUDescriptorHandle();
-	}
+	m_CurrentCBV[Type][Slot] = cbv->GetCPUDescriptorHandle();
 }
 
 void D3D12HAL::SetSampler(U32 Slot, EShaderType Type, SamplerDesc& Sampler)
 {
 	D3D12SamplerState& state = m_SamplerStateCache.Get(Sampler);
-	if (Type == SHADER_TYPE_PIXEL)
-	{
-		m_CurrentSampler[0][Slot] = state.GetCPUDescriptorHandle();
-	}
-	else if (Type == SHADER_TYPE_VERTEX)
-	{
-		m_CurrentSampler[1][Slot] = state.GetCPUDescriptorHandle();
-	}
+	m_CurrentSampler[Type][Slot] = state.GetCPUDescriptorHandle();
 }
 
 void D3D12HAL::SetBlendState(BlendDesc& Blend)

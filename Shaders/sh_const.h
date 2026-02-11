@@ -29,10 +29,10 @@ struct ScreenVertexVsOutput
 struct VS_Output
 {
 	float4 position : SV_POSITION;
+	float3 world_position : WORLD_POSITION;
 	float4 color	: COLOR0;
 	float3x3 tbn	: TBN;
 	float2 uv		: TEXCOORD0;
-	float3 eyevec	: TEXCOORD1;
 };
 
 //
@@ -56,7 +56,7 @@ struct CameraParameters
 	float4x4 viewMatrix;
 	float4x4 projMatrix;
 	float4x4 invProjMatrix;
-	float4x4 invViewProjMatrix;
+	float4x4 invViewMatrix;
 	float4 eyeWorld;
 	float4 dummy0, dummy1, dummy2;
 };
@@ -93,6 +93,16 @@ float4x4 SetMatrix4x4( float4 u, float4 v, float4 w, float4 i )
 						u.y, v.y, w.y, i.y,
 						u.z, v.z, w.z, i.z,
 						u.w, v.w, w.w, i.w );
+}
+
+float2 UVToNDC(float2 uv)
+{
+	return uv * float2(2.0, -2.0) + float2(-1.0, 1.0);
+}
+
+float2 NDCToUV(float2 ndc)
+{
+	return ndc * float2(0.5, -0.5) + float2(0.5, 0.5);
 }
 
 //

@@ -86,6 +86,7 @@ namespace sys {
 		camCst->EyeWorld = m_Camera->GetWorldPosition();
 		XMVECTOR det;
 		camCst->InvProjMatrix = XMMatrixTranspose(XMMatrixInverse(&det, proj));
+		camCst->InvViewMatrix = XMMatrixTranspose(XMMatrixInverse(&det, view));
 		m_CameraConstant->Unlock();
 
 		GlobalParameters* globalParam;
@@ -95,8 +96,10 @@ namespace sys {
 
 		hal->SetConstantBuffer(0, SHADER_TYPE_VERTEX, m_GlobalConstant);
 		hal->SetConstantBuffer(0, SHADER_TYPE_PIXEL, m_GlobalConstant);
+		hal->SetConstantBuffer(0, SHADER_TYPE_COMPUTE, m_GlobalConstant);
 		hal->SetConstantBuffer(9, SHADER_TYPE_VERTEX, m_CameraConstant);
 		hal->SetConstantBuffer(9, SHADER_TYPE_PIXEL, m_CameraConstant);
+		hal->SetConstantBuffer(9, SHADER_TYPE_COMPUTE, m_CameraConstant);
 
 		gData.Rdr->GetRenderGraph()->DrawFrame();
 

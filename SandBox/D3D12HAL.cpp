@@ -132,19 +132,13 @@ void D3D12HAL::Init(int sizeX, int sizeY, sys::Renderer* owner)
 	int cy = (int)(rcWindow.bottom - rcWindow.top);
 	SetWindowPos(sys::pc::hWnd, 0, 0, 0, cx, cy, SWP_NOZORDER | SWP_NOMOVE);
 
-#if 1 //defined(_DEBUG)
+#if defined(_DEBUG)
 	// Enable the D3D12 debug layer.
 	{
 		ComPtr<ID3D12Debug> debugController;
 		if (SUCCEEDED(D3D12GetDebugInterface(IID_PPV_ARGS(&debugController))))
 		{
 			debugController->EnableDebugLayer();
-		}
-		ComPtr<ID3D12Debug1> debugController1;
-		if (SUCCEEDED(debugController->QueryInterface(IID_PPV_ARGS(&debugController1))))
-		{
-			debugController1->EnableDebugLayer();
-			debugController1->SetEnableGPUBasedValidation(false);
 		}
 	}
 #endif
