@@ -5,6 +5,7 @@
 #include <assimp/scene.h>
 #include <assimp/postprocess.h>
 #include <assimp/Importer.hpp>
+#include <assimp/version.h>
 #include <filesystem>
 
 #include <Mesh.h>
@@ -49,6 +50,63 @@ void VisitNode(aiNode* pNode, FMesh&& meshFunc)
 	}
 }
 
+enum class SourceApp { BLENDER, MAX, UNREAL };
+
+aiMatrix4x4 GetCorrection(SourceApp source)
+{
+	aiMatrix4x4 correction;
+	switch (source) {
+	case SourceApp::BLENDER:
+	case SourceApp::MAX:
+		// 180-degree flip on Y to turn -Z forward into +Z forward
+		aiMatrix4x4::RotationY(AI_MATH_PI, correction);
+		break;
+	case SourceApp::UNREAL:
+		// 90-degree flip to turn +X forward into +Z forward
+		aiMatrix4x4::RotationY(AI_MATH_PI * 0.5f, correction);
+		break;
+	}
+	return correction;
+}
+
+SourceApp DetectSource(const aiScene* scene)
+{
+	if (scene->mMetaData)
+	{
+		if (scene->mMetaData) {
+			for (unsigned int i = 0; i < scene->mMetaData->mNumProperties; ++i) {
+				MESSAGE("Key: %s", scene->mMetaData->mKeys[i].C_Str());
+			}
+		}
+
+		aiString generator;
+		if (scene->mMetaData->Get("SourceAsset_Generator", generator))
+		{
+			std::string genStr = generator.C_Str();
+			if (genStr.find("Blender") != std::string::npos) return SourceApp::BLENDER;
+			if (genStr.find("Unreal") != std::string::npos)  return SourceApp::UNREAL;
+			if (genStr.find("3ds Max") != std::string::npos) return SourceApp::MAX;
+			if (genStr.find("FBX SDK") != std::string::npos) return SourceApp::MAX;
+		}
+	}
+
+	// Default fallback (usually Blender/Max style for glTF)
+	return SourceApp::BLENDER;
+}
+
+aiMatrix4x4 GetWorldTransform(aiNode* node)
+{
+	aiMatrix4x4 transform = node->mTransformation;
+	aiNode* parent = node->mParent;
+
+	while (parent != nullptr) {
+		// Multiply by parent transform (Parent * Child order)
+		transform = parent->mTransformation * transform;
+		parent = parent->mParent;
+	}
+	return transform;
+};
+
 void SceneImporter::LoadScene(std::string& filepath)
 {
 	std::string with_alias = "..\\GameDB\\" + filepath;
@@ -57,13 +115,15 @@ void SceneImporter::LoadScene(std::string& filepath)
 	std::string extension = str_toupper(directory.extension().string());
 	//ASSIMP
 	{
+		MESSAGE("Importing %s with ASSIMP %d.%d", filepath.c_str(), aiGetVersionMajor(), aiGetVersionMinor());
+
 		directory.remove_filename();
 
 		Assimp::Importer importer;
 
 		const aiScene* pScene = importer.ReadFile(with_alias,
+			aiProcess_ConvertToLeftHanded |
 			aiProcess_CalcTangentSpace |
-			aiProcess_FlipUVs |
 			aiProcess_RemoveRedundantMaterials |
 			aiProcess_GenUVCoords |
 			aiProcess_TransformUVCoords |
@@ -74,29 +134,15 @@ void SceneImporter::LoadScene(std::string& filepath)
 
 		if (pScene)
 		{
+			SourceApp sourceApp = DetectSource(pScene);
+
+			/*
 			for (int i = 0; i < pScene->mNumMaterials; i++)
 			{
 				aiMaterial* pAiMaterial = pScene->mMaterials[i];
 				MESSAGE(pAiMaterial->GetName().C_Str());
-
-
-				/*
-				for (int t = 0; t < pAiMaterial->GetTextureCount(aiTextureType_DIFFUSE); t++)
-				{
-					aiString tex;
-					{
-						pAiMaterial->GetTexture(aiTextureType_DIFFUSE, t, &tex, nullptr, nullptr, nullptr, nullptr, nullptr);
-						OutputDebugString(tex.C_Str());
-						OutputDebugString("\n");
-					}
-					{
-						pAiMaterial->GetTexture(aiTextureType_NORMALS, t, &tex, nullptr, nullptr, nullptr, nullptr, nullptr);
-						OutputDebugString(tex.C_Str());
-						OutputDebugString("\n");
-					}
-				}
-				*/
 			}
+			*/
 
 			auto Translate = [](const aiMatrix4x4& _in) -> Mat4x4
 				{
@@ -146,25 +192,32 @@ void SceneImporter::LoadScene(std::string& filepath)
 					MESSAGE("Camera %d %s", i, pCamera->mName.C_Str());
 
 					aiNode* cameraNode = pScene->mRootNode->FindNode(pCamera->mName);
-					aiMatrix4x4 transform = cameraNode->mTransformation;
-					//transform = aiMatrix4x4();
-					aiVector3D cameraPosition = transform * pCamera->mPosition;
-					aiVector3D cameraTarget = transform * pCamera->mLookAt;
-					//cameraPosition = pCamera->mPosition;
-					//cameraTarget = pCamera->mLookAt;
+					aiMatrix4x4 worldMatrix = GetWorldTransform(cameraNode);
+
+					// 1. Position from matrix
+					aiVector3D worldPos(worldMatrix.a4, worldMatrix.b4, worldMatrix.c4);
+
+					// 2. Setup Correction
+					aiMatrix4x4 correction = GetCorrection(sourceApp);
+
+					// 3. Transform LookAt and Up by the World Rotation AND the Correction
+					aiMatrix3x3 worldRot(worldMatrix);
+					aiMatrix3x3 corrRot(correction);
+
+					// Combine: WorldRotation * LocalCorrection
+					aiMatrix3x3 finalRotation = worldRot * corrRot;
+
+					aiVector3D finalForward = finalRotation * pCamera->mLookAt;
+					aiVector3D finalUp = finalRotation * pCamera->mUp;
+
+					// 4. Final LH View Matrix
+					aiVector3D worldTarget = worldPos + finalForward;
 
 					Camera* cam = new Camera();
 					sys::RegisterCameraObject(cam);
 					cam->SetName(std::string(pCamera->mName.C_Str()));
-					cam->SetWorldPosition(Vec4f(cameraPosition.x, cameraPosition.y, cameraPosition.z, 1.f));
-					cam->SetWorldTarget(Vec4f(cameraTarget.x, cameraTarget.y, cameraTarget.z, 1.f));
-
-					////find the transformation matrix corresponding to the camera node
-					//aiNode* rootNode = pScene->mRootNode;
-					//aiNode* cameraNode = pScene->mRootNode->FindNode(pCamera->mName);
-					//aiMatrix4x4 cameraTransformationMatrix = cameraNode->mTransformation;					
-					//auto worldPosition = cameraTransformationMatrix * pCamera->mPosition;
-					//MESSAGE("kjlkj");
+					cam->SetWorldPosition(Vec4f(worldPos.x, worldPos.y, worldPos.z, 1.f));
+					cam->SetWorldTarget(Vec4f(worldTarget.x, worldTarget.y, worldTarget.z, 1.f));
 				}
 
 				// Set Camera

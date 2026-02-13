@@ -18,7 +18,7 @@ void Camera::Update()
 	XMVECTOR eye = *(XMVECTOR*)&m_WorldPos;
 	XMVECTOR at = *(XMVECTOR*)&m_WorldTarget;
 	XMVECTOR up = XMVectorSet(0,1,0,0);
-	m_Node = *reinterpret_cast<Mat4x4*>(&XMMatrixLookAtRH(eye,at,up));
+	m_Node = XMMatrixLookAtLH(eye,at,up);
 #endif
 }
 

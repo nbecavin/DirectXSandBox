@@ -20,8 +20,8 @@ void CameraFree::Update(F32 dTime)
 	float up = input->GetAction(0,INPUT_ACTION_MOVE_UP);
 	float down = input->GetAction(0,INPUT_ACTION_MOVE_DOWN);
 
-	float x = left-right;
-	float y = up-down;
+	float x = right-left;
+	float y = down-up;
 	float z = forward-backward;
 
 	float speed = dTime*4.5f;
@@ -48,8 +48,8 @@ void CameraFree::Update(F32 dTime)
 	float rotateRight = input->GetAction(0,INPUT_ACTION_RSTICK_RIGHT);
 	float rotateUp = input->GetAction(0,INPUT_ACTION_RSTICK_UP);
 	float rotateDown = input->GetAction(0,INPUT_ACTION_RSTICK_DOWN);
-	float yangle = rotateRight*speedangle - rotateLeft*speedangle;
-	float xangle = rotateUp*speedangle - rotateDown*speedangle;
+	float yangle = rotateLeft * speedangle - rotateRight * speedangle;
+	float xangle = rotateUp * speedangle - rotateDown * speedangle;
 
 	// Rotations
 	XMVECTOR qrotx = XMQuaternionRotationAxis(*reinterpret_cast<XMVECTOR*>(&camup),yangle);

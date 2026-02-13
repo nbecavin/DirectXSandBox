@@ -66,7 +66,7 @@ void main(uint2 did : SV_DispatchThreadID)
 
 	//color = worldDir;
 
-	Output[did] = float4(color, 1);
+	//Output[did] = float4(color, 1);
 }
 
 #else

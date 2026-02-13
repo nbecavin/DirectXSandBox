@@ -30,6 +30,7 @@ float4 ForwardMain(const in VS_Output i) : SV_TARGET
 	radiance += STATIC_AMBIENT * mat.albedo; //should be GI instead... or skyligh
 
 	//radiance = mat.normal;
+	//radiance = -V;
 
 	if(Global.Visualize == EVIZ_SHOW_NORMAL)
 		return float4(mat.normal, mat.opacity);

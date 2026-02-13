@@ -77,7 +77,7 @@ namespace sys {
 
 		view = *reinterpret_cast<XMMATRIX*>(&m_Camera->GetViewMatrix());
 
-		proj = XMMatrixPerspectiveRH(.25, .25f / ((float)SizeX / (float)SizeY), 0.1, 1000);
+		proj = XMMatrixPerspectiveLH(.25, .25f / ((float)SizeX / (float)SizeY), 0.1, 1000);
 
 		CameraConstant* camCst;
 		m_CameraConstant->Lock(0, 0, (void**)&camCst);
