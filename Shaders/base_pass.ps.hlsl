@@ -33,7 +33,7 @@ float4 ForwardMain(const in VS_Output i) : SV_TARGET
 	//radiance = -V;
 
 	if(Global.Visualize == EVIZ_SHOW_NORMAL)
-		return float4(mat.normal, mat.opacity);
+		return float4(mat.normal * 0.5 + 0.5, mat.opacity);
 	if (Global.Visualize == EVIZ_SHOW_ROUGHNESS)
 		return float4(mat.roughness.xxx, mat.opacity);
 	if (Global.Visualize == EVIZ_SHOW_METAL)

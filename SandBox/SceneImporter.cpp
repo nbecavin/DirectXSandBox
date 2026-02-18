@@ -124,6 +124,7 @@ void SceneImporter::LoadScene(std::string& filepath)
 		const aiScene* pScene = importer.ReadFile(with_alias,
 			aiProcess_ConvertToLeftHanded |
 			aiProcess_CalcTangentSpace |
+			aiProcess_GenSmoothNormals |
 			aiProcess_RemoveRedundantMaterials |
 			aiProcess_GenUVCoords |
 			aiProcess_TransformUVCoords |
