@@ -12,7 +12,8 @@ static const float HALF_PI = 1.57079632679;
 
 float3x3 MakeTBN(float3 tangent, float3 binormal, float3 normal)
 {
-	return transpose(float3x3(tangent, binormal, normal));
+    float3 T = normalize(tangent - normal * dot(tangent, normal)); // Gram-Schmidt
+	return float3x3(T, binormal, normal);
 }
 
 //

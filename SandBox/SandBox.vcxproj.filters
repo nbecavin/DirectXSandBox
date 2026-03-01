@@ -83,9 +83,6 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="SandBox.cpp">
-      <Filter>Engine</Filter>
-    </ClCompile>
     <ClCompile Include="Sky.cpp">
       <Filter>Engine\Scenery Objects\Sky</Filter>
     </ClCompile>
@@ -252,11 +249,9 @@
     <ClCompile Include="PathTracer.cpp">
       <Filter>Engine\Renderer</Filter>
     </ClCompile>
+    <ClCompile Include="SandBox.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="SandBox.h">
-      <Filter>Engine</Filter>
-    </ClInclude>
     <ClInclude Include="Includes\GraphObject.h">
       <Filter>Engine\Scenery Objects</Filter>
     </ClInclude>
@@ -438,6 +433,7 @@
     <ClInclude Include="includes\PathTracer.h">
       <Filter>Engine\Renderer</Filter>
     </ClInclude>
+    <ClInclude Include="SandBox.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="SandBox.ico">

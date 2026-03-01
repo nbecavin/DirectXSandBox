@@ -53,8 +53,10 @@ MaterialPBR SampleMaterial(in VS_Output i)
 
     // Normal mapping
 	float3 normal = sNormal.Sample(sSampler, i.uv).xyz;// * 2 - 1;
-	//normal = float3(0, 0, 1);
-	normal = normalize(mul(i.tbn, normal)); //tangent space to local space
+	normal = float3(0, 0, 1);
+	//normal = normalize(mul(i.tbn, normal)); //tangent space to local space
+
+	normal = normalize(mul(normal, i.tbn)); //tangent space to local space
 
 	mat.albedo = albedo_and_opacity.xyz;
 	mat.opacity = albedo_and_opacity.w;
@@ -116,32 +118,5 @@ float3 EvaluateBRDF(MaterialPBR m, float3 LightColor, float3 L, float3 N, float3
 	float3 color = Lo + ambient + m.emission;
 	return color;
 }
-
-
-#if 0
-// -------------------------------
-// Pixel Shader entry (example)
-// -------------------------------
-float4 PSMain(PS_IN IN) : SV_Target
-{
-    // Camera vector from surface to camera
-    float3 V = normalize(g_CameraPos - IN.worldPos);
-
-// Sample material
-Material mat = SampleMaterial(IN);
-
-// Evaluate PBR
-float3 outColor = EvaluatePBR(mat, IN, V);
-
-// Apply simple tonemapping + gamma if needed (engine-specific)
-// Example: simple Reinhard
-outColor = outColor / (outColor + float3(1.0,1.0,1.0));
-
-// sRGB conversion if writing to sRGB RT is not automatic:
-// outColor = pow(outColor, 1.0 / 2.2);
-
-return float4(outColor, 1.0);
-}
-#endif
 
 #endif //__MATERIAL_COMMON_HH__
