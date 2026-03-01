@@ -5,7 +5,7 @@
 
 #pragma once
 
-#define D3D12_AGILITYSDK_VERSION	717
+#define D3D12_AGILITYSDK_VERSION	619
 
 #if defined(_PC)
 //#	include "targetver.h"
