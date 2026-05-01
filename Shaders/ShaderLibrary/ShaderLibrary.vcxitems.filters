@@ -135,6 +135,9 @@
     <None Include="$(MSBuildThisFileDirectory)..\brdf.hlsli">
       <Filter>Material</Filter>
     </None>
+    <None Include="$(MSBuildThisFileDirectory)..\raytracing_common.hlsli">
+      <Filter>Raytracing</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="$(MSBuildThisFileDirectory)..\..\Tools\RTXDI\Include\Rtxdi\DI\ReSTIRDI.h">

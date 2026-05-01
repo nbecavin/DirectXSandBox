@@ -15,6 +15,8 @@ RenderGraph::~RenderGraph()
 
 void RenderGraph::DrawFrame()
 {
+	GlobalParameters p = gData.Rdr->GetGlobalParameters();
+
 	gData.Scene->GatherDrawObjects();
 
 	sys::RenderHAL* hal = gData.Rdr->GetHAL();
@@ -56,6 +58,14 @@ void RenderGraph::DrawFrame()
 		hal->ProfileEndEvent();
 	}
 
+	if (p.Visualize == EVIZ_PATHTRACER)
+	{
+		hal->ProfileBeginEvent(0, "Pathtracer");
+
+		hal->ProfileEndEvent();
+	}
+
+	if(p.Visualize == EVIZ_SHOW_RAYTRACING_DEBUG)
 	{
 		hal->ProfileBeginEvent(0, "Raytracing debug");
 		d3d->GetCommandList()->ResourceBarrier(1,
@@ -72,6 +82,12 @@ void RenderGraph::DrawFrame()
 		hal->BindComputePipelineState(ShaderMap::RaytracingDebugInlineRGS);
 		hal->Dispatch(threadGroupX, threadGroupY, 1);
 
+		d3d->GetCommandList()->ResourceBarrier(1,
+			&CD3DX12_RESOURCE_BARRIER::Transition(hdrTextureLink->Resource12,
+				D3D12_RESOURCE_STATE_UNORDERED_ACCESS,
+				D3D12_RESOURCE_STATE_RENDER_TARGET)
+		);
+
 		hal->ProfileEndEvent();
 	}
 
@@ -80,7 +96,7 @@ void RenderGraph::DrawFrame()
 
 		d3d->GetCommandList()->ResourceBarrier(1,
 			&CD3DX12_RESOURCE_BARRIER::Transition(hdrTextureLink->Resource12,
-				D3D12_RESOURCE_STATE_UNORDERED_ACCESS,
+				D3D12_RESOURCE_STATE_RENDER_TARGET,
 				D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE | D3D12_RESOURCE_STATE_NON_PIXEL_SHADER_RESOURCE)
 		);
 

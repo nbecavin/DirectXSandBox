@@ -20,11 +20,11 @@ namespace sys {
 	{
 		switch (type)
 		{
-		case SHADER_TYPE_VERTEX:	return "vs_6_7";
-		case SHADER_TYPE_PIXEL:		return "ps_6_7";
-		case SHADER_TYPE_COMPUTE:	return "cs_6_7";
-		case SHADER_TYPE_MESH:		return "ms_6_7";
-		case SHADER_TYPE_RAYGEN:	return "lib_6_7";
+		case SHADER_TYPE_VERTEX:	return "vs_6_9";
+		case SHADER_TYPE_PIXEL:		return "ps_6_9";
+		case SHADER_TYPE_COMPUTE:	return "cs_6_9";
+		case SHADER_TYPE_MESH:		return "ms_6_9";
+		case SHADER_TYPE_RAYGEN:	return "lib_6_9";
 		};
 		return "unkwon"; //will trigger a compiler error
 	}

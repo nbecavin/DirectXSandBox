@@ -62,6 +62,7 @@
     </None>
     <None Include="$(MSBuildThisFileDirectory)..\material_common.hlsli" />
     <None Include="$(MSBuildThisFileDirectory)..\material_parameter.hlsli.h" />
+    <None Include="$(MSBuildThisFileDirectory)..\raytracing_common.hlsli" />
     <None Include="$(MSBuildThisFileDirectory)..\rtxdi_integration.hlsli" />
   </ItemGroup>
   <ItemGroup>
