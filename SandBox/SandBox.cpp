@@ -14,6 +14,26 @@
 
 #include <SceneImporter.h>
 
+//--------------------------------------------------------------------------------
+// Set Start level
+
+enum class LevelDefinition
+{
+	Default,
+	Bistro,
+	AsoboMansion,
+	GI_Walt,
+	NvidiaBistro,
+	Sponza,
+	AMDBreakfastRoom,
+	UE,
+	IntelSponza
+};
+
+const LevelDefinition startLevel = LevelDefinition::AsoboMansion;
+
+//--------------------------------------------------------------------------------
+
 sys::Globals gData;
 
 void sys::Globals::Init()
@@ -74,26 +94,51 @@ void sys::MainLoop()
 
 	SceneImporter imp;
 
-	if(0)
+	switch (startLevel)
 	{
-		// bistro
+	case LevelDefinition::Bistro:
+	{
 		imp.LoadScene("assets\\bistro\\bistro.gltf");
 		cam->SetWorldPosition(Vec4f(-22.787, 2.395, 10.013, 1));
 		cam->SetWorldTarget(Vec4f(-21.788, 2.368, 10.051, 1));
-	}
-	else
+	}break;
+	case LevelDefinition::AsoboMansion:
 	{
-		//imp.LoadScene("assets\\necropolis\\necropolis.gltf");
-		//imp.LoadScene("assets\\restaurant_scene_fbx\\restaurant_scene.fbx");
-		//imp.LoadScene("assets\\restaurant_scene_gltf\\restaurant_scene_gltf.gltf");
-//		imp.LoadScene("assets\\Bistro_v5_2\\BistroInterior.fbx");
-//		imp.LoadScene("assets\\Bistro_v5_2\\BistroExterior.fbx");
-//		imp.LoadScene("assets\\from_blender\\from_blender.gltf");
 		imp.LoadScene("assets\\asobo_mansion\\mansion.gltf");
-//		imp.LoadScene("assets\\trench\\trench.gltf");
-//		imp.LoadScene("assets\\breakfast_room\\BreakfastRoom.gltf");
-//		imp.LoadScene("assets\\sponza\\sponza.gltf");
-//		imp.LoadScene("assets\\gi_walt\\gi_walt.gltf");
+	}break;
+	case LevelDefinition::GI_Walt:
+	{
+		imp.LoadScene("assets\\gi_walt\\gi_walt.gltf");
+	}break;
+	case LevelDefinition::NvidiaBistro:
+	{
+		imp.LoadScene("assets\\Bistro_v5_2\\BistroInterior.fbx");
+		imp.LoadScene("assets\\Bistro_v5_2\\BistroExterior.fbx");
+	}break;
+	case LevelDefinition::Sponza:
+	{
+		imp.LoadScene("assets\\sponza\\sponza.gltf");
+	}break;
+	case LevelDefinition::AMDBreakfastRoom:
+	{
+		imp.LoadScene("assets\\breakfast_room\\BreakfastRoom.gltf");
+	}break;
+	case LevelDefinition::UE:
+	{
+		imp.LoadScene("assets\\trench\\trench.gltf");
+	}break;
+	case LevelDefinition::IntelSponza:
+	{
+		imp.LoadScene("assets\\main_sponza\\NewSponza_Main_glTF_003.gltf");
+		imp.LoadScene("assets\\pkg_a_curtains\\NewSponza_Curtains_glTF.gltf");
+		imp.LoadScene("assets\\pkg_b_ivy\\NewSponza_IvyGrowth_glTF.gltf");
+		imp.LoadScene("assets\\pkg_c_trees\\NewSponza_CypressTree_glTF.gltf");
+	}break;
+	case LevelDefinition::Default:
+	default:
+	{
+		imp.LoadScene("assets\\from_blender\\from_blender.gltf");
+	}break;
 	}
 
 	MESSAGE("Entering mainloop");
