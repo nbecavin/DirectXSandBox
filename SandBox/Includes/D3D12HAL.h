@@ -105,8 +105,8 @@ private:
 	static const UINT					m_BufferCount = 2;
 	UINT								m_FrameCount = 1;
 
-	D3D12DescriptorHeap					m_SRVDynamicHeap;
-	D3D12DescriptorHeap					m_SamplerDynamicHeap;
+	D3D12GpuDescriptorHeap				m_SRVDynamicHeap;
+	D3D12GpuDescriptorHeap				m_SamplerDynamicHeap;
 
 	// Descriptor heaps by types
 	D3D12DescriptorHeap					m_SrvHeap;

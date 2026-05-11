@@ -311,7 +311,7 @@ void D3D12HAL::FlushGraphicsPipelineState()
 	{
 		//pixel - SRV
 		{
-			U32 slot = m_SRVDynamicHeap.AllocateSlot(MAX_SRVS);
+			U32 slot = m_SRVDynamicHeap.AllocateDynamicSlot(MAX_SRVS);
 			for (int i = 0; i < MAX_SRVS; i++)
 			{
 				if (m_CurrentSRV[0][i].ptr != 0)
@@ -326,7 +326,7 @@ void D3D12HAL::FlushGraphicsPipelineState()
 		}
 		//pixel - CBV
 		{
-			U32 slot = m_SRVDynamicHeap.AllocateSlot(MAX_SRVS);
+			U32 slot = m_SRVDynamicHeap.AllocateDynamicSlot(MAX_SRVS);
 			for (int i = 0; i < MAX_CBS; i++)
 			{
 				if (m_CurrentCBV[0][i].ptr != 0)
@@ -342,7 +342,7 @@ void D3D12HAL::FlushGraphicsPipelineState()
 		}
 		//vertex - SRV
 		{
-			U32 slot = m_SRVDynamicHeap.AllocateSlot(MAX_SRVS);
+			U32 slot = m_SRVDynamicHeap.AllocateDynamicSlot(MAX_SRVS);
 			for (int i = 0; i < MAX_SRVS; i++)
 			{
 				if (m_CurrentSRV[1][i].ptr != 0)
@@ -358,7 +358,7 @@ void D3D12HAL::FlushGraphicsPipelineState()
 		}
 		//vertex - CBS
 		{
-			U32 slot = m_SRVDynamicHeap.AllocateSlot(MAX_SRVS);
+			U32 slot = m_SRVDynamicHeap.AllocateDynamicSlot(MAX_SRVS);
 			for (int i = 0; i < MAX_CBS; i++)
 			{
 				if (m_CurrentCBV[1][i].ptr != 0)
@@ -373,7 +373,7 @@ void D3D12HAL::FlushGraphicsPipelineState()
 		}
 		// uav
 		{
-			U32 slot = m_SRVDynamicHeap.AllocateSlot(MAX_UAVS);
+			U32 slot = m_SRVDynamicHeap.AllocateDynamicSlot(MAX_UAVS);
 			for (int i = 0; i < MAX_UAVS; i++)
 			{
 				if (m_CurrentUAV[i].ptr != 0)
@@ -389,7 +389,7 @@ void D3D12HAL::FlushGraphicsPipelineState()
 	}
 
 	{
-		U32 start = m_SamplerDynamicHeap.AllocateSlot(MAX_SAMPLERS * 2);
+		U32 start = m_SamplerDynamicHeap.AllocateDynamicSlot(MAX_SAMPLERS * 2);
 		U32 offset = start;
 
 		//Sampler
@@ -432,7 +432,7 @@ void D3D12HAL::FlushComputePipelineState()
 	{
 		//compute - SRV
 		{
-			U32 slot = m_SRVDynamicHeap.AllocateSlot(MAX_SRVS);
+			U32 slot = m_SRVDynamicHeap.AllocateDynamicSlot(MAX_SRVS);
 			for (int i = 0; i < MAX_SRVS; i++)
 			{
 				if (m_CurrentSRV[SHADER_TYPE_COMPUTE][i].ptr != 0)
@@ -447,7 +447,7 @@ void D3D12HAL::FlushComputePipelineState()
 		}
 		//pixel - CBV
 		{
-			U32 slot = m_SRVDynamicHeap.AllocateSlot(MAX_SRVS);
+			U32 slot = m_SRVDynamicHeap.AllocateDynamicSlot(MAX_SRVS);
 			for (int i = 0; i < MAX_CBS; i++)
 			{
 				if (m_CurrentCBV[SHADER_TYPE_COMPUTE][i].ptr != 0)
@@ -463,7 +463,7 @@ void D3D12HAL::FlushComputePipelineState()
 		}
 		// uav
 		{
-			U32 slot = m_SRVDynamicHeap.AllocateSlot(MAX_UAVS);
+			U32 slot = m_SRVDynamicHeap.AllocateDynamicSlot(MAX_UAVS);
 			for (int i = 0; i < MAX_UAVS; i++)
 			{
 				if (m_CurrentUAV[i].ptr != 0)
@@ -479,7 +479,7 @@ void D3D12HAL::FlushComputePipelineState()
 	}
 
 	{
-		U32 start = m_SamplerDynamicHeap.AllocateSlot(MAX_SAMPLERS * 2);
+		U32 start = m_SamplerDynamicHeap.AllocateDynamicSlot(MAX_SAMPLERS * 2);
 		U32 offset = start;
 
 		//Sampler

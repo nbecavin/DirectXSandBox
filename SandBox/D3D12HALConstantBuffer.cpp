@@ -37,7 +37,6 @@ void D3D12ConstantBuffer::Create(U32 _Size)
 	Device->CreateConstantBufferView(&m_BufferView, heap.GetCPUSlotHandle(slot));
 
 	m_CpuBase = heap.GetCPUSlotHandle(slot);
-	m_GpuBase = heap.GetGPUSlotHandle(slot);
 }
 
 bool D3D12ConstantBuffer::Lock(U32 OffsetToLock, U32 SizeToLock, void **pData, EMap Flags)

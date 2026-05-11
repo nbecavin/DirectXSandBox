@@ -117,6 +117,9 @@ void GpuScene::DrawScene()
 
 	HAL->ProfileBeginEvent(0, "GpuScene Draw");
 
+	// Grow material constant buffer array if needed
+	//auto* mtl_cst = HAL->CreateConstantBuffer(sizeof(MaterialParameter) * 10000);
+
 	for (int id = 0; id < m_Instances.GetSize(); id++)
 	{
 		InstanceData& instance = m_Instances[id];

@@ -53,6 +53,6 @@ void D3D12HAL::PresentFrame()
 	m_CommandList->ResourceBarrier(1, &barrier);
 	//m_CommandList->ResourceBarrier(1, &CD3DX12_RESOURCE_BARRIER::Transition(m_RenderTargets[m_FrameIndex].Get(), D3D12_RESOURCE_STATE_RENDER_TARGET, D3D12_RESOURCE_STATE_PRESENT));
 
-	m_SRVDynamicHeap.SetSlot(0);
-	m_SamplerDynamicHeap.SetSlot(0);
+	m_SRVDynamicHeap.ResetDynamicSlotOffset();
+	m_SamplerDynamicHeap.ResetDynamicSlotOffset();
 }

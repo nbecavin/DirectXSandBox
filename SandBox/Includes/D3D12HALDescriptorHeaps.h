@@ -8,7 +8,6 @@ public:
 	void Init(D3D12_DESCRIPTOR_HEAP_DESC& heapDesc, const char * name);
 
 	inline D3D12_CPU_DESCRIPTOR_HANDLE GetCPUSlotHandle(U32 _Slot) const { return{ m_CPUBase.ptr + _Slot * m_DescriptorSize }; }
-	inline D3D12_GPU_DESCRIPTOR_HANDLE GetGPUSlotHandle(U32 _Slot) const { return{ m_GPUBase.ptr + _Slot * m_DescriptorSize }; }
 
 	void SetSlot(U32 _Slot)
 	{
@@ -50,6 +49,61 @@ private:
 
 	UINT	m_DescriptorSize = 0;
 	UINT	m_CurrentDescriptorOffset = 0;
+};
+
+class D3D12GpuDescriptorHeap
+{
+public:
+	void Init(D3D12_DESCRIPTOR_HEAP_DESC& heapDesc, const char* name);
+
+	inline D3D12_CPU_DESCRIPTOR_HANDLE GetCPUSlotHandle(U32 _Slot) const { return{ m_CPUBase.ptr + _Slot * m_DescriptorSize }; }
+	inline D3D12_GPU_DESCRIPTOR_HANDLE GetGPUSlotHandle(U32 _Slot) const { return{ m_GPUBase.ptr + _Slot * m_DescriptorSize }; }
+
+	void ResetDynamicSlotOffset()
+	{
+		m_CurrentDescriptorOffset = 0;
+	}
+
+	U32 AllocateStaticSlot(U32 _Num)
+	{
+		//MESSAGE(""ERROR
+		U32 slot = m_CurrentStaticDescriptorOffset;
+		m_CurrentStaticDescriptorOffset = Min<U32>(slot + _Num, m_Desc.NumDescriptors);
+		return slot;
+	}
+
+	U32 AllocateDynamicSlot(U32 _Num)
+	{
+		U32 slot;
+
+		// Recycle ...
+		U32 endDescriptor = m_CurrentDescriptorOffset + _Num;
+		if (endDescriptor >= m_Desc.NumDescriptors / 2)
+		{
+			slot = 0;
+			m_CurrentDescriptorOffset = _Num;
+		}
+		else
+		{
+			slot = m_CurrentDescriptorOffset;
+			m_CurrentDescriptorOffset += _Num;
+		}
+
+		return slot;
+	}
+
+	ID3D12DescriptorHeap* Get() { return m_Heap.Get(); }
+
+private:
+	Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> m_Heap;
+	D3D12_DESCRIPTOR_HEAP_DESC m_Desc;
+
+	D3D12_CPU_DESCRIPTOR_HANDLE	m_CPUBase = {};
+	D3D12_GPU_DESCRIPTOR_HANDLE m_GPUBase = {};
+
+	UINT	m_DescriptorSize = 0;
+	UINT	m_CurrentDescriptorOffset = 0;
+	UINT	m_CurrentStaticDescriptorOffset = 0;
 };
 
 #endif //__D3D12_DESCRIPTORHEAPS_HH__

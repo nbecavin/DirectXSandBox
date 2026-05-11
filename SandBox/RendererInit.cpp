@@ -8,7 +8,7 @@ namespace sys {
 	int Renderer::Init()
 	{
 		m_GlobalParams = {};
-		m_GlobalParams.Visualize = EVIZ_SHOW_RAYTRACING_DEBUG;
+		m_GlobalParams.Visualize = EVIZ_LIT;
 
 		SizeX = 1920;
 		SizeY = 1080;
