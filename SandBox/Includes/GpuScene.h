@@ -38,7 +38,10 @@ namespace sys
 
 	protected:
 		MaterialDA		m_MaterialDA;
-		std::shared_ptr<Bitmap> m_MaterialStorage;
+
+		static const U32 sMaterialMaxCount = 16000;
+		std::shared_ptr<Buffer> m_MaterialStorage;
+		U64 m_MaterialStorageWriteOffset = 0;
 
 		InstanceDataDA m_Instances;
 		DynArray<ConstantBuffer*, 256> m_InstanceData; //Naive construct

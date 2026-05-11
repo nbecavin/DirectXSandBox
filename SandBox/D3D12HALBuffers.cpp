@@ -36,6 +36,20 @@ Buffer* D3D12HAL::CreateBuffer(U32 _Size, Buffer::ECpuAccess _CpuAccess)
 	return buffer;
 }
 
+void* D3D12Buffer::Map(U64 Offset)
+{
+	void* pData = nullptr;
+	res->Map(0, nullptr, &pData);
+	//m_LockedRange.Begin = OffsetToLock;
+	//m_LockedRange.End = SizeToLock ? SizeToLock : m_BufferView.SizeInBytes;
+	return (U8*)pData + Offset;
+}
+
+void D3D12Buffer::Unmap()
+{
+	res->Unmap(0, nullptr);// &m_LockedRange);
+}
+
 VertexBuffer* D3D12HAL::CreateVertexBuffer(U32 _Size, U32 _Stride, U32 _Usage, void* _Datas)
 {
 	D3D12VertexBuffer* vb = new D3D12VertexBuffer();

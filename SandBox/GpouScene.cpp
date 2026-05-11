@@ -25,6 +25,7 @@ GpuScene::~GpuScene()
 void GpuScene::Init()
 {
 	m_RaytracingScene = std::make_unique<RaytracingScene>();
+	UpdateBuffers();
 }
 
 void GpuScene::Shut()
@@ -34,15 +35,19 @@ void GpuScene::Shut()
 void GpuScene::RegisterMaterial(Material* material)
 {
 	U32 id = m_MaterialDA.Add(material);
+
+	material->SetGPUDataOffset(m_MaterialStorageWriteOffset);
+	m_MaterialStorageWriteOffset += sizeof(MaterialParameter);
+	//EXCEPTION();
 }
 
 void GpuScene::UpdateBuffers()
 {
 	if (m_MaterialStorage.get() == nullptr)
 	{
-		m_MaterialStorage = std::make_shared<Bitmap>();
-		//m_MaterialStorage->
-		//gData.Rdr->GetHAL()->CreateBuffer();
+		U32 buffer_byte_size = sMaterialMaxCount * sizeof(MaterialParameter);
+		m_MaterialStorage.reset(gData.Rdr->GetHAL()->CreateBuffer(buffer_byte_size, Buffer::CpuAccess_Write));
+		m_MaterialStorageWriteOffset = 0;
 	}
 }
 
@@ -92,6 +97,14 @@ void GpuScene::SetActiveMaterial(Material* Mat)
 		return;
 
 	auto* HAL = gData.Rdr->GetHAL();
+
+	// Update storage data
+	U64 dataOffset = Mat->GetGPUDataOffset();
+	MaterialParameter* param = (MaterialParameter *)m_MaterialStorage->Map(dataOffset);
+	if (param)
+	{
+		param->albedo.Set(Mat->GetDiffuse().x, Mat->GetDiffuse().y, Mat->GetDiffuse().z);
+	}
 
 	Bitmap* bm = NULL;
 	bm = Mat->GetBitmap(MTL_STAGE_ALBEDO);
