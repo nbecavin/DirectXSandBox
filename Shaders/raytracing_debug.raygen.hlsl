@@ -34,7 +34,8 @@ void OnAnyHit(HitAttributes h, inout RayPayload pay)
 
 void OnClosestHit(HitAttributes h, inout RayPayload pay)
 {
-	pay.color = GetBarycentrics(h.Barycentrics);
+	GeometrySampler gs = GetGeometrySample(h);
+	pay.color = gs.position;
 }
 
 void OnMiss(inout RayPayload pay)
