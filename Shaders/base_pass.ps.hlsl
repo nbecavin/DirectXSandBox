@@ -44,8 +44,10 @@ float4 ForwardMain(const in VS_Output i) : SV_TARGET
 
 float4 GbufferMain( const in VS_Output i ) : SV_TARGET
 {
-	float albedo_alpha = sAlbedo.Sample(sSampler, i.uv).a;
-	float3 normal = sNormal.Sample(sSampler, i.uv).xyz*0.5+0.5;//i.normal;
+	MaterialParameter p = GetMaterial(Instance.materialID);
+	
+	float albedo_alpha = GetTexture2D(p.albedo_map).Sample(sSampler, i.uv).a;
+	float3 normal = GetTexture2D(p.normal_map).Sample(sSampler, i.uv).xyz * 0.5 + 0.5; //i.normal;
 
 	// get normal in world space
 	return float4(normal,albedo_alpha);

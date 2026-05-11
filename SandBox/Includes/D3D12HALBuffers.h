@@ -13,6 +13,15 @@ public:
 	void Unmap();
 };
 
+class D3D12ShaderResourceView : public ShaderResourceView
+{
+public:
+	D3D12ShaderResourceView() {}
+	ID3D12Resource* res;
+	D3D12_CPU_DESCRIPTOR_HANDLE CpuView;
+	D3D12_GPU_DESCRIPTOR_HANDLE GpuView;
+};
+
 class D3D12AccelerationStructure : public AccelerationStructure
 {
 public:

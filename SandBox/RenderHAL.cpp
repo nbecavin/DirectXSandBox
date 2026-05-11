@@ -27,6 +27,10 @@ namespace sys {
 	{
 	}
 
+	void RenderHAL::SetShaderResource(U32 Slot, EShaderType Type, ShaderResourceView* View)
+	{
+	}
+
 	void RenderHAL::SetUAV(U32 Slot, Bitmap* Texture)
 	{
 	}
@@ -42,14 +46,7 @@ namespace sys {
 	void RenderHAL::FullScreenQuad(Vec2f scale,Vec2f offset)
 	{
 		SetVertexDeclaration(m_ScreenVertexDecl);
-		SetStreamSource(0,m_FullscreenQuadVB,0,32);
-
-		/*
-		XMVECTOR * _vec = (XMVECTOR*)(m_VSConstantCache);
-		_vec[USER_CST+0] = XMVectorSet(scale.x,scale.y,offset.x,offset.y);
-		UpdateVSConstants();
-		*/
-
+		SetStreamSource(0, m_FullscreenQuadVB, 0, 32);
 		SetPrimitiveTopology(PRIM_TRIANGLESTRIP);
 		DrawInstanced(4,1,0,0);
 	}

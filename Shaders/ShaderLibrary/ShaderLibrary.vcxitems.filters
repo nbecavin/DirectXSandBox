@@ -176,5 +176,8 @@
     <FxCompile Include="$(MSBuildThisFileDirectory)..\raytracing_debug.raygen.hlsl">
       <Filter>Raytracing</Filter>
     </FxCompile>
+    <FxCompile Include="$(MSBuildThisFileDirectory)..\raytracing_sun_shadows.raygen.hlsl">
+      <Filter>Raytracing</Filter>
+    </FxCompile>
   </ItemGroup>
 </Project>

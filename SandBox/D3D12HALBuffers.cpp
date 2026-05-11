@@ -2,6 +2,23 @@
 #include <D3D12HALBuffers.h>
 #include <Renderer.h>
 
+
+ShaderResourceView* D3D12HAL::CreateShaderResourceView(Buffer* _Buffer, U32 _Count, U32 _Stride)
+{
+	D3D12ShaderResourceView* srv = new D3D12ShaderResourceView();
+	srv->res = _Buffer->AsPtr<D3D12Buffer>()->res;
+
+	CD3DX12_SHADER_RESOURCE_VIEW_DESC desc = CD3DX12_SHADER_RESOURCE_VIEW_DESC::StructuredBuffer(_Count, _Stride, 0);
+
+	U32 slot = m_SrvHeap.AllocateSlot(1);
+	srv->CpuView = m_SrvHeap.GetCPUSlotHandle(slot);
+
+	ID3D12Device* Device = GetD3D12HALRef().GetDevice();
+	Device->CreateShaderResourceView(srv->res, &desc, srv->CpuView);
+
+	return srv;
+}
+
 Buffer* D3D12HAL::CreateBuffer(U32 _Size, Buffer::ECpuAccess _CpuAccess)
 {
 	U32 alignedSize = Align(_Size, 256);

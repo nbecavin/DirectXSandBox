@@ -10,17 +10,20 @@
 
 SamplerState sSampler : register(s0);
 #define LinearSampler sSampler
-Texture2D sAlbedo : register(t0);
-Texture2D sNormal : register(t1);
-Texture2D sSpecular : register(t2);
 
-StructuredBuffer<MaterialParameter> MaterialStore;
-
-/*MaterialParameter GetBindlessMaterial(uint index)
+#ifdef USE_BINDLESS_MATERIALS
+MaterialParameter GetBindlessMaterial(uint index)
 {
 	StructuredBuffer<MaterialParameter> store = GetBindlessResource(0);
 	return store[index];
-}*/
+}
+#else
+StructuredBuffer<MaterialParameter> MaterialStore : register(t16);
+MaterialParameter GetMaterial(uint index)
+{
+	return MaterialStore[index];
+}
+#endif
 
 struct MaterialPBR
 {
@@ -35,33 +38,36 @@ struct MaterialPBR
 
 MaterialPBR SampleMaterial(in VS_Output i)
 {
+	MaterialParameter p = GetMaterial(Instance.materialID);
+	
 	MaterialPBR mat = (MaterialPBR) 0;
 
-	float4 albedo_and_opacity = sAlbedo.Sample(LinearSampler, i.uv);
+	//float4 albedo_and_opacity = sAlbedo.Sample(LinearSampler, i.uv);
+	float4 albedo_and_opacity = GetTexture2D(p.albedo_map).Sample(LinearSampler, i.uv);
 
     // If your albedo texture is stored in sRGB and sampled as linear by sampler state, you can skip SRGBToLinear.
     // If you get sRGB values unconverted, convert:
     // albedo = SRGBToLinear(albedo);
 
-	float roughness = sSpecular.Sample(LinearSampler, i.uv).rgb;
+	float roughness = GetTexture2D(p.roughness_map).Sample(LinearSampler, i.uv).r * p.roughness;
     /*float3 mra = g_MRATexture.Sample(LinearSampler, IN.uv).rgb;
     float metallic = mra.r;
     float roughness = mra.g;
     float ao = mra.b;*/
 
-	float3 emissive = 0; //g_EmissiveTex.Sample(LinearSampler, IN.uv).rgb;
+	float3 emissive = p.emission; //g_EmissiveTex.Sample(LinearSampler, IN.uv).rgb;
 
     // Normal mapping
-	float3 normal = sNormal.Sample(sSampler, i.uv).xyz;// * 2 - 1;
-	normal = float3(0, 0, 1);
+	float3 normal = GetTexture2D(p.normal_map).Sample(sSampler, i.uv).xyz; // * 2 - 1;
+	//normal = float3(0, 0, 1);
 	//normal = normalize(mul(i.tbn, normal)); //tangent space to local space
 
 	normal = normalize(mul(normal, i.tbn)); //tangent space to local space
 
-	mat.albedo = albedo_and_opacity.xyz;
-	mat.opacity = albedo_and_opacity.w;
+	mat.albedo = albedo_and_opacity.xyz * p.albedo;
+	mat.opacity = albedo_and_opacity.w * p.opacity;
 	mat.normal = normal;
-	mat.metallic = saturate(0); // metallic);
+	mat.metallic = p.metallic;
 	mat.roughness = clamp(roughness, 0.04, 1.0); // avoid 0.0 roughness which can alias
 	mat.ao = saturate(1);
 	mat.emission = emissive;

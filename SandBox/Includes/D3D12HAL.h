@@ -44,6 +44,7 @@ public:
 	ConstantBuffer* CreateConstantBuffer(U32 _Size);
 	AccelerationStructure* CreateAccelerationStructure(U32 _Size);
 	Buffer* CreateBuffer(U32 _Size, Buffer::ECpuAccess _CpuAccess);
+	ShaderResourceView* CreateShaderResourceView(Buffer* _Buffer, U32 _Count, U32 _Stride);
 
 	void InitShaders();
 	void SetScissorRect(U32 left, U32 right, U32 top, U32 bottom);
@@ -75,6 +76,7 @@ public:
 	void SetAccelerationStructure(U32 Slot, EShaderType Type, AccelerationStructure* AS);
 	void SetConstantBuffer(U32 Slot, EShaderType Type, ConstantBuffer* CBV);
 	void SetShaderResource(U32 Slot, EShaderType Type, Bitmap* Texture);
+	void SetShaderResource(U32 Slot, EShaderType Type, ShaderResourceView* View);
 	void SetUAV(U32 Slot, Bitmap* Texture);
 
 	void DrawInstanced(UINT VertexCountPerInstance, UINT InstanceCount, UINT StartVertexLocation, UINT StartInstanceLocation);

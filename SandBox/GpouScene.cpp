@@ -48,6 +48,8 @@ void GpuScene::UpdateBuffers()
 		U32 buffer_byte_size = sMaterialMaxCount * sizeof(MaterialParameter);
 		m_MaterialStorage.reset(gData.Rdr->GetHAL()->CreateBuffer(buffer_byte_size, Buffer::CpuAccess_Write));
 		m_MaterialStorageWriteOffset = 0;
+
+		m_MaterialSRV.reset(gData.Rdr->GetHAL()->CreateShaderResourceView(m_MaterialStorage.get(), sMaterialMaxCount, sizeof(MaterialParameter)));
 	}
 }
 
@@ -104,23 +106,27 @@ void GpuScene::SetActiveMaterial(Material* Mat)
 	if (param)
 	{
 		param->albedo.Set(Mat->GetDiffuse().x, Mat->GetDiffuse().y, Mat->GetDiffuse().z);
-	}
+		param->roughness = Mat->GetRoughness();
+		param->metallic = Mat->GetMetallic();
+		param->emission.Set(0, 0, 0);// Mat->GetEmissive();
+		param->opacity = 1.f;
+		param->ao = 1.f;
 
-	Bitmap* bm = NULL;
-	bm = Mat->GetBitmap(MTL_STAGE_ALBEDO);
-	if (bm)
-	{
-		HAL->SetShaderResource(0, SHADER_TYPE_PIXEL, bm);
-	}
-	bm = Mat->GetBitmap(MTL_STAGE_NORMAL);
-	if (bm)
-	{
-		HAL->SetShaderResource(1, SHADER_TYPE_PIXEL, bm);
-	}
-	bm = Mat->GetBitmap(MTL_STAGE_ROUGHNESS);
-	if (bm)
-	{
-		HAL->SetShaderResource(2, SHADER_TYPE_PIXEL, bm);
+		auto BindSRV = [&HAL](Material* Mat, U32 Stage, U32 Slot, U32& BindlessSlot)
+			{
+				Bitmap* bm = NULL;
+				bm = Mat->GetBitmap(Stage);
+				if (bm && bm->GetBinHwResId() != BM_INVALIDHWRESID)
+				{
+					TextureLink* tex = reinterpret_cast<TextureLink*>(bm->GetBinHwResId());
+					BindlessSlot = tex->m_BindlessSRVIndex;
+					//HAL->SetShaderResource(0, SHADER_TYPE_PIXEL, bm);
+				}
+			};
+
+		BindSRV(Mat, MTL_STAGE_ALBEDO, 0, param->albedo_map);
+		BindSRV(Mat, MTL_STAGE_NORMAL, 1, param->normal_map);
+		BindSRV(Mat, MTL_STAGE_ROUGHNESS, 2, param->roughness_map);
 	}
 }
 
@@ -130,6 +136,9 @@ void GpuScene::DrawScene()
 
 	HAL->ProfileBeginEvent(0, "GpuScene Draw");
 
+	HAL->SetShaderResource(16, SHADER_TYPE_VERTEX, m_MaterialSRV.get());
+	HAL->SetShaderResource(16, SHADER_TYPE_PIXEL, m_MaterialSRV.get());
+
 	// Grow material constant buffer array if needed
 	//auto* mtl_cst = HAL->CreateConstantBuffer(sizeof(MaterialParameter) * 10000);
 
@@ -137,26 +146,43 @@ void GpuScene::DrawScene()
 	{
 		InstanceData& instance = m_Instances[id];
 
+		// Grow
 		if( id >= m_InstanceData.GetSize())
 		{
-			auto* cst  = HAL->CreateConstantBuffer(sizeof(InstanceConstant));
-			InstanceConstant* c;
-			cst->Lock(0, 0, (void**)&c);
-			c[0] = instance.instanceCst;
-			cst->Unlock();
-			m_InstanceData.Add(cst);
-		}
-		HAL->BindGraphicPipelineState(ShaderMap::BaseMeshVS, ShaderMap::BasePassPS);
-		HAL->SetConstantBuffer(1, SHADER_TYPE_VERTEX, m_InstanceData[id]);
+			auto* c0 = HAL->CreateConstantBuffer(sizeof(InstanceConstant));
+			m_InstanceData.Add(c0);
 
+			auto* c1 = HAL->CreateConstantBuffer(sizeof(InstanceIDConstant));
+			m_InstanceIDData.Add(c1);
+		}
+
+		HAL->BindGraphicPipelineState(ShaderMap::BaseMeshVS, ShaderMap::BasePassPS);
+
+		HAL->SetConstantBuffer(1, SHADER_TYPE_VERTEX, m_InstanceData[id]);
+		HAL->SetConstantBuffer(2, SHADER_TYPE_VERTEX, m_InstanceIDData[id]);
+		HAL->SetConstantBuffer(2, SHADER_TYPE_PIXEL, m_InstanceIDData[id]);
 		SetActiveMaterial(instance.shading.Mtl);
 
-		HAL->SetVertexDeclaration(instance.geometry.Decl);
+		// fill instance data
+		{
+			InstanceConstant* c;
+			m_InstanceData[id]->Lock(0, 0, (void**)&c);
+			c[0] = instance.instanceCst;
+			m_InstanceData[id]->Unlock();
+		}
+		{
+			InstanceIDConstant* c;
+			m_InstanceIDData[id]->Lock(0, 0, (void**)&c);
+			c[0].MaterialID = instance.shading.Mtl->GetGPUDataOffset() / sizeof(MaterialParameter);
+			c[0].MatricesID = 0;
+			m_InstanceIDData[id]->Unlock();
+		}
 
+		HAL->SetVertexDeclaration(instance.geometry.Decl);
 		HAL->SetStreamSource(0, instance.geometry.VB, instance.geometry.VertexStart, instance.geometry.VertexStride);
 		HAL->SetIndices(instance.geometry.IB, instance.geometry.IndexType);
-
 		HAL->SetPrimitiveTopology(instance.geometry.PrimType);
+
 		HAL->DrawIndexedInstanced(instance.geometry.IndexCount, 1, instance.geometry.IndexStart, instance.geometry.VertexStart);
 	}
 

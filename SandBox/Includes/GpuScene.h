@@ -41,10 +41,12 @@ namespace sys
 
 		static const U32 sMaterialMaxCount = 16000;
 		std::shared_ptr<Buffer> m_MaterialStorage;
+		std::shared_ptr<ShaderResourceView> m_MaterialSRV;
 		U64 m_MaterialStorageWriteOffset = 0;
 
 		InstanceDataDA m_Instances;
 		DynArray<ConstantBuffer*, 256> m_InstanceData; //Naive construct
+		DynArray<ConstantBuffer*, 256> m_InstanceIDData; //Naive construct
 
 		std::unique_ptr<RaytracingScene> m_RaytracingScene;
 	};

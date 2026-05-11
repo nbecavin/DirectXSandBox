@@ -10,12 +10,12 @@
 
 struct TextureLink
 {
-	union {
-		ID3D12Resource* Resource12;
-	};
+	ID3D12Resource* Resource12;
 	D3D12_CPU_DESCRIPTOR_HANDLE m_RTV;
-	D3D12_CPU_DESCRIPTOR_HANDLE m_SRV;
 	D3D12_CPU_DESCRIPTOR_HANDLE m_UAV;
+
+	D3D12_CPU_DESCRIPTOR_HANDLE m_SRV;
+	U32 m_BindlessSRVIndex;
 };
 
 struct Vertex2D
@@ -70,6 +70,7 @@ namespace sys {
 		virtual Buffer* CreateBuffer(U32 _Size, Buffer::ECpuAccess _CpuAccess) = 0;
 		virtual AccelerationStructure* CreateAccelerationStructure(U32 _Size) = 0;
 		virtual ConstantBuffer* CreateConstantBuffer(U32 _Size) = 0;
+		virtual ShaderResourceView* CreateShaderResourceView(Buffer* _Buffer, U32 _Count, U32 _Stride) = 0;
 
 		virtual void SetScissorRect(U32 left, U32 right, U32 top, U32 bottom) = 0;
 
@@ -83,6 +84,7 @@ namespace sys {
 		virtual void SetAccelerationStructure(U32 Slot, EShaderType Type, AccelerationStructure* AS);
 		virtual void SetConstantBuffer(U32 Slot, EShaderType Type, ConstantBuffer* CBV) = 0;
 		virtual void SetShaderResource(U32 Slot, EShaderType Type, Bitmap* Texture);
+		virtual void SetShaderResource(U32 Slot, EShaderType Type, ShaderResourceView* View);
 		virtual void SetUAV(U32 Slot, Bitmap* Texture);
 		virtual void SetDepthStencilState(DepthStencilDesc& Desc) = 0;
 		virtual void SetRasterizerState(RasterizerDesc& Desc) = 0;

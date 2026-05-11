@@ -12,6 +12,6 @@ struct MaterialParameter
 
 	U32 albedo_map;
 	U32 normal_map;
-	U32 roughnes_map;
+	U32 roughness_map;
 	U32 metal_map;
 };

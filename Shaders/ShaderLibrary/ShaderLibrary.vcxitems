@@ -88,6 +88,10 @@
   <ItemGroup>
     <FxCompile Include="$(MSBuildThisFileDirectory)..\auto_exposure.cs.hlsl" />
     <FxCompile Include="$(MSBuildThisFileDirectory)..\raytracing_debug.raygen.hlsl" />
+    <FxCompile Include="$(MSBuildThisFileDirectory)..\raytracing_sun_shadows.raygen.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Compute</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">4.0</ShaderModel>
+    </FxCompile>
     <FxCompile Include="$(MSBuildThisFileDirectory)..\RTXDI-Integration\LightingPasses\Presampling\PresampleReGIR.hlsl" />
   </ItemGroup>
 </Project>

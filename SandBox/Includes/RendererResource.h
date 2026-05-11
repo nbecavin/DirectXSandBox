@@ -67,3 +67,14 @@ public:
 	// resource
 	// view
 };
+
+//
+
+class ShaderResourceView
+{
+public:
+	template <typename T>
+	T* AsPtr() { return (T*)this; }
+
+	ShaderResourceView() {}
+};

@@ -37,6 +37,27 @@ void RenderGraph::DrawFrame()
 		hal->ProfileEndEvent();
 	}
 
+	if(0)
+	{
+		hal->ProfileBeginEvent(0, "Raytraced Sun Shadows");
+
+		U32 threadGroupX = (sceneX + 7) / 8;
+		U32 threadGroupY = (sceneY + 7) / 8;
+
+		hal->SetAccelerationStructure(0, SHADER_TYPE_COMPUTE, gData.Scene->GetRaytracingScene()->m_TLAS);
+		hal->SetUAV(0, hdrRenderTarget);
+		hal->BindComputePipelineState(ShaderMap::RaytracingSunShadowsInlineRGS);
+		hal->Dispatch(threadGroupX, threadGroupY, 1);
+
+		/*d3d->GetCommandList()->ResourceBarrier(1,
+			&CD3DX12_RESOURCE_BARRIER::Transition(hdrTextureLink->Resource12,
+				D3D12_RESOURCE_STATE_UNORDERED_ACCESS,
+				D3D12_RESOURCE_STATE_RENDER_TARGET)
+		);*/
+
+		hal->ProfileEndEvent();
+	}
+
 	{
 		hal->ProfileBeginEvent(0, "Forward Pass");
 

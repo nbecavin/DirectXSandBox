@@ -9,6 +9,12 @@ struct InstanceConstant
 	Mat4x4	InvWorldMatrix;
 };
 
+struct InstanceIDConstant
+{
+	U32	MaterialID;
+	U32	MatricesID;
+};
+
 //
 // cb_camera
 struct CameraConstant

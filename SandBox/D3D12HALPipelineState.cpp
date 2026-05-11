@@ -257,6 +257,18 @@ void D3D12HAL::SetShaderResource(U32 Slot, EShaderType Type, Bitmap* Texture)
 	}
 }
 
+void D3D12HAL::SetShaderResource(U32 Slot, EShaderType Type, ShaderResourceView* View)
+{
+	if(View)
+	{
+		m_CurrentSRV[Type][Slot] = View->AsPtr<D3D12ShaderResourceView>()->CpuView;
+	}
+	else
+	{
+		m_CurrentSRV[Type][Slot].ptr = 0; // null handle
+	}
+}
+
 void D3D12HAL::SetUAV(U32 Slot, Bitmap* Texture)
 {
 	TextureLink* tex = reinterpret_cast<TextureLink*>(Texture->GetBinHwResId());

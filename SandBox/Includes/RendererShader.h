@@ -35,6 +35,8 @@ struct ShaderMap
 	static ShaderKernel* TonemappingPS;
 	static ShaderKernel* RaytracingDebugRGS;
 	static ShaderKernel* RaytracingDebugInlineRGS;
+	static ShaderKernel* RaytracingSunShadowsRGS;
+	static ShaderKernel* RaytracingSunShadowsInlineRGS;
 	static ShaderKernel* PathTracerRGS;
 };
 

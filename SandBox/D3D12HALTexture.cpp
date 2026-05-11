@@ -398,6 +398,9 @@ void D3D12HAL::CreateTexture(Bitmap * _Bm)
 		U32 slot = m_SrvHeap.AllocateSlot(1);
 		tex->m_SRV.ptr = m_SrvHeap.GetCPUSlotHandle(slot).ptr;
 		Device->CreateShaderResourceView(tex->Resource12, &SRVDesc, tex->m_SRV);
+
+		tex->m_BindlessSRVIndex = m_SRVDynamicHeap.AllocateStaticSlot(1);
+		m_Device->CopyDescriptorsSimple(1, m_SRVDynamicHeap.GetCPUSlotHandle(tex->m_BindlessSRVIndex), tex->m_SRV, D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
 	}
 
 	if (_Bm->GetUsage() & BM_USAGE_UAV)

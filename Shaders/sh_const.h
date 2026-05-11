@@ -1,6 +1,8 @@
 #ifndef __SH_CONST_HH__
 #define __SH_CONST_HH__
 
+//#define USE_BINDLESS_MATERIALS
+
 // C++ interop
 typedef float2 Vec2f;
 typedef float3 Vec3f;
@@ -51,6 +53,12 @@ struct InstanceParameters
 	uint materialID;
 };
 
+struct InstanceID
+{
+	uint materialID;
+	uint matricesID;
+};
+
 struct CameraParameters
 {
 	float4x4 viewMatrix;
@@ -65,19 +73,8 @@ struct CameraParameters
 
 ConstantBuffer<GlobalParameters> Global : register(b0);
 ConstantBuffer<InstanceParameters> Object : register(b1);
+ConstantBuffer<InstanceID> Instance : register(b2);
 ConstantBuffer<CameraParameters> Camera : register(b9);
-
-
-// Compatibility layer
-
-float texDepth2D ( Texture2D depthBuffer, SamplerState depthCompare, const in float2 uv )
-{
-	#ifdef INVERTED_ZBUFFER
-		return 1.0f - depthBuffer.Sample(depthCompare, uv ).x;
-	#else
-		return depthBuffer.Sample(depthCompare, uv).x;
-	#endif
-}
 
 //--------------------------------------------------
 
@@ -110,5 +107,7 @@ float2 NDCToUV(float2 ndc)
 
 template<typename T> T GetBindlessResource(uint index) { return (T)ResourceDescriptorHeap[NonUniformResourceIndex(index)]; }
 template<typename T> T GetBindlessResourceUniform(uint index) { return (T)ResourceDescriptorHeap[index]; }
+
+Texture2D GetTexture2D(uint index) { return GetBindlessResource<Texture2D>(index); }
 
 #endif //__SH_CONST_HH__

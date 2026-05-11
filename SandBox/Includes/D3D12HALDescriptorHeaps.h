@@ -64,6 +64,11 @@ public:
 		m_CurrentDescriptorOffset = 0;
 	}
 
+	void ResetStaticSlotOffset()
+	{
+		m_CurrentStaticDescriptorOffset = m_Desc.NumDescriptors / 2;
+	}
+
 	U32 AllocateStaticSlot(U32 _Num)
 	{
 		//MESSAGE(""ERROR
