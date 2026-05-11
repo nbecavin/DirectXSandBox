@@ -35,6 +35,14 @@ public:
 		Size = _Size;
 	}
 	virtual U32 GetSize() { return Size; }
+
+	virtual void* Map(U64 Offset) {
+		return nullptr;
+	}
+	virtual void Unmap()
+	{
+	}
+
 protected:
 	U32 Size = 0;
 	ECpuAccess CpuAccess;

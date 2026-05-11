@@ -22,6 +22,8 @@ protected:
 	float m_Metallic = 0.f;
 	float m_Emission = 0.f;
 
+	U64 m_GPUStorageOffset = 0;
+
 public:
 	Material();
 
@@ -32,6 +34,9 @@ public:
 	float GetRoughness() { return m_Roughness; }
 	float GetMetallic() { return m_Metallic; }
 	float GetEmission() { return m_Emission; }
+
+	void SetGPUDataOffset(U64 Offset) { m_GPUStorageOffset = Offset; }
+	U64 GetGPUDataOffset() const { return m_GPUStorageOffset; }
 
 	void LoadFromAiMaterial(std::filesystem::path directory, aiMaterial* importMaterial);
 };

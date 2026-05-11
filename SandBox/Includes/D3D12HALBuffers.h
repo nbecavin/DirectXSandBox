@@ -8,6 +8,9 @@ class D3D12Buffer : public Buffer
 public:
 	D3D12Buffer(U32 _Size, Buffer::ECpuAccess _CpuAccess) : Buffer(_Size, _CpuAccess) {}
 	ID3D12Resource* res;
+
+	void* Map(U64 Offset);
+	void Unmap();
 };
 
 class D3D12AccelerationStructure : public AccelerationStructure
