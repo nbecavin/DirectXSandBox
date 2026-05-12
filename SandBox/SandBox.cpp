@@ -225,12 +225,18 @@ void sys::UpdateEditorMenu()
 				p.Visualize = EVIZ_LIT;
 			if (ImGui::MenuItem("Pathtracer", nullptr, p.Visualize == EVIZ_PATHTRACER))
 				p.Visualize = EVIZ_PATHTRACER;
-			if(ImGui::MenuItem("Show Normals", nullptr, p.Visualize == EVIZ_SHOW_NORMAL))
-				p.Visualize = EVIZ_SHOW_NORMAL;
-			if (ImGui::MenuItem("Show Roughness", nullptr, p.Visualize == EVIZ_SHOW_ROUGHNESS))
-				p.Visualize = EVIZ_SHOW_ROUGHNESS;
-			if (ImGui::MenuItem("Show Metallic", nullptr, p.Visualize == EVIZ_SHOW_METAL))
-				p.Visualize = EVIZ_SHOW_METAL;
+			if(ImGui::BeginMenu("Show GBuffer"))
+			{
+				if (ImGui::MenuItem("Show Albedo", nullptr, p.Visualize == EVIZ_SHOW_ALBEDO))
+					p.Visualize = EVIZ_SHOW_ALBEDO;
+				if (ImGui::MenuItem("Show Normals", nullptr, p.Visualize == EVIZ_SHOW_NORMAL))
+					p.Visualize = EVIZ_SHOW_NORMAL;
+				if (ImGui::MenuItem("Show Roughness", nullptr, p.Visualize == EVIZ_SHOW_ROUGHNESS))
+					p.Visualize = EVIZ_SHOW_ROUGHNESS;
+				if (ImGui::MenuItem("Show Metallic", nullptr, p.Visualize == EVIZ_SHOW_METAL))
+					p.Visualize = EVIZ_SHOW_METAL;
+				ImGui::EndMenu();
+			}
 			if (ImGui::MenuItem("Show Raytracing Debug", nullptr, p.Visualize == EVIZ_SHOW_RAYTRACING_DEBUG))
 				p.Visualize = EVIZ_SHOW_RAYTRACING_DEBUG;
 			gData.Rdr->SetGlobalParameters(p);

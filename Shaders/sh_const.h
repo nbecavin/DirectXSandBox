@@ -76,6 +76,9 @@ ConstantBuffer<InstanceParameters> Object : register(b1);
 ConstantBuffer<InstanceID> Instance : register(b2);
 ConstantBuffer<CameraParameters> Camera : register(b9);
 
+// Fixed SRV mapping
+Texture2D<unorm float> ShadowBuffer : register(t0);
+
 //--------------------------------------------------
 
 float3x3 SetMatrix3x3( float3 u, float3 v, float3 w )

@@ -130,7 +130,7 @@ void GpuScene::SetActiveMaterial(Material* Mat)
 	}
 }
 
-void GpuScene::DrawScene()
+void GpuScene::DrawScene(PassHint hint)
 {
 	auto* HAL = gData.Rdr->GetHAL();
 
@@ -156,7 +156,7 @@ void GpuScene::DrawScene()
 			m_InstanceIDData.Add(c1);
 		}
 
-		HAL->BindGraphicPipelineState(ShaderMap::BaseMeshVS, ShaderMap::BasePassPS);
+		HAL->BindGraphicPipelineState(ShaderMap::BaseMeshVS, hint == PassHint::GBuffer ? ShaderMap::GBufferPassPS : ShaderMap::BasePassPS);
 
 		HAL->SetConstantBuffer(1, SHADER_TYPE_VERTEX, m_InstanceData[id]);
 		HAL->SetConstantBuffer(2, SHADER_TYPE_VERTEX, m_InstanceIDData[id]);

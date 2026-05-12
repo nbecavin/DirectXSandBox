@@ -250,6 +250,9 @@
       <Filter>Engine\Renderer</Filter>
     </ClCompile>
     <ClCompile Include="SandBox.cpp" />
+    <ClCompile Include="..\Tools\RTXDI\Source\ReSTIRPT.cpp">
+      <Filter>Tools\RTXDI</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Includes\GraphObject.h">

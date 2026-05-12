@@ -138,6 +138,7 @@
     <ClCompile Include="..\Tools\RTXDI\Source\ReGIR.cpp" />
     <ClCompile Include="..\Tools\RTXDI\Source\ReSTIRDI.cpp" />
     <ClCompile Include="..\Tools\RTXDI\Source\ReSTIRGI.cpp" />
+    <ClCompile Include="..\Tools\RTXDI\Source\ReSTIRPT.cpp" />
     <ClCompile Include="..\Tools\RTXDI\Source\RISBufferSegmentAllocator.cpp" />
     <ClCompile Include="..\Tools\RTXDI\Source\RtxdiUtils.cpp" />
     <ClCompile Include="AssetCache.cpp" />

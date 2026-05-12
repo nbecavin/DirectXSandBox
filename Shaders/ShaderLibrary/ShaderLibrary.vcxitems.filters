@@ -37,6 +37,9 @@
     <Filter Include="Pathtracer">
       <UniqueIdentifier>{dbce3341-e811-4110-a575-512bcfe175f9}</UniqueIdentifier>
     </Filter>
+    <Filter Include="RTXDI-Integration\RTXDI-SDK\PT">
+      <UniqueIdentifier>{449e0993-6265-4a26-abdd-f880bc14a53b}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="$(MSBuildThisFileDirectory)..\base_pass.ps.hlsl">
@@ -138,6 +141,45 @@
     <None Include="$(MSBuildThisFileDirectory)..\raytracing_common.hlsli">
       <Filter>Raytracing</Filter>
     </None>
+    <None Include="$(MSBuildThisFileDirectory)..\..\Tools\RTXDI\Include\Rtxdi\PT\BoilingFilter.hlsli">
+      <Filter>RTXDI-Integration\RTXDI-SDK\PT</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)..\..\Tools\RTXDI\Include\Rtxdi\PT\HybridShift.hlsli">
+      <Filter>RTXDI-Integration\RTXDI-SDK\PT</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)..\..\Tools\RTXDI\Include\Rtxdi\PT\HybridShiftPathTracerContext.hlsli">
+      <Filter>RTXDI-Integration\RTXDI-SDK\PT</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)..\..\Tools\RTXDI\Include\Rtxdi\PT\InitialSampling.hlsli">
+      <Filter>RTXDI-Integration\RTXDI-SDK\PT</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)..\..\Tools\RTXDI\Include\Rtxdi\PT\InitialSamplingPathTracerContext.hlsli">
+      <Filter>RTXDI-Integration\RTXDI-SDK\PT</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)..\..\Tools\RTXDI\Include\Rtxdi\PT\PathReconnectibility.hlsli">
+      <Filter>RTXDI-Integration\RTXDI-SDK\PT</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)..\..\Tools\RTXDI\Include\Rtxdi\PT\PathTracerContext.hlsli">
+      <Filter>RTXDI-Integration\RTXDI-SDK\PT</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)..\..\Tools\RTXDI\Include\Rtxdi\PT\PathTracerContextParameters.hlsli">
+      <Filter>RTXDI-Integration\RTXDI-SDK\PT</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)..\..\Tools\RTXDI\Include\Rtxdi\PT\PathTracerRandomContext.hlsli">
+      <Filter>RTXDI-Integration\RTXDI-SDK\PT</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)..\..\Tools\RTXDI\Include\Rtxdi\PT\PathTracerState.hlsli">
+      <Filter>RTXDI-Integration\RTXDI-SDK\PT</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)..\..\Tools\RTXDI\Include\Rtxdi\PT\Reservoir.hlsli">
+      <Filter>RTXDI-Integration\RTXDI-SDK\PT</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)..\..\Tools\RTXDI\Include\Rtxdi\PT\SpatialResampling.hlsli">
+      <Filter>RTXDI-Integration\RTXDI-SDK\PT</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)..\..\Tools\RTXDI\Include\Rtxdi\PT\TemporalResampling.hlsli">
+      <Filter>RTXDI-Integration\RTXDI-SDK\PT</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="$(MSBuildThisFileDirectory)..\..\Tools\RTXDI\Include\Rtxdi\DI\ReSTIRDI.h">
@@ -165,6 +207,12 @@
       <Filter>RTXDI-Integration\RTXDI-SDK\ReGIR</Filter>
     </ClInclude>
     <ClInclude Include="$(MSBuildThisFileDirectory)..\cpp_interop.hlsli.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\Tools\RTXDI\Include\Rtxdi\PT\ReSTIRPT.h">
+      <Filter>RTXDI-Integration\RTXDI-SDK\PT</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\Tools\RTXDI\Include\Rtxdi\PT\ReSTIRPTParameters.h">
+      <Filter>RTXDI-Integration\RTXDI-SDK\PT</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="$(MSBuildThisFileDirectory)..\RTXDI-Integration\LightingPasses\Presampling\PresampleReGIR.hlsl">

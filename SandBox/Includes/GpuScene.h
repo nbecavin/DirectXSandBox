@@ -34,7 +34,16 @@ namespace sys
 		}
 
 		void SetActiveMaterial(Material* Mat);
-		void DrawScene();
+
+		enum class PassHint
+		{
+			GBuffer,
+			ShadowCast,
+			Forward,
+			Raytracing,
+		};
+
+		void DrawScene(PassHint hint);
 
 	protected:
 		MaterialDA		m_MaterialDA;

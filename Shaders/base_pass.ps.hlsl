@@ -24,11 +24,15 @@ float4 ForwardMain(const in VS_Output i) : SV_TARGET
 	float3 DLIGHT_COLOR = 4 * float3( 1.0, 1, 1.0 );
 
 	float3 STATIC_AMBIENT = float3( 0.1, 0.1, 0.15 );
+	
+	// Sample shadow buffer
+	float shadow = ShadowBuffer.Sample(sSampler, i.uv).r;	
 
 	// Evaluate BRDF for sun
-	float3 radiance = EvaluateBRDF(mat, DLIGHT_COLOR, DLIGHT_DIR, mat.normal, V);
+	float3 radiance = EvaluateBRDF(mat, DLIGHT_COLOR * shadow, DLIGHT_DIR, mat.normal, V);
 	radiance += STATIC_AMBIENT * mat.albedo; //should be GI instead... or skyligh
 
+	//radiance = shadow;
 	//radiance = mat.normal;
 	//radiance = -V;
 

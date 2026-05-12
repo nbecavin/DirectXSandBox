@@ -58,10 +58,10 @@ float4 Interpolate(float4 vertices[3], float3 bary)
 // Inline Raytracing
 
 template<typename TPayload, typename TCallbackHandler>
-void TraceRayInline(RaytracingAccelerationStructure TLAS, RayDesc ray, inout TPayload pay, TCallbackHandler callbacks)
+void TraceRayInline(RaytracingAccelerationStructure TLAS, uint flags, RayDesc ray, inout TPayload pay, TCallbackHandler callbacks)
 {
 	RayQuery<RAY_FLAG_NONE, RAYQUERY_FLAG_NONE> q;
-	q.TraceRayInline(TLAS, RAY_FLAG_NONE, -1, ray);
+	q.TraceRayInline(TLAS, flags, -1, ray);
 	while (q.Proceed())
 	{
 		if (q.CandidateType() == CANDIDATE_NON_OPAQUE_TRIANGLE)

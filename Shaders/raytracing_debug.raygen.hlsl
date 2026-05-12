@@ -69,7 +69,7 @@ void main(uint2 did : SV_DispatchThreadID)
 //ray.Origin = float3(0,0,0);
 	
 	RayPayload pay;
-	TraceRayInline(TLAS, ray, pay, callbacks);
+	TraceRayInline(TLAS, RAY_FLAG_NONE, ray, pay, callbacks);
 	
 	color = pay.color;
 	//color = worldDir;

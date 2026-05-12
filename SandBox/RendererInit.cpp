@@ -48,13 +48,16 @@ namespace sys {
 		m_HdrRenderTarget->SetUsage(BM_USAGE_SRV | BM_USAGE_RTV | BM_USAGE_UAV);
 		GetHAL()->CreateTexture(m_HdrRenderTarget);
 
-		m_gBuffer[0] = new Bitmap();
-		m_gBuffer[0]->SetSize(SizeX,SizeY);
-		m_gBuffer[0]->SetFormat(BM_R8G8B8A8_UNORM);
-		m_gBuffer[0]->SetType(BM_TYPE_2D);
-		m_gBuffer[0]->DisableFlags(BM_SRGB);
-		m_gBuffer[0]->SetUsage(BM_USAGE_SRV | BM_USAGE_RTV | BM_USAGE_UAV);
-		GetHAL()->CreateTexture(m_gBuffer[0]);
+		for (int i = 0; i < _countof(m_gBuffer); i++)
+		{
+			m_gBuffer[i] = new Bitmap();
+			m_gBuffer[i]->SetSize(SizeX, SizeY);
+			m_gBuffer[i]->SetFormat(BM_R8G8B8A8_UNORM);
+			m_gBuffer[i]->SetType(BM_TYPE_2D);
+			m_gBuffer[i]->DisableFlags(BM_SRGB);
+			m_gBuffer[i]->SetUsage(BM_USAGE_SRV | BM_USAGE_RTV | BM_USAGE_UAV);
+			GetHAL()->CreateTexture(m_gBuffer[i]);
+		}
 
 		m_lightBuffer = new Bitmap();
 		m_lightBuffer->SetSize(SizeX,SizeY);
@@ -70,6 +73,14 @@ namespace sys {
 		m_linearZBuffer->SetType(BM_TYPE_2D);
 		m_linearZBuffer->SetUsage(BM_USAGE_SRV | BM_USAGE_RTV | BM_USAGE_UAV);
 		GetHAL()->CreateTexture(m_linearZBuffer);
+
+		m_shadowBuffer = new Bitmap();
+		m_shadowBuffer->SetSize(SizeX, SizeY);
+		m_shadowBuffer->SetFormat(BM_R8_UNORM);
+		m_shadowBuffer->SetType(BM_TYPE_2D);
+		m_shadowBuffer->DisableFlags(BM_SRGB);
+		m_shadowBuffer->SetUsage(BM_USAGE_SRV | BM_USAGE_UAV);
+		GetHAL()->CreateTexture(m_shadowBuffer);
 
 		m_ssaoBuffer = new Bitmap();
 		m_ssaoBuffer->SetSize(SizeX,SizeY);
