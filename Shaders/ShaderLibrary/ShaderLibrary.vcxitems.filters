@@ -40,6 +40,12 @@
     <Filter Include="RTXDI-Integration\RTXDI-SDK\PT">
       <UniqueIdentifier>{449e0993-6265-4a26-abdd-f880bc14a53b}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Foundation">
+      <UniqueIdentifier>{fd69fe43-34f8-4b34-9dfa-5b2927fc4281}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Debug">
+      <UniqueIdentifier>{68388988-3f3b-4683-9391-427ee9516c83}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="$(MSBuildThisFileDirectory)..\base_pass.ps.hlsl">
@@ -59,7 +65,6 @@
     </Text>
   </ItemGroup>
   <ItemGroup>
-    <None Include="$(MSBuildThisFileDirectory)..\ImGui.hlsl" />
     <None Include="$(MSBuildThisFileDirectory)..\material_common.hlsli">
       <Filter>Material</Filter>
     </None>
@@ -180,6 +185,12 @@
     <None Include="$(MSBuildThisFileDirectory)..\..\Tools\RTXDI\Include\Rtxdi\PT\TemporalResampling.hlsli">
       <Filter>RTXDI-Integration\RTXDI-SDK\PT</Filter>
     </None>
+    <None Include="$(MSBuildThisFileDirectory)..\gbuffer.hlsli">
+      <Filter>Foundation</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)..\ImGui.hlsl">
+      <Filter>Debug</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="$(MSBuildThisFileDirectory)..\..\Tools\RTXDI\Include\Rtxdi\DI\ReSTIRDI.h">
@@ -226,6 +237,9 @@
     </FxCompile>
     <FxCompile Include="$(MSBuildThisFileDirectory)..\raytracing_sun_shadows.raygen.hlsl">
       <Filter>Raytracing</Filter>
+    </FxCompile>
+    <FxCompile Include="$(MSBuildThisFileDirectory)..\debug_gbuffer.ps.hlsl">
+      <Filter>Debug</Filter>
     </FxCompile>
   </ItemGroup>
 </Project>

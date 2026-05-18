@@ -38,6 +38,7 @@ struct ShaderMap
 	static ShaderKernel* RaytracingSunShadowsRGS;
 	static ShaderKernel* RaytracingSunShadowsInlineRGS;
 	static ShaderKernel* PathTracerRGS;
+	static ShaderKernel* DebugGbufferPS;
 };
 
 #endif //__RENDERER_SHADER_HH__

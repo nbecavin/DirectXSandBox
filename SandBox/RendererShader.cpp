@@ -19,6 +19,8 @@ ShaderKernel* ShaderMap::RaytracingSunShadowsRGS = nullptr;
 ShaderKernel* ShaderMap::RaytracingSunShadowsInlineRGS = nullptr;
 ShaderKernel* ShaderMap::PathTracerRGS = nullptr;
 
+ShaderKernel* ShaderMap::DebugGbufferPS = nullptr;
+
 namespace sys {
 
 	ShaderKernel* textRTXDI;
@@ -53,6 +55,9 @@ namespace sys {
 
 		ShaderMap::RaytracingSunShadowsRGS = GetHAL()->CreateKernel("shaders/raytracing_sun_shadows.raygen.hlsl", "main", SHADER_TYPE_RAYGEN);
 		ShaderMap::RaytracingSunShadowsInlineRGS = GetHAL()->CreateKernel("shaders/raytracing_sun_shadows.raygen.hlsl", "main", SHADER_TYPE_COMPUTE);
+
+		// Debug
+		ShaderMap::DebugGbufferPS = GetHAL()->CreateKernel("shaders/debug_gbuffer.ps.hlsl", "main", SHADER_TYPE_PIXEL);
 	}
 
 };

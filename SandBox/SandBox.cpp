@@ -235,6 +235,8 @@ void sys::UpdateEditorMenu()
 					p.Visualize = EVIZ_SHOW_ROUGHNESS;
 				if (ImGui::MenuItem("Show Metallic", nullptr, p.Visualize == EVIZ_SHOW_METAL))
 					p.Visualize = EVIZ_SHOW_METAL;
+				if (ImGui::MenuItem("Show Depth", nullptr, p.Visualize == EVIZ_SHOW_DEPTH))
+					p.Visualize = EVIZ_SHOW_DEPTH;
 				ImGui::EndMenu();
 			}
 			if (ImGui::MenuItem("Show Raytracing Debug", nullptr, p.Visualize == EVIZ_SHOW_RAYTRACING_DEBUG))

@@ -70,6 +70,7 @@
     <None Include="$(MSBuildThisFileDirectory)..\..\Tools\RTXDI\Include\Rtxdi\Utils\Math.hlsli" />
     <None Include="$(MSBuildThisFileDirectory)..\..\Tools\RTXDI\Include\Rtxdi\Utils\ReservoirAddressing.hlsli" />
     <None Include="$(MSBuildThisFileDirectory)..\brdf.hlsli" />
+    <None Include="$(MSBuildThisFileDirectory)..\gbuffer.hlsli" />
     <None Include="$(MSBuildThisFileDirectory)..\ImGui.hlsl">
       <FileType>Document</FileType>
     </None>
@@ -102,6 +103,9 @@
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="$(MSBuildThisFileDirectory)..\auto_exposure.cs.hlsl" />
+    <FxCompile Include="$(MSBuildThisFileDirectory)..\debug_gbuffer.ps.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Pixel</ShaderType>
+    </FxCompile>
     <FxCompile Include="$(MSBuildThisFileDirectory)..\raytracing_debug.raygen.hlsl" />
     <FxCompile Include="$(MSBuildThisFileDirectory)..\raytracing_sun_shadows.raygen.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Compute</ShaderType>

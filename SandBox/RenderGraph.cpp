@@ -190,4 +190,39 @@ void RenderGraph::DrawFrame()
 
 		hal->ProfileEndEvent();
 	}
+
+	bool bDebugGbuffer = p.Visualize == EVIZ_SHOW_ALBEDO || p.Visualize == EVIZ_SHOW_NORMAL || p.Visualize == EVIZ_SHOW_ROUGHNESS || p.Visualize == EVIZ_SHOW_METAL || p.Visualize == EVIZ_SHOW_DEPTH;
+	if(bDebugGbuffer)
+	{
+		hal->ProfileBeginEvent(0, "Debug Gbuffer");
+
+		TextureLink* gbuffer0 = reinterpret_cast<TextureLink*>(gData.Rdr->m_gBuffer[0]->GetBinHwResId());
+		TextureLink* gbuffer1 = reinterpret_cast<TextureLink*>(gData.Rdr->m_gBuffer[1]->GetBinHwResId());
+		TextureLink* gbuffer2 = reinterpret_cast<TextureLink*>(gData.Rdr->m_gBuffer[2]->GetBinHwResId());
+		TextureLink* gbuffer3 = reinterpret_cast<TextureLink*>(gData.Rdr->m_gBuffer[3]->GetBinHwResId());
+
+		d3d->GetCommandList()->ResourceBarrier(1, &CD3DX12_RESOURCE_BARRIER::Transition(gbuffer0->Resource12, D3D12_RESOURCE_STATE_RENDER_TARGET, D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE | D3D12_RESOURCE_STATE_NON_PIXEL_SHADER_RESOURCE));
+		d3d->GetCommandList()->ResourceBarrier(1, &CD3DX12_RESOURCE_BARRIER::Transition(gbuffer1->Resource12, D3D12_RESOURCE_STATE_RENDER_TARGET, D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE | D3D12_RESOURCE_STATE_NON_PIXEL_SHADER_RESOURCE));
+		d3d->GetCommandList()->ResourceBarrier(1, &CD3DX12_RESOURCE_BARRIER::Transition(gbuffer2->Resource12, D3D12_RESOURCE_STATE_RENDER_TARGET, D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE | D3D12_RESOURCE_STATE_NON_PIXEL_SHADER_RESOURCE));
+		d3d->GetCommandList()->ResourceBarrier(1, &CD3DX12_RESOURCE_BARRIER::Transition(gbuffer3->Resource12, D3D12_RESOURCE_STATE_RENDER_TARGET, D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE | D3D12_RESOURCE_STATE_NON_PIXEL_SHADER_RESOURCE));
+
+		hal->SetShaderResource(4, SHADER_TYPE_PIXEL, gData.Rdr->m_gBuffer[0]);
+		hal->SetShaderResource(5, SHADER_TYPE_PIXEL, gData.Rdr->m_gBuffer[1]);
+		hal->SetShaderResource(6, SHADER_TYPE_PIXEL, gData.Rdr->m_gBuffer[2]);
+		hal->SetShaderResource(7, SHADER_TYPE_PIXEL, gData.Rdr->m_gBuffer[3]);
+
+		D3D12_CPU_DESCRIPTOR_HANDLE rtv = d3d->GetCurrentBackBufferView();
+		d3d->GetCommandList()->OMSetRenderTargets(1, &rtv, false, &d3d->GetDSV());
+
+		hal->SetShaderResource(0, SHADER_TYPE_PIXEL, hdrRenderTarget);
+		hal->BindGraphicPipelineState(ShaderMap::ScreenVertexVS, ShaderMap::DebugGbufferPS);
+		hal->FullScreenQuad(Vec2f(1.f, 1.f), Vec2f(0.f, 0.f));
+
+		d3d->GetCommandList()->ResourceBarrier(1, &CD3DX12_RESOURCE_BARRIER::Transition(gbuffer0->Resource12, D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE | D3D12_RESOURCE_STATE_NON_PIXEL_SHADER_RESOURCE, D3D12_RESOURCE_STATE_RENDER_TARGET));
+		d3d->GetCommandList()->ResourceBarrier(1, &CD3DX12_RESOURCE_BARRIER::Transition(gbuffer1->Resource12, D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE | D3D12_RESOURCE_STATE_NON_PIXEL_SHADER_RESOURCE, D3D12_RESOURCE_STATE_RENDER_TARGET));
+		d3d->GetCommandList()->ResourceBarrier(1, &CD3DX12_RESOURCE_BARRIER::Transition(gbuffer2->Resource12, D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE | D3D12_RESOURCE_STATE_NON_PIXEL_SHADER_RESOURCE, D3D12_RESOURCE_STATE_RENDER_TARGET));
+		d3d->GetCommandList()->ResourceBarrier(1, &CD3DX12_RESOURCE_BARRIER::Transition(gbuffer3->Resource12, D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE | D3D12_RESOURCE_STATE_NON_PIXEL_SHADER_RESOURCE, D3D12_RESOURCE_STATE_RENDER_TARGET));
+
+		hal->ProfileEndEvent();
+	}
 }

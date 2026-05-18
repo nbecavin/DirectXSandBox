@@ -42,7 +42,6 @@ MaterialPBR SampleMaterial(in VS_Output i)
 	
 	MaterialPBR mat = (MaterialPBR) 0;
 
-	//float4 albedo_and_opacity = sAlbedo.Sample(LinearSampler, i.uv);
 	float4 albedo_and_opacity = GetTexture2D(p.albedo_map).Sample(LinearSampler, i.uv);
 
     // If your albedo texture is stored in sRGB and sampled as linear by sampler state, you can skip SRGBToLinear.
