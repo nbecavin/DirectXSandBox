@@ -2,7 +2,7 @@
 Open Asset Import Library (assimp)
 ----------------------------------------------------------------------
 
-Copyright (c) 2006-2022, assimp team
+Copyright (c) 2006-2026, assimp team
 
 All rights reserved.
 
@@ -47,28 +47,29 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #endif
 
 #include <stdint.h>
+#include <stdlib.h>
 #include <string.h>
 #include <cmath>
 
 // ------------------------------------------------------------------------------------------------
-// Hashing function taken from
-// http://www.azillionmonkeys.com/qed/hash.html
-// (incremental version)
-//
-// This code is Copyright 2004-2008 by Paul Hsieh. It is used here in the belief that
-// Assimp's license is considered compatible with Pauls's derivative license as specified
-// on his web page.
-//
-// (stdint.h should have been been included here)
+/// @brief Hashing function taken from
+/// http://www.azillionmonkeys.com/qed/hash.html
+/// (incremental version)
+///
+/// This code is Copyright 2004-2008 by Paul Hsieh. It is used here in the belief that
+/// Assimp's license is considered compatible with Pauls's derivative license as specified
+/// on his web page.
+///
+/// (stdint.h should have been been included here)
 // ------------------------------------------------------------------------------------------------
 #undef get16bits
 #if (defined(__GNUC__) && defined(__i386__)) || defined(__WATCOMC__) \
   || defined(_MSC_VER) || defined (__BORLANDC__) || defined (__TURBOC__)
-#define get16bits(d) (*((const uint16_t *) (d)))
+#  define get16bits(d) (*((const uint16_t *) (d)))
 #endif
 
 #if !defined (get16bits)
-#define get16bits(d) ((((uint32_t)(((const uint8_t *)(d))[1])) << 8)\
+#  define get16bits(d) ((((uint32_t)(((const uint8_t *)(d))[1])) << 8)\
                        +(uint32_t)(((const uint8_t *)(d))[0]) )
 #endif
 
@@ -76,9 +77,9 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 inline uint32_t SuperFastHash (const char * data, uint32_t len = 0, uint32_t hash = 0) {
     uint32_t tmp;
     int rem;
-    
-    if (!data) return 0;
-    if (!len)len = (uint32_t)::strlen(data);
+
+    if (data == NULL) return 0;
+    if (len == 0)len = (uint32_t)::strlen(data);
 
     rem = len & 3;
     len >>= 2;

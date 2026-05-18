@@ -13,7 +13,7 @@
 #include <Material.h>
 #include <RaytracingScene.h>
 
-#pragma comment(lib, "../Tools/assimp/lib/x64/assimp-vc143-mt.lib")
+#pragma comment(lib, "../Tools/assimp/lib/x64/assimp-vc145-mt.lib")
 
 std::string str_toupper(std::string s)
 {
@@ -66,6 +66,9 @@ aiMatrix4x4 GetCorrection(SourceApp source)
 		aiMatrix4x4::RotationY(AI_MATH_PI * 0.5f, correction);
 		break;
 	}
+
+	// Assimp 6.0.5 has fixed camera orientation. Return identity
+	aiMatrix4x4::RotationY(0, correction);
 	return correction;
 }
 
