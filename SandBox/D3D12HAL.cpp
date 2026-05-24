@@ -251,7 +251,7 @@ void D3D12HAL::Init(int sizeX, int sizeY, sys::Renderer* owner)
 		D3D12_CPU_DESCRIPTOR_HANDLE dsvHandle = m_DsvHeap.GetCPUSlotHandle(slot);
 
 		CD3DX12_RESOURCE_DESC resdesc;
-		resdesc = CD3DX12_RESOURCE_DESC::Tex2D(DXGI_FORMAT_D32_FLOAT, sizeX, sizeY);
+		resdesc = CD3DX12_RESOURCE_DESC::Tex2D(DXGI_FORMAT_D32_FLOAT, sizeX, sizeY, 1, 1);
 		resdesc.Flags = D3D12_RESOURCE_FLAG_ALLOW_DEPTH_STENCIL;
 
 		D3D12_CLEAR_VALUE clearZ;
@@ -442,11 +442,14 @@ void D3D12HAL::Shut()
 void D3D12HAL::SetAndClearRenderTarget()
 {
 	m_CurrentGraphicsPSO.NumRenderTargets = 1;
+	for(UINT i = 0; i < _countof(m_CurrentGraphicsPSO.RTVFormats); i++)
+	{
+		m_CurrentGraphicsPSO.RTVFormats[i] = DXGI_FORMAT_UNKNOWN;
+	}
 	m_CurrentGraphicsPSO.RTVFormats[0] = DXGI_FORMAT_R8G8B8A8_UNORM;
 	m_CurrentGraphicsPSO.SampleDesc.Count = 1;
 	m_CurrentGraphicsPSO.DSVFormat = DXGI_FORMAT_D32_FLOAT;
-	//m_CommandList->SetGra
-	//GetCommandList()->OMSetRenderTargets(1, &m_BackBuffer, m_DepthBuffer);
+	m_CurrentGraphicsPSO.SampleMask = -1;
 
 	D3D12_CPU_DESCRIPTOR_HANDLE rtv = GetCurrentBackBufferView();
 	m_CommandList->OMSetRenderTargets(1, &rtv, false, &m_DepthStencilView);

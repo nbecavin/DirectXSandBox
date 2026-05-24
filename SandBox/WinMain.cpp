@@ -13,6 +13,9 @@
 #include <Renderer.h>
 #include <RenderHAL.h>
 
+#include <SDL3/SDL_init.h>
+#pragma comment(lib,"../Tools/SDL3-3.4.8/lib/x64/SDL3.lib")
+
 #if WINAPI_FAMILY==WINAPI_FAMILY_APP
 	using namespace Windows::ApplicationModel;
 	using namespace Windows::ApplicationModel::Core;
@@ -40,20 +43,8 @@ namespace sys { namespace pc {
 	HINSTANCE	hInstance;
 	int			nCmdShow;
 	HWND		hWnd;
-#if WINAPI_FAMILY==WINAPI_FAMILY_APP
-	Direct3DApplicationSource^ m_App;
-#endif
 }; };
 
-#if WINAPI_FAMILY==WINAPI_FAMILY_APP
-[Platform::MTAThread]
-int main(Platform::Array<Platform::String^>^)
-{
-	sys::pc::m_App = ref new sys::pc::Direct3DApplicationSource();
-	CoreApplication::Run(sys::pc::m_App);
-	return 0;
-}
-#else
 int APIENTRY _tWinMain(HINSTANCE hInstance,
                      HINSTANCE hPrevInstance,
                      LPTSTR    lpCmdLine,
@@ -66,13 +57,14 @@ int APIENTRY _tWinMain(HINSTANCE hInstance,
 
 	HRESULT hr = CoInitializeEx(nullptr, COINIT_MULTITHREADED);
 
+	SDL_Init(SDL_INIT_EVENTS | SDL_INIT_GAMEPAD);
+
 	sys::Init();
 	sys::MainLoop();
 	sys::Shut();
 
 	return 0;
 }
-#endif
 
 //
 //  FONCTION : MyRegisterClass()

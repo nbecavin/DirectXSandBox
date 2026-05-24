@@ -274,7 +274,7 @@ void D3D12HAL::SetUAV(U32 Slot, Bitmap* Texture)
 	TextureLink* tex = reinterpret_cast<TextureLink*>(Texture->GetBinHwResId());
 	if ((U64)tex != BM_INVALIDHWRESID)
 	{
-		m_CurrentUAV[Slot] = tex->m_SRV;
+		m_CurrentUAV[Slot] = tex->m_UAV;
 	}
 }
 

@@ -18,6 +18,9 @@ public:
 	inline U32 GetArraySize() const { return sizeof(T)*Size; }
 	inline U32 GetSize() const { return Size; }
 
+	inline T* begin() { return Datas; }
+	inline T* end() { return Datas + Size; }
+
 	T& operator[](U32 Id)
 	{
 		return Datas[Id];

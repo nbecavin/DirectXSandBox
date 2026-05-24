@@ -8,6 +8,9 @@
 
 float4 ForwardMain(const in VS_Output i) : SV_TARGET
 {
+	float2 pixel_pos = i.position.xy / float2(1920, 1080);
+	float3 screen_uv = float3(pixel_pos, i.position.z) / i.position.w;	
+	
     // Camera vector from surface to camera
     float3 V = normalize(Camera.eyeWorld - i.world_position);
 
@@ -23,13 +26,15 @@ float4 ForwardMain(const in VS_Output i) : SV_TARGET
 	float3 STATIC_AMBIENT = float3( 0.1, 0.1, 0.15 );
 	
 	// Sample shadow buffer
-	float shadow = ShadowBuffer.Sample(sSampler, i.uv).r;
+	float shadow = ShadowBuffer.Sample(sSampler, screen_uv.xy).r;
 
 	// Evaluate BRDF for sun
 	float3 radiance = EvaluateBRDF(mat, DLIGHT_COLOR * shadow, DLIGHT_DIR, mat.normal, V);
 	radiance += STATIC_AMBIENT * mat.albedo; //should be GI instead... or skylight
 
 	//radiance = shadow;
+	radiance = ShadowBuffer.Sample(sSampler, screen_uv.xy).rgb;
+	//radiance = float3(screen_uv.xy, 0);
 	//radiance = mat.normal;
 	//radiance = -V;
 	return float4(radiance, mat.opacity);
@@ -45,7 +50,8 @@ PackedGBufferRT GbufferMain(const in VS_Output i)
 	
 	gbuffer.albedo = mat.albedo;
 	gbuffer.opacity = mat.opacity;
-	gbuffer.shading_normal = mat.normal;
+	gbuffer.shading_normal = 1;
+	mat.normal;
 	
 	return PackedGBufferRT::Pack(gbuffer);
 }

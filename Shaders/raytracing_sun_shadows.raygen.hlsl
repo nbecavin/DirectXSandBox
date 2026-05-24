@@ -14,6 +14,7 @@
 
 #include "sh_const.h"
 #include "raytracing_common.hlsli"
+#include "gbuffer.hlsli"
 
 #define TMIN_EPSILON	 10e-4
 #define TMAX_INF	 10e9
@@ -59,6 +60,9 @@ void main(uint2 did : SV_DispatchThreadID)
 	//float3 viewDir = normalize(mul(float4(ndcViewport, 0, 1), Camera.invProjMatrix).xyz);
 	float3 worldDir = mul(viewDir, Camera.invViewMatrix);
 
+	GBuffer gbuffer;
+	gbuffer.Unpack(uvViewport);
+	
 	RayDesc ray;
 	ray.TMin = 0;
 	ray.TMax = TMAX_INF;
@@ -71,7 +75,8 @@ void main(uint2 did : SV_DispatchThreadID)
 	RayPayload pay;
 	TraceRayInline(TLAS, RAY_FLAG_NONE, ray, pay, callbacks);
 	
-	color = 1;//pay.color;
+	color = gbuffer.albedo;//
+	pay.color;
 	//color = worldDir;
 
 	Output[did] = float4(color, 1);

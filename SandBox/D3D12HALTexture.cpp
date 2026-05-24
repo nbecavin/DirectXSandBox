@@ -280,6 +280,9 @@ void D3D12HAL::CreateTexture(Bitmap * _Bm)
 			return;
 		}
 
+		std::wstring wname(_Bm->GetName().begin(), _Bm->GetName().end());
+		tex->Resource12->SetName(wname.c_str());
+
 		// Fill in resource with initial data
 		if (_Bm->GetDatas())
 		{

@@ -20,6 +20,8 @@ float4 main(ScreenVertexVsOutput i) : SV_Target
 		vSample.rgb = gbuffer.roughness.xxx;
 	if (Global.Visualize == EVIZ_SHOW_METAL)
 		vSample.rgb = gbuffer.metallic.xxx;
+	if (Global.Visualize == EVIZ_SHOW_DEPTH)
+		vSample.rgb = gbuffer.depth;
 
 	// Gamma correction : Linear -> sRGB
 	vSample.rgb = LinearToSRGB(vSample, false);

@@ -72,6 +72,7 @@ namespace sys {
 		virtual ConstantBuffer* CreateConstantBuffer(U32 _Size) = 0;
 		virtual ShaderResourceView* CreateShaderResourceView(Buffer* _Buffer, U32 _Count, U32 _Stride) = 0;
 
+		virtual void SetRenderTargets(U32 numRTV, TextureLink** RTVs) = 0;
 		virtual void SetScissorRect(U32 left, U32 right, U32 top, U32 bottom) = 0;
 
 		virtual void BindGraphicPipelineState(ShaderKernel* VS, ShaderKernel* PS) = 0;

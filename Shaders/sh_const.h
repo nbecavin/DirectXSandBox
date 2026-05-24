@@ -77,7 +77,8 @@ ConstantBuffer<InstanceID> Instance : register(b2);
 ConstantBuffer<CameraParameters> Camera : register(b9);
 
 // Fixed SRV mapping
-Texture2D<unorm float> ShadowBuffer : register(t0);
+//Texture2D<unorm float> ShadowBuffer : register(t0);
+Texture2D<float3> ShadowBuffer : register(t0);
 
 //--------------------------------------------------
 

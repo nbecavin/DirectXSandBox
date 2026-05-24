@@ -80,3 +80,26 @@ void D3D12HAL::BindComputePipelineState(ShaderKernel* CS)
 {
 	m_CurrentComputePSO.CS = ((D3D12Shader*)CS->m_ShaderBlob)->m_ByteCode;
 }
+
+void D3D12HAL::SetRenderTargets(U32 numRTV, TextureLink** RTVs)
+{
+	D3D12_CPU_DESCRIPTOR_HANDLE gpuDescriptors[8] = {};
+	int i;
+	for (i = 0; i < numRTV && i < _countof(m_CurrentGraphicsPSO.RTVFormats); i++)
+	{
+		TextureLink* link = RTVs[i];
+		gpuDescriptors[i] = link->m_RTV;
+
+		m_CurrentGraphicsPSO.RTVFormats[i] = link->Resource12 ? link->Resource12->GetDesc().Format : DXGI_FORMAT_UNKNOWN;
+	}
+	for (; i < _countof(m_CurrentGraphicsPSO.RTVFormats); i++)
+	{
+		m_CurrentGraphicsPSO.RTVFormats[i] = DXGI_FORMAT_UNKNOWN;
+	}
+
+	m_CurrentGraphicsPSO.NumRenderTargets = numRTV;
+	m_CurrentGraphicsPSO.DSVFormat = GetDepthStencil() ? GetDepthStencil()->GetDesc().Format : DXGI_FORMAT_UNKNOWN;
+	m_CurrentGraphicsPSO.SampleMask = -1;
+
+	GetCommandList()->OMSetRenderTargets(numRTV, gpuDescriptors, false, &GetDSV());
+}

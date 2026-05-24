@@ -62,11 +62,16 @@ public:
 	ID3D12Device* GetDevice() { return m_Device.Get(); }
 	ID3D12GraphicsCommandList5* GetCommandList() { return m_CommandList.Get(); }
 	D3D12_GRAPHICS_PIPELINE_STATE_DESC& GetPipelineState() { return m_CurrentGraphicsPSO; }
+	ID3D12Resource* GetDepthStencil() const
+	{
+		return m_DepthStencil.Get();
+	}
 	D3D12_CPU_DESCRIPTOR_HANDLE GetDSV() const {
 		return m_DepthStencilView;
 	}
 
 	// Graphics command list
+	void SetRenderTargets(U32 numRTV, TextureLink** RTVs);
 	void SetViewports(D3D12_VIEWPORT& Viewport);
 	void SetAndClearRenderTarget();
 	void SetDepthStencilState(DepthStencilDesc& Desc);

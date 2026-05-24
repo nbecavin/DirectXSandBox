@@ -239,6 +239,8 @@ void sys::UpdateEditorMenu()
 					p.Visualize = EVIZ_SHOW_DEPTH;
 				ImGui::EndMenu();
 			}
+			if (ImGui::MenuItem("Show Raytraced Shadow", nullptr, p.Visualize == EVIZ_SHOW_RAYTRACED_SHADOW_DEBUG))
+				p.Visualize = EVIZ_SHOW_RAYTRACED_SHADOW_DEBUG;
 			if (ImGui::MenuItem("Show Raytracing Debug", nullptr, p.Visualize == EVIZ_SHOW_RAYTRACING_DEBUG))
 				p.Visualize = EVIZ_SHOW_RAYTRACING_DEBUG;
 			gData.Rdr->SetGlobalParameters(p);
@@ -246,6 +248,15 @@ void sys::UpdateEditorMenu()
 			//ShowExampleMenuFile();
 			ImGui::EndMenu();
 		}
+		if (ImGui::BeginMenu("Tools"))
+		{
+			if (ImGui::MenuItem("Reload Shaders", "F5"))
+			{
+				gData.Rdr->InitShaders();
+			}			
+			ImGui::EndMenu();
+		}
+
 		/* 
 		if (ImGui::BeginMenu("Edit"))
 		{

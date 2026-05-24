@@ -36,9 +36,11 @@ namespace sys
 
 	float WinInputManager::GetAction(int inputid,int actionid)
 	{
+		float value = InputManager::GetAction(inputid, actionid);
+
 		XINPUT_STATE * state = &m_XInputPads[inputid];
 		float	coef = 255.f / 32767.f;
-		float	value = 0.f;
+
 		switch(actionid){
 		case INPUT_ACTION_MOVE_FORWARD:
 			value = (float)Clamp((float)state->Gamepad.sThumbLY*coef,0.f,255.f);
@@ -80,6 +82,8 @@ namespace sys
 
 	void WinInputManager::Update(float dTime)
 	{
+		InputManager::Update(dTime);
+
 		// Update from mouse
 		m_DeviceMouse->Acquire();
 		DIMOUSESTATE2 lMouseState;

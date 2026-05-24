@@ -6,11 +6,12 @@
   <ItemDefinitionGroup>
     <ClCompile>
       <AdditionalIncludeDirectories>
-		  $(SolutionDir)\Tools\imgui;
-		  $(SolutionDir)\Tools\assimp\include\;
-		  $(SolutionDir)\Tools\RTXDI\include\;
-		  %(AdditionalIncludeDirectories)
-	  </AdditionalIncludeDirectories>
+        $(SolutionDir)\Tools\imgui;
+        $(SolutionDir)\Tools\assimp\include\;
+        $(SolutionDir)\Tools\RTXDI\include\;
+        $(SolutionDir)\Tools\SDL3-3.4.8\include\;
+        %(AdditionalIncludeDirectories)
+      </AdditionalIncludeDirectories>
     </ClCompile>
   </ItemDefinitionGroup>
   <ItemGroup />

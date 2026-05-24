@@ -5,9 +5,11 @@ Texture2D<float4> GBuffer0 : register(t4);
 Texture2D<float4> GBuffer1 : register(t5);
 Texture2D<float4> GBuffer2 : register(t6);
 Texture2D<float4> GBuffer3 : register(t7);
+Texture2D<float> DepthBuffer : register(t8);
 
 struct GBuffer
 {
+	float depth;
 	float3 albedo;
 	float3 shading_normal;
 	float3 geometric_normal;
@@ -27,6 +29,7 @@ struct GBuffer
 		float4 slice2 = GBuffer2.Load(int3(uvw));
 		float4 slice3 = GBuffer3.Load(int3(uvw));
 		
+		depth = DepthBuffer.Load(int3(uvw));
 		albedo = slice0.xyz;
 		opacity = slice0.a;
 		shading_normal = slice1.xyz;
@@ -49,14 +52,14 @@ struct PackedGBufferRT
 		packed.GBuffer0RT.rgb = gbuffer.albedo;
 		packed.GBuffer0RT.a = gbuffer.opacity;
 		
-		packed.GBuffer1RT.rgb = gbuffer.shading_normal;
+		packed.GBuffer1RT.rgb = gbuffer.shading_normal * 0.5 + 0.5;
 		packed.GBuffer1RT.a = gbuffer.roughness;
 		
-		packed.GBuffer2RT.rgb = gbuffer.geometric_normal;
+		packed.GBuffer2RT.rgb = gbuffer.geometric_normal * 0.5 + 0.5;
 		packed.GBuffer2RT.a = gbuffer.metallic;
 		
 		packed.GBuffer3RT.r = asfloat(gbuffer.materialID);
-		packed.GBuffer3RT.gba = 0;		
+		packed.GBuffer3RT.gba = 0;
 		return packed;
 	}	
 };
