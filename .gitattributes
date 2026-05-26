@@ -58,3 +58,4 @@
 #*.rtf   diff=astextplain
 #*.RTF   diff=astextplain
 GameDB/assets/** filter=lfs diff=lfs merge=lfs -text
+Tools/**/*.pdb filter=lfs diff=lfs merge=lfs -text
