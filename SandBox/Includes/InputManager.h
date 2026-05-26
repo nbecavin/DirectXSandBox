@@ -48,6 +48,25 @@ namespace sys
         };
 
         Gamepad() = default;
+
+        // Move ctor
+        Gamepad(Gamepad&& o) noexcept
+            : controller(o.controller)
+        {
+            o.controller = nullptr;
+        }
+
+        // Move assign
+        Gamepad& operator=(Gamepad&& o) noexcept
+        {
+            if (this != &o) {
+                close();
+                controller = o.controller;
+                o.controller = nullptr;
+            }
+            return *this;
+        }
+
         ~Gamepad() { close(); }
 
         bool open(SDL_JoystickID& id)
@@ -55,6 +74,11 @@ namespace sys
             controller = SDL_OpenGamepad(id);
             if (!controller)
                 return false;
+
+            const char* name = SDL_GetGamepadName(controller);
+
+            int count;
+            SDL_GamepadBinding** bindings = SDL_GetGamepadBindings(controller, &count);
 
             joystick = SDL_GetGamepadJoystick(controller);
             haptic = SDL_OpenHapticFromJoystick(joystick);
@@ -69,6 +93,8 @@ namespace sys
             if (haptic) { SDL_CloseHaptic(haptic); haptic = nullptr; }
             if (controller) { SDL_CloseGamepad(controller); controller = nullptr; }
         }
+
+		const char* getTypeString() { return SDL_GetGamepadName(controller); }
 
         bool isConnected() const { return controller != nullptr; }
 

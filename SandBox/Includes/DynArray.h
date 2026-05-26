@@ -1,6 +1,8 @@
 #ifndef __DYNARRAY_HH__
 #define __DYNARRAY_HH__
 
+#include <utility>
+
 template<class T,int granularity> class DynArray
 {
 public:
@@ -57,6 +59,22 @@ public:
 		Reserve--;
 		Size++;
 		return Size-1;
+	}
+
+	// Emplace: construct element in-place with perfect forwarding of arguments.
+	template<typename... Args>
+	T* Emplace(Args&&... args)
+	{
+		if (!Reserve)
+		{
+			Reserve = granularity;
+			Realloc(Size + Reserve);
+		}
+
+		new(&Datas[Size]) T(std::forward<Args>(args)...);
+		Reserve--;
+		Size++;
+		return &Datas[Size - 1];
 	}
 
 	void Realloc(U32 NewSize)

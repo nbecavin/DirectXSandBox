@@ -45,6 +45,11 @@ namespace sys { namespace pc {
 	HWND		hWnd;
 }; };
 
+void sdlLogOutputFunction(void* userdata, int category, SDL_LogPriority priority, const char* message)
+{
+	OutputDebugString(message);
+}
+
 int APIENTRY _tWinMain(HINSTANCE hInstance,
                      HINSTANCE hPrevInstance,
                      LPTSTR    lpCmdLine,
@@ -56,6 +61,15 @@ int APIENTRY _tWinMain(HINSTANCE hInstance,
 	sys::pc::nCmdShow = nCmdShow;
 
 	HRESULT hr = CoInitializeEx(nullptr, COINIT_MULTITHREADED);
+
+//	SDL_SetHint(SDL_HINT_LOGGING, "error=debug;*=verbose;*=debug"); 
+//	SDL_SetLogOutputFunction(&sdlLogOutputFunction, nullptr);
+
+	SDL_SetHint(SDL_HINT_JOYSTICK_DIRECTINPUT, "0");
+	SDL_SetHint(SDL_HINT_JOYSTICK_ALLOW_BACKGROUND_EVENTS, "1");
+	//SDL_SetHint(SDL_HINT_JOYSTICK_RAWINPUT, "1");
+	SDL_SetHint(SDL_HINT_JOYSTICK_HIDAPI, "1");
+	//SDL_SetHint(SDL_HINT_JOYSTICK_HIDAPI_PS5, "1");
 
 	SDL_Init(SDL_INIT_EVENTS | SDL_INIT_GAMEPAD);
 

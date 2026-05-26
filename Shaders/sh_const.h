@@ -77,8 +77,11 @@ ConstantBuffer<InstanceID> Instance : register(b2);
 ConstantBuffer<CameraParameters> Camera : register(b9);
 
 // Fixed SRV mapping
-//Texture2D<unorm float> ShadowBuffer : register(t0);
-Texture2D<float3> ShadowBuffer : register(t0);
+Texture2D<unorm float> ShadowBuffer : register(t0);
+
+static float3 DLIGHT_DIR = normalize(float3(-0.2, 0.4, -1));
+static float3 DLIGHT_COLOR = 4 * float3(1.0, 1, 1.0);
+static float3 STATIC_AMBIENT = 0.25 * float3(0.1, 0.1, 0.15);
 
 //--------------------------------------------------
 

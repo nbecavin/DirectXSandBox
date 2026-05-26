@@ -16,12 +16,12 @@
 #include "raytracing_common.hlsli"
 #include "gbuffer.hlsli"
 
-#define TMIN_EPSILON	 10e-4
-#define TMAX_INF	 10e9
+#define TMIN_EPSILON	10e-4
+#define TMAX_INF		10e9
 
 RaytracingAccelerationStructure TLAS;
 
-RWTexture2D<float4> Output : register(u0);
+RWTexture2D<float> Output : register(u0);
 
 struct RayPayload
 {
@@ -36,11 +36,13 @@ void OnAnyHit(HitAttributes h, inout RayPayload pay)
 void OnClosestHit(HitAttributes h, inout RayPayload pay)
 {
 	GeometrySampler gs = GetGeometrySample(h);
+	pay.HitT = h.HitT;
 	pay.color = gs.position;
 }
 
 void OnMiss(inout RayPayload pay)
 {
+	pay.HitT = -1;
 	pay.color = float3(1, 0, 0);
 }
 
@@ -51,14 +53,14 @@ static DefaultCallbackHandler callbacks;
 [numthreads(8, 8, 1)]
 void main(uint2 did : SV_DispatchThreadID)
 {
-	float3 color = float3(1, 0, 1);
+	float shadow = 1.0;
 
 	float2 uvViewport = (float2) did.xy / float2(1920, 1080); //DispatchRaysDimensions();
 	float2 ndcViewport = UVToNDC(uvViewport);
 
 	float3 viewDir = normalize(float3(mul(float4(ndcViewport, 0, 1), Camera.invProjMatrix).xy, 1.f));
 	//float3 viewDir = normalize(mul(float4(ndcViewport, 0, 1), Camera.invProjMatrix).xyz);
-	float3 worldDir = mul(viewDir, Camera.invViewMatrix);
+	float3 worldDir = normalize(mul(viewDir, Camera.invViewMatrix));
 
 	GBuffer gbuffer;
 	gbuffer.Unpack(uvViewport);
@@ -69,17 +71,22 @@ void main(uint2 did : SV_DispatchThreadID)
 	ray.Origin = Camera.eyeWorld;
 	ray.Direction = worldDir;
 
-//ray.Direction = float3(0,1,0);
-//ray.Origin = float3(0,0,0);
-	
-	RayPayload pay;
+	RayPayload pay = (RayPayload)0;
 	TraceRayInline(TLAS, RAY_FLAG_NONE, ray, pay, callbacks);
 	
-	color = gbuffer.albedo;//
-	pay.color;
-	//color = worldDir;
+	if (pay.HitT > 0)
+	{		
+		ray.TMin = 0.01;
+		ray.Origin = ray.Origin + ray.Direction * (pay.HitT - TMIN_EPSILON);
+		ray.Direction = DLIGHT_DIR;
+		
+		pay = (RayPayload)0;
+		TraceRayInline(TLAS, RAY_FLAG_NONE, ray, pay, callbacks);
+		
+		shadow = (pay.HitT > 0) ? 0 : 1;
+	}
 
-	Output[did] = float4(color, 1);
+	Output[did] = shadow;
 }
 
 #else

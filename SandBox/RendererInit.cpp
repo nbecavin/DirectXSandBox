@@ -59,14 +59,6 @@ namespace sys {
 			GetHAL()->CreateTexture(m_gBuffer[i]);
 		}
 
-		m_lightBuffer = new Bitmap();
-		m_lightBuffer->SetSize(SizeX,SizeY);
-		m_lightBuffer->SetFormat(BM_R8G8B8A8_UNORM);
-		m_lightBuffer->SetType(BM_TYPE_2D);
-		m_lightBuffer->DisableFlags(BM_SRGB);
-		m_lightBuffer->SetUsage(BM_USAGE_SRV | BM_USAGE_RTV | BM_USAGE_UAV);
-		GetHAL()->CreateTexture(m_lightBuffer);
-
 		m_linearZBuffer = new Bitmap();
 		m_linearZBuffer->SetSize(SizeX,SizeY);
 		m_linearZBuffer->SetFormat(BM_R32_FLOAT);
@@ -81,14 +73,6 @@ namespace sys {
 		m_shadowBuffer->DisableFlags(BM_SRGB);
 		m_shadowBuffer->SetUsage(BM_USAGE_SRV | BM_USAGE_UAV);
 		GetHAL()->CreateTexture(m_shadowBuffer);
-
-		m_ssaoBuffer = new Bitmap();
-		m_ssaoBuffer->SetSize(SizeX,SizeY);
-		m_ssaoBuffer->SetFormat(BM_R8G8B8A8_UNORM);
-		m_ssaoBuffer->SetType(BM_TYPE_2D);
-		m_ssaoBuffer->DisableFlags(BM_SRGB);
-		m_ssaoBuffer->SetUsage(BM_USAGE_SRV | BM_USAGE_RTV);
-		GetHAL()->CreateTexture(m_ssaoBuffer);
 
 		m_CameraConstant = GetHAL()->CreateConstantBuffer(sizeof(CameraConstant));
 		m_GlobalConstant = GetHAL()->CreateConstantBuffer(sizeof(GlobalParameters));

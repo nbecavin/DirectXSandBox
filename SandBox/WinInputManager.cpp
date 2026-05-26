@@ -38,6 +38,7 @@ namespace sys
 	{
 		float value = InputManager::GetAction(inputid, actionid);
 
+#if 0 //replaced by SDL gamepad handling
 		XINPUT_STATE * state = &m_XInputPads[inputid];
 		float	coef = 255.f / 32767.f;
 
@@ -76,8 +77,10 @@ namespace sys
 	
 		// Remove dead zone
 		value = Clamp(255.f*(value-32.f)/(255.f-32.f),0.f,255.f);
+		value / 255.f;
+#endif
 
-		return value/255.f;
+		return value;
 	}
 
 	void WinInputManager::Update(float dTime)

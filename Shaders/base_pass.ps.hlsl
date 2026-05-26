@@ -4,12 +4,10 @@
 
 #include "gbuffer.hlsli"
 
-/*SamplerState g_samLinear : register( s0 );*/
-
 float4 ForwardMain(const in VS_Output i) : SV_TARGET
 {
 	float2 pixel_pos = i.position.xy / float2(1920, 1080);
-	float3 screen_uv = float3(pixel_pos, i.position.z) / i.position.w;	
+	float3 screen_uv = float3(pixel_pos, i.position.z / i.position.w);
 	
     // Camera vector from surface to camera
     float3 V = normalize(Camera.eyeWorld - i.world_position);
@@ -19,13 +17,7 @@ float4 ForwardMain(const in VS_Output i) : SV_TARGET
     if (mat.opacity < 0.5f)
         discard;
 
-	// Basic directional sun lighting
-	float3 DLIGHT_DIR = normalize( float3(0,1,0.55) );
-	float3 DLIGHT_COLOR = 4 * float3( 1.0, 1, 1.0 );
-
-	float3 STATIC_AMBIENT = float3( 0.1, 0.1, 0.15 );
-	
-	// Sample shadow buffer
+	// Sample sun shadow buffer
 	float shadow = ShadowBuffer.Sample(sSampler, screen_uv.xy).r;
 
 	// Evaluate BRDF for sun
@@ -33,7 +25,8 @@ float4 ForwardMain(const in VS_Output i) : SV_TARGET
 	radiance += STATIC_AMBIENT * mat.albedo; //should be GI instead... or skylight
 
 	//radiance = shadow;
-	radiance = ShadowBuffer.Sample(sSampler, screen_uv.xy).rgb;
+	//radiance = ShadowBuffer.Sample(sSampler, screen_uv.xy).r;
+	//radiance = ShadowBuffer.Sample(sSampler, i.uv.xy).rgb;
 	//radiance = float3(screen_uv.xy, 0);
 	//radiance = mat.normal;
 	//radiance = -V;
